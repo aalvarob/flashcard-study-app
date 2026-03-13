@@ -28,3 +28,4 @@
 - [x] Integrar logo Batista no header do app
 - [x] Integrar logo da Convenção Batista de Alagoas
 - [x] Integrar logo da Ordem dos Pastores Batistas do Brasil
+- [x] Aumentar tamanho dos textos para ocupar máximo da tela
