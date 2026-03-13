@@ -14,4 +14,10 @@
 - [x] Implementar tela de estatísticas
 - [x] Configurar tab bar com ícones
 - [x] Atualizar app.config.ts com nome e logo
+- [x] Adicionar contadores para "Não Sei" e "Não Lembro"
+- [x] Adicionar campos notSureCount e notRememberCount ao Flashcard
+- [x] Atualizar tela principal com 4 botões de resultado
+- [x] Atualizar tela de estatísticas com novos contadores
+- [x] Atualizar tela de cards com novos contadores
+- [x] Escrever testes para novos contadores
 - [x] Salvar checkpoint final

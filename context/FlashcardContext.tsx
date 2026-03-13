@@ -14,6 +14,8 @@ export interface Flashcard extends FlashcardData {
   enabled: boolean;
   correctCount: number;
   wrongCount: number;
+  notSureCount: number;
+  notRememberCount: number;
 }
 
 interface FlashcardState {
@@ -21,6 +23,8 @@ interface FlashcardState {
   currentIndex: number;
   sessionCorrect: number;
   sessionWrong: number;
+  sessionNotSure: number;
+  sessionNotRemember: number;
   isFlipped: boolean;
 }
 
@@ -29,6 +33,8 @@ type FlashcardAction =
   | { type: "TOGGLE_CARD"; id: string }
   | { type: "MARK_CORRECT"; id: string }
   | { type: "MARK_WRONG"; id: string }
+  | { type: "MARK_NOT_SURE"; id: string }
+  | { type: "MARK_NOT_REMEMBER"; id: string }
   | { type: "NEXT_CARD" }
   | { type: "PREV_CARD" }
   | { type: "SET_INDEX"; index: number }
@@ -77,6 +83,28 @@ function reducer(state: FlashcardState, action: FlashcardAction): FlashcardState
       };
     }
 
+    case "MARK_NOT_SURE": {
+      const updated = state.cards.map((c) =>
+        c.id === action.id ? { ...c, notSureCount: c.notSureCount + 1 } : c
+      );
+      return {
+        ...state,
+        cards: updated,
+        sessionNotSure: state.sessionNotSure + 1,
+      };
+    }
+
+    case "MARK_NOT_REMEMBER": {
+      const updated = state.cards.map((c) =>
+        c.id === action.id ? { ...c, notRememberCount: c.notRememberCount + 1 } : c
+      );
+      return {
+        ...state,
+        cards: updated,
+        sessionNotRemember: state.sessionNotRemember + 1,
+      };
+    }
+
     case "NEXT_CARD": {
       const enabled = getEnabledCards(state.cards);
       if (enabled.length === 0) return state;
@@ -101,15 +129,17 @@ function reducer(state: FlashcardState, action: FlashcardAction): FlashcardState
       return { ...state, isFlipped: false };
 
     case "RESET_SESSION":
-      return { ...state, sessionCorrect: 0, sessionWrong: 0, currentIndex: 0, isFlipped: false };
+      return { ...state, sessionCorrect: 0, sessionWrong: 0, sessionNotSure: 0, sessionNotRemember: 0, currentIndex: 0, isFlipped: false };
 
     case "RESET_ALL_STATS": {
-      const reset = state.cards.map((c) => ({ ...c, correctCount: 0, wrongCount: 0 }));
+      const reset = state.cards.map((c) => ({ ...c, correctCount: 0, wrongCount: 0, notSureCount: 0, notRememberCount: 0 }));
       return {
         ...state,
         cards: reset,
         sessionCorrect: 0,
         sessionWrong: 0,
+        sessionNotSure: 0,
+        sessionNotRemember: 0,
         currentIndex: 0,
         isFlipped: false,
       };
@@ -125,6 +155,8 @@ const initialState: FlashcardState = {
   currentIndex: 0,
   sessionCorrect: 0,
   sessionWrong: 0,
+  sessionNotSure: 0,
+  sessionNotRemember: 0,
   isFlipped: false,
 };
 
@@ -135,6 +167,8 @@ interface FlashcardContextValue {
   toggleCard: (id: string) => void;
   markCorrect: () => void;
   markWrong: () => void;
+  markNotSure: () => void;
+  markNotRemember: () => void;
   nextCard: () => void;
   prevCard: () => void;
   flipCard: () => void;
@@ -143,6 +177,8 @@ interface FlashcardContextValue {
   getCardsByArea: (area: FlashcardArea) => Flashcard[];
   totalCorrect: number;
   totalWrong: number;
+  totalNotSure: number;
+  totalNotRemember: number;
 }
 
 const FlashcardContext = createContext<FlashcardContextValue | null>(null);
@@ -161,8 +197,8 @@ export function FlashcardProvider({ children }: { children: React.ReactNode }) {
           const merged = FLASHCARDS_DATA.map((fd) => {
             const existing = parsed.find((p) => p.id === fd.id);
             return existing
-              ? { ...fd, enabled: existing.enabled, correctCount: existing.correctCount, wrongCount: existing.wrongCount }
-              : { ...fd, enabled: true, correctCount: 0, wrongCount: 0 };
+              ? { ...fd, enabled: existing.enabled, correctCount: existing.correctCount, wrongCount: existing.wrongCount, notSureCount: existing.notSureCount ?? 0, notRememberCount: existing.notRememberCount ?? 0 }
+              : { ...fd, enabled: true, correctCount: 0, wrongCount: 0, notSureCount: 0, notRememberCount: 0 };
           });
           dispatch({ type: "INIT", payload: merged });
         } else {
@@ -171,6 +207,8 @@ export function FlashcardProvider({ children }: { children: React.ReactNode }) {
             enabled: true,
             correctCount: 0,
             wrongCount: 0,
+            notSureCount: 0,
+            notRememberCount: 0,
           }));
           dispatch({ type: "INIT", payload: initial });
         }
@@ -180,6 +218,8 @@ export function FlashcardProvider({ children }: { children: React.ReactNode }) {
           enabled: true,
           correctCount: 0,
           wrongCount: 0,
+          notSureCount: 0,
+          notRememberCount: 0,
         }));
         dispatch({ type: "INIT", payload: initial });
       }
@@ -211,6 +251,18 @@ export function FlashcardProvider({ children }: { children: React.ReactNode }) {
     }
   }, [currentCard]);
 
+  const markNotSure = useCallback(() => {
+    if (currentCard) {
+      dispatch({ type: "MARK_NOT_SURE", id: currentCard.id });
+    }
+  }, [currentCard]);
+
+  const markNotRemember = useCallback(() => {
+    if (currentCard) {
+      dispatch({ type: "MARK_NOT_REMEMBER", id: currentCard.id });
+    }
+  }, [currentCard]);
+
   const nextCard = useCallback(() => dispatch({ type: "NEXT_CARD" }), []);
   const prevCard = useCallback(() => dispatch({ type: "PREV_CARD" }), []);
   const flipCard = useCallback(() => dispatch({ type: "FLIP_CARD" }), []);
@@ -224,6 +276,8 @@ export function FlashcardProvider({ children }: { children: React.ReactNode }) {
 
   const totalCorrect = state.cards.reduce((sum, c) => sum + c.correctCount, 0);
   const totalWrong = state.cards.reduce((sum, c) => sum + c.wrongCount, 0);
+  const totalNotSure = state.cards.reduce((sum, c) => sum + c.notSureCount, 0);
+  const totalNotRemember = state.cards.reduce((sum, c) => sum + c.notRememberCount, 0);
 
   return (
     <FlashcardContext.Provider
@@ -234,6 +288,8 @@ export function FlashcardProvider({ children }: { children: React.ReactNode }) {
         toggleCard,
         markCorrect,
         markWrong,
+        markNotSure,
+        markNotRemember,
         nextCard,
         prevCard,
         flipCard,
@@ -242,6 +298,8 @@ export function FlashcardProvider({ children }: { children: React.ReactNode }) {
         getCardsByArea,
         totalCorrect,
         totalWrong,
+        totalNotSure,
+        totalNotRemember,
       }}
     >
       {children}

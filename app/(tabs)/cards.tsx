@@ -66,14 +66,28 @@ export default function CardsScreen() {
             >
               {item.question}
             </Text>
-            {(item.correctCount > 0 || item.wrongCount > 0) && (
+            {(item.correctCount > 0 || item.wrongCount > 0 || item.notSureCount > 0 || item.notRememberCount > 0) && (
               <View style={styles.statsRow}>
-                <Text style={[styles.statText, { color: "#27AE60" }]}>
-                  ✓ {item.correctCount}
-                </Text>
-                <Text style={[styles.statText, { color: "#E74C3C" }]}>
-                  ✗ {item.wrongCount}
-                </Text>
+                {item.correctCount > 0 && (
+                  <Text style={[styles.statText, { color: "#27AE60" }]}>
+                    ✓ {item.correctCount}
+                  </Text>
+                )}
+                {item.wrongCount > 0 && (
+                  <Text style={[styles.statText, { color: "#E74C3C" }]}>
+                    ✗ {item.wrongCount}
+                  </Text>
+                )}
+                {item.notSureCount > 0 && (
+                  <Text style={[styles.statText, { color: "#F59E0B" }]}>
+                    ? {item.notSureCount}
+                  </Text>
+                )}
+                {item.notRememberCount > 0 && (
+                  <Text style={[styles.statText, { color: "#A855F7" }]}>
+                    ! {item.notRememberCount}
+                  </Text>
+                )}
               </View>
             )}
           </View>

@@ -15,14 +15,14 @@ import * as Haptics from "expo-haptics";
 
 export default function StatsScreen() {
   const colors = useColors();
-  const { state, totalCorrect, totalWrong, getCardsByArea, resetAllStats, resetSession } =
+  const { state, totalCorrect, totalWrong, totalNotSure, totalNotRemember, getCardsByArea, resetAllStats, resetSession } =
     useFlashcards();
 
-  const { sessionCorrect, sessionWrong } = state;
-  const totalAnswered = totalCorrect + totalWrong;
+  const { sessionCorrect, sessionWrong, sessionNotSure, sessionNotRemember } = state;
+  const totalAnswered = totalCorrect + totalWrong + totalNotSure + totalNotRemember;
   const accuracy = totalAnswered > 0 ? Math.round((totalCorrect / totalAnswered) * 100) : 0;
 
-  const sessionTotal = sessionCorrect + sessionWrong;
+  const sessionTotal = sessionCorrect + sessionWrong + sessionNotSure + sessionNotRemember;
   const sessionAccuracy =
     sessionTotal > 0 ? Math.round((sessionCorrect / sessionTotal) * 100) : 0;
 
@@ -31,20 +31,24 @@ export default function StatsScreen() {
 
   const teologiaCorrect = teologiaCards.reduce((s, c) => s + c.correctCount, 0);
   const teologiaWrong = teologiaCards.reduce((s, c) => s + c.wrongCount, 0);
-  const teologiaTotal = teologiaCorrect + teologiaWrong;
+  const teologiaNotSure = teologiaCards.reduce((s, c) => s + c.notSureCount, 0);
+  const teologiaNotRemember = teologiaCards.reduce((s, c) => s + c.notRememberCount, 0);
+  const teologiaTotal = teologiaCorrect + teologiaWrong + teologiaNotSure + teologiaNotRemember;
   const teologiaAccuracy =
     teologiaTotal > 0 ? Math.round((teologiaCorrect / teologiaTotal) * 100) : 0;
 
   const eclesiologiaCorrect = eclesiologiaCards.reduce((s, c) => s + c.correctCount, 0);
   const eclesiologiaWrong = eclesiologiaCards.reduce((s, c) => s + c.wrongCount, 0);
-  const eclesiologiaTotal = eclesiologiaCorrect + eclesiologiaWrong;
+  const eclesiologiaNotSure = eclesiologiaCards.reduce((s, c) => s + c.notSureCount, 0);
+  const eclesiologiaNotRemember = eclesiologiaCards.reduce((s, c) => s + c.notRememberCount, 0);
+  const eclesiologiaTotal = eclesiologiaCorrect + eclesiologiaWrong + eclesiologiaNotSure + eclesiologiaNotRemember;
   const eclesiologiaAccuracy =
     eclesiologiaTotal > 0 ? Math.round((eclesiologiaCorrect / eclesiologiaTotal) * 100) : 0;
 
-  // Top 5 cards with most errors
+  // Top 5 cards with most errors or uncertainties
   const hardestCards = [...state.cards]
-    .filter((c) => c.wrongCount > 0)
-    .sort((a, b) => b.wrongCount - a.wrongCount)
+    .filter((c) => c.wrongCount > 0 || c.notSureCount > 0 || c.notRememberCount > 0)
+    .sort((a, b) => (b.wrongCount + b.notSureCount + b.notRememberCount) - (a.wrongCount + a.notSureCount + a.notRememberCount))
     .slice(0, 5);
 
   function handleResetSession() {
@@ -53,7 +57,7 @@ export default function StatsScreen() {
     }
     Alert.alert(
       "Resetar Sessão",
-      "Deseja zerar os contadores de acertos e erros desta sessão?",
+      "Deseja zerar os contadores de acertos, erros, dúvidas e esquecimentos desta sessão?",
       [
         { text: "Cancelar", style: "cancel" },
         {
@@ -113,13 +117,19 @@ export default function StatsScreen() {
               </View>
               <View style={[styles.statDivider, { backgroundColor: colors.border }]} />
               <View style={styles.statItem}>
-                <Text
-                  style={[styles.statValue, { color: getAccuracyColor(sessionAccuracy) }]}
-                >
-                  {sessionAccuracy}%
-                </Text>
-                <Text style={[styles.statLabel, { color: colors.muted }]}>Aproveit.</Text>
+                <Text style={[styles.statValue, { color: "#F59E0B" }]}>{sessionNotSure}</Text>
+                <Text style={[styles.statLabel, { color: colors.muted }]}>Dúvidas</Text>
               </View>
+              <View style={[styles.statDivider, { backgroundColor: colors.border }]} />
+              <View style={styles.statItem}>
+                <Text style={[styles.statValue, { color: "#A855F7" }]}>{sessionNotRemember}</Text>
+                <Text style={[styles.statLabel, { color: colors.muted }]}>Esqueci</Text>
+              </View>
+            </View>
+            <View style={styles.sessionAccuracyContainer}>
+              <Text style={[styles.sessionAccuracyLabel, { color: colors.muted }]}>
+                Aproveitamento: <Text style={[{ color: getAccuracyColor(sessionAccuracy) }]}>{sessionAccuracy}%</Text>
+              </Text>
             </View>
           </View>
         </View>
@@ -140,10 +150,13 @@ export default function StatsScreen() {
               </View>
               <View style={[styles.statDivider, { backgroundColor: colors.border }]} />
               <View style={styles.statItem}>
-                <Text style={[styles.statValue, { color: getAccuracyColor(accuracy) }]}>
-                  {accuracy}%
-                </Text>
-                <Text style={[styles.statLabel, { color: colors.muted }]}>Aproveit.</Text>
+                <Text style={[styles.statValue, { color: "#F59E0B" }]}>{totalNotSure}</Text>
+                <Text style={[styles.statLabel, { color: colors.muted }]}>Dúvidas</Text>
+              </View>
+              <View style={[styles.statDivider, { backgroundColor: colors.border }]} />
+              <View style={styles.statItem}>
+                <Text style={[styles.statValue, { color: "#A855F7" }]}>{totalNotRemember}</Text>
+                <Text style={[styles.statLabel, { color: colors.muted }]}>Esqueci</Text>
               </View>
             </View>
             {/* Barra de progresso de aproveitamento */}
@@ -160,7 +173,7 @@ export default function StatsScreen() {
                 />
               </View>
               <Text style={[styles.accuracyBarLabel, { color: colors.muted }]}>
-                {totalAnswered} respostas no total
+                {totalAnswered} respostas no total — Aproveitamento: {accuracy}%
               </Text>
             </View>
           </View>
@@ -171,27 +184,63 @@ export default function StatsScreen() {
           <Text style={[styles.sectionTitle, { color: colors.muted }]}>POR ÁREA</Text>
 
           <View style={[styles.card, { backgroundColor: colors.surface, borderColor: colors.border }]}>
-            <View style={styles.areaRow}>
-              <View style={[styles.areaColorDot, { backgroundColor: colors.primary }]} />
-              <Text style={[styles.areaName, { color: colors.foreground }]}>Teologia</Text>
+            <View style={styles.areaSection}>
+              <View style={[styles.areaHeader, { borderBottomColor: colors.border }]}>
+                <View style={[styles.areaColorDot, { backgroundColor: colors.primary }]} />
+                <Text style={[styles.areaName, { color: colors.foreground }]}>Teologia</Text>
+              </View>
               <View style={styles.areaStats}>
-                <Text style={[styles.areaStatText, { color: "#27AE60" }]}>✓ {teologiaCorrect}</Text>
-                <Text style={[styles.areaStatText, { color: "#E74C3C" }]}>✗ {teologiaWrong}</Text>
-                <Text style={[styles.areaAccuracy, { color: getAccuracyColor(teologiaAccuracy) }]}>
-                  {teologiaAccuracy}%
-                </Text>
+                <View style={styles.areaStatItem}>
+                  <Text style={[styles.areaStatValue, { color: "#27AE60" }]}>{teologiaCorrect}</Text>
+                  <Text style={[styles.areaStatLabel, { color: colors.muted }]}>Acertos</Text>
+                </View>
+                <View style={styles.areaStatItem}>
+                  <Text style={[styles.areaStatValue, { color: "#E74C3C" }]}>{teologiaWrong}</Text>
+                  <Text style={[styles.areaStatLabel, { color: colors.muted }]}>Erros</Text>
+                </View>
+                <View style={styles.areaStatItem}>
+                  <Text style={[styles.areaStatValue, { color: "#F59E0B" }]}>{teologiaNotSure}</Text>
+                  <Text style={[styles.areaStatLabel, { color: colors.muted }]}>Dúvidas</Text>
+                </View>
+                <View style={styles.areaStatItem}>
+                  <Text style={[styles.areaStatValue, { color: "#A855F7" }]}>{teologiaNotRemember}</Text>
+                  <Text style={[styles.areaStatLabel, { color: colors.muted }]}>Esqueci</Text>
+                </View>
+                <View style={styles.areaStatItem}>
+                  <Text style={[styles.areaStatValue, { color: getAccuracyColor(teologiaAccuracy) }]}>{teologiaAccuracy}%</Text>
+                  <Text style={[styles.areaStatLabel, { color: colors.muted }]}>Aproveita.</Text>
+                </View>
               </View>
             </View>
+
             <View style={[styles.divider, { backgroundColor: colors.border }]} />
-            <View style={styles.areaRow}>
-              <View style={[styles.areaColorDot, { backgroundColor: "#6B46C1" }]} />
-              <Text style={[styles.areaName, { color: colors.foreground }]}>Eclesiologia</Text>
+
+            <View style={styles.areaSection}>
+              <View style={[styles.areaHeader, { borderBottomColor: colors.border }]}>
+                <View style={[styles.areaColorDot, { backgroundColor: "#6B46C1" }]} />
+                <Text style={[styles.areaName, { color: colors.foreground }]}>Eclesiologia</Text>
+              </View>
               <View style={styles.areaStats}>
-                <Text style={[styles.areaStatText, { color: "#27AE60" }]}>✓ {eclesiologiaCorrect}</Text>
-                <Text style={[styles.areaStatText, { color: "#E74C3C" }]}>✗ {eclesiologiaWrong}</Text>
-                <Text style={[styles.areaAccuracy, { color: getAccuracyColor(eclesiologiaAccuracy) }]}>
-                  {eclesiologiaAccuracy}%
-                </Text>
+                <View style={styles.areaStatItem}>
+                  <Text style={[styles.areaStatValue, { color: "#27AE60" }]}>{eclesiologiaCorrect}</Text>
+                  <Text style={[styles.areaStatLabel, { color: colors.muted }]}>Acertos</Text>
+                </View>
+                <View style={styles.areaStatItem}>
+                  <Text style={[styles.areaStatValue, { color: "#E74C3C" }]}>{eclesiologiaWrong}</Text>
+                  <Text style={[styles.areaStatLabel, { color: colors.muted }]}>Erros</Text>
+                </View>
+                <View style={styles.areaStatItem}>
+                  <Text style={[styles.areaStatValue, { color: "#F59E0B" }]}>{eclesiologiaNotSure}</Text>
+                  <Text style={[styles.areaStatLabel, { color: colors.muted }]}>Dúvidas</Text>
+                </View>
+                <View style={styles.areaStatItem}>
+                  <Text style={[styles.areaStatValue, { color: "#A855F7" }]}>{eclesiologiaNotRemember}</Text>
+                  <Text style={[styles.areaStatLabel, { color: colors.muted }]}>Esqueci</Text>
+                </View>
+                <View style={styles.areaStatItem}>
+                  <Text style={[styles.areaStatValue, { color: getAccuracyColor(eclesiologiaAccuracy) }]}>{eclesiologiaAccuracy}%</Text>
+                  <Text style={[styles.areaStatLabel, { color: colors.muted }]}>Aproveita.</Text>
+                </View>
               </View>
             </View>
           </View>
@@ -200,7 +249,7 @@ export default function StatsScreen() {
         {/* Cards Mais Difíceis */}
         {hardestCards.length > 0 && (
           <View style={styles.section}>
-            <Text style={[styles.sectionTitle, { color: colors.muted }]}>MAIS DIFÍCEIS</Text>
+            <Text style={[styles.sectionTitle, { color: colors.muted }]}>MAIS DESAFIADORES</Text>
             <View style={[styles.card, { backgroundColor: colors.surface, borderColor: colors.border }]}>
               {hardestCards.map((card, index) => (
                 <View key={card.id}>
@@ -215,12 +264,26 @@ export default function StatsScreen() {
                       </Text>
                     </View>
                     <View style={styles.hardCardStats}>
-                      <Text style={[styles.hardCardStat, { color: "#E74C3C" }]}>
-                        ✗ {card.wrongCount}
-                      </Text>
-                      <Text style={[styles.hardCardStat, { color: "#27AE60" }]}>
-                        ✓ {card.correctCount}
-                      </Text>
+                      {card.correctCount > 0 && (
+                        <Text style={[styles.hardCardStat, { color: "#27AE60" }]}>
+                          ✓ {card.correctCount}
+                        </Text>
+                      )}
+                      {card.wrongCount > 0 && (
+                        <Text style={[styles.hardCardStat, { color: "#E74C3C" }]}>
+                          ✗ {card.wrongCount}
+                        </Text>
+                      )}
+                      {card.notSureCount > 0 && (
+                        <Text style={[styles.hardCardStat, { color: "#F59E0B" }]}>
+                          ? {card.notSureCount}
+                        </Text>
+                      )}
+                      {card.notRememberCount > 0 && (
+                        <Text style={[styles.hardCardStat, { color: "#A855F7" }]}>
+                          ! {card.notRememberCount}
+                        </Text>
+                      )}
                     </View>
                   </View>
                 </View>
@@ -315,16 +378,27 @@ const styles = StyleSheet.create({
     gap: 4,
   },
   statValue: {
-    fontSize: 32,
+    fontSize: 28,
     fontWeight: "800",
   },
   statLabel: {
-    fontSize: 12,
+    fontSize: 11,
     fontWeight: "500",
   },
   statDivider: {
     width: 1,
     height: 48,
+  },
+  sessionAccuracyContainer: {
+    marginTop: 12,
+    paddingTop: 12,
+    borderTopWidth: StyleSheet.hairlineWidth,
+    borderTopColor: "rgba(0,0,0,0.1)",
+    alignItems: "center",
+  },
+  sessionAccuracyLabel: {
+    fontSize: 13,
+    fontWeight: "600",
   },
   accuracyBarContainer: {
     marginTop: 16,
@@ -343,11 +417,16 @@ const styles = StyleSheet.create({
     fontSize: 11,
     textAlign: "center",
   },
-  areaRow: {
+  areaSection: {
+    paddingVertical: 12,
+  },
+  areaHeader: {
     flexDirection: "row",
     alignItems: "center",
-    paddingVertical: 10,
     gap: 10,
+    paddingBottom: 10,
+    borderBottomWidth: StyleSheet.hairlineWidth,
+    marginBottom: 10,
   },
   areaColorDot: {
     width: 10,
@@ -355,24 +434,26 @@ const styles = StyleSheet.create({
     borderRadius: 5,
   },
   areaName: {
-    flex: 1,
     fontSize: 14,
     fontWeight: "600",
   },
   areaStats: {
     flexDirection: "row",
+    justifyContent: "space-around",
+    gap: 8,
+  },
+  areaStatItem: {
+    flex: 1,
     alignItems: "center",
-    gap: 10,
+    gap: 2,
   },
-  areaStatText: {
-    fontSize: 13,
-    fontWeight: "600",
-  },
-  areaAccuracy: {
-    fontSize: 14,
+  areaStatValue: {
+    fontSize: 16,
     fontWeight: "700",
-    minWidth: 36,
-    textAlign: "right",
+  },
+  areaStatLabel: {
+    fontSize: 10,
+    fontWeight: "500",
   },
   divider: {
     height: StyleSheet.hairlineWidth,
@@ -396,7 +477,7 @@ const styles = StyleSheet.create({
     gap: 2,
   },
   hardCardStat: {
-    fontSize: 13,
+    fontSize: 12,
     fontWeight: "600",
   },
   resetButtons: {

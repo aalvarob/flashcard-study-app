@@ -20,12 +20,14 @@ export default function StudyScreen() {
     currentCard,
     markCorrect,
     markWrong,
+    markNotSure,
+    markNotRemember,
     nextCard,
     prevCard,
     flipCard,
   } = useFlashcards();
 
-  const { sessionCorrect, sessionWrong, isFlipped, currentIndex } = state;
+  const { sessionCorrect, sessionWrong, sessionNotSure, sessionNotRemember, isFlipped, currentIndex } = state;
   const total = enabledCards.length;
 
   function handleFlip() {
@@ -48,6 +50,22 @@ export default function StudyScreen() {
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
     }
     markWrong();
+    nextCard();
+  }
+
+  function handleNotSure() {
+    if (Platform.OS !== "web") {
+      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+    }
+    markNotSure();
+    nextCard();
+  }
+
+  function handleNotRemember() {
+    if (Platform.OS !== "web") {
+      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+    }
+    markNotRemember();
     nextCard();
   }
 
@@ -83,6 +101,18 @@ export default function StudyScreen() {
             <Text style={styles.scoreIcon}>✗</Text>
             <Text style={[styles.scoreValue, { color: "#F87171" }]}>{sessionWrong}</Text>
             <Text style={[styles.scoreLabel, { color: "rgba(255,255,255,0.7)" }]}>Erros</Text>
+          </View>
+          <View style={styles.scoreDivider} />
+          <View style={[styles.scoreBox, { backgroundColor: "rgba(245,158,11,0.25)" }]}>
+            <Text style={styles.scoreIcon}>?</Text>
+            <Text style={[styles.scoreValue, { color: "#FBBF24" }]}>{sessionNotSure}</Text>
+            <Text style={[styles.scoreLabel, { color: "rgba(255,255,255,0.7)" }]}>Dúvida</Text>
+          </View>
+          <View style={styles.scoreDivider} />
+          <View style={[styles.scoreBox, { backgroundColor: "rgba(168,85,247,0.25)" }]}>
+            <Text style={styles.scoreIcon}>!</Text>
+            <Text style={[styles.scoreValue, { color: "#D8B4FE" }]}>{sessionNotRemember}</Text>
+            <Text style={[styles.scoreLabel, { color: "rgba(255,255,255,0.7)" }]}>Esqueci</Text>
           </View>
         </View>
       </View>
@@ -123,31 +153,59 @@ export default function StudyScreen() {
       {currentCard && (
         <View style={styles.actionsArea}>
           {isFlipped ? (
-            /* Botões Acertei / Errei — aparecem após virar */
-            <View style={styles.resultButtons}>
-              <Pressable
-                onPress={handleWrong}
-                style={({ pressed }) => [
-                  styles.resultBtn,
-                  styles.wrongBtn,
-                  { opacity: pressed ? 0.8 : 1, transform: [{ scale: pressed ? 0.97 : 1 }] },
-                ]}
-              >
-                <Text style={styles.resultBtnIcon}>✗</Text>
-                <Text style={styles.resultBtnText}>Errei</Text>
-              </Pressable>
+            /* Botões de Resultado — aparecem após virar */
+            <View style={styles.resultButtonsContainer}>
+              <View style={styles.resultButtonsRow}>
+                <Pressable
+                  onPress={handleWrong}
+                  style={({ pressed }) => [
+                    styles.resultBtn,
+                    styles.wrongBtn,
+                    { opacity: pressed ? 0.8 : 1, transform: [{ scale: pressed ? 0.97 : 1 }] },
+                  ]}
+                >
+                  <Text style={styles.resultBtnIcon}>✗</Text>
+                  <Text style={styles.resultBtnText}>Errei</Text>
+                </Pressable>
 
-              <Pressable
-                onPress={handleCorrect}
-                style={({ pressed }) => [
-                  styles.resultBtn,
-                  styles.correctBtn,
-                  { opacity: pressed ? 0.8 : 1, transform: [{ scale: pressed ? 0.97 : 1 }] },
-                ]}
-              >
-                <Text style={styles.resultBtnIcon}>✓</Text>
-                <Text style={styles.resultBtnText}>Acertei</Text>
-              </Pressable>
+                <Pressable
+                  onPress={handleCorrect}
+                  style={({ pressed }) => [
+                    styles.resultBtn,
+                    styles.correctBtn,
+                    { opacity: pressed ? 0.8 : 1, transform: [{ scale: pressed ? 0.97 : 1 }] },
+                  ]}
+                >
+                  <Text style={styles.resultBtnIcon}>✓</Text>
+                  <Text style={styles.resultBtnText}>Acertei</Text>
+                </Pressable>
+              </View>
+
+              <View style={styles.resultButtonsRow}>
+                <Pressable
+                  onPress={handleNotSure}
+                  style={({ pressed }) => [
+                    styles.resultBtn,
+                    styles.notSureBtn,
+                    { opacity: pressed ? 0.8 : 1, transform: [{ scale: pressed ? 0.97 : 1 }] },
+                  ]}
+                >
+                  <Text style={styles.resultBtnIcon}>?</Text>
+                  <Text style={styles.resultBtnText}>Não Sei</Text>
+                </Pressable>
+
+                <Pressable
+                  onPress={handleNotRemember}
+                  style={({ pressed }) => [
+                    styles.resultBtn,
+                    styles.notRememberBtn,
+                    { opacity: pressed ? 0.8 : 1, transform: [{ scale: pressed ? 0.97 : 1 }] },
+                  ]}
+                >
+                  <Text style={styles.resultBtnIcon}>!</Text>
+                  <Text style={styles.resultBtnText}>Não Lembro</Text>
+                </Pressable>
+              </View>
             </View>
           ) : (
             /* Botão Virar */
@@ -192,48 +250,49 @@ export default function StudyScreen() {
 
 const styles = StyleSheet.create({
   header: {
-    paddingHorizontal: 20,
+    paddingHorizontal: 12,
     paddingTop: 16,
-    paddingBottom: 16,
+    paddingBottom: 12,
   },
   headerTitle: {
     fontSize: 18,
     fontWeight: "700",
     color: "#FFFFFF",
     textAlign: "center",
-    marginBottom: 12,
+    marginBottom: 10,
     letterSpacing: 0.5,
   },
   scoreRow: {
     flexDirection: "row",
     justifyContent: "center",
     alignItems: "center",
-    gap: 16,
-  },
-  scoreBox: {
-    flexDirection: "row",
-    alignItems: "center",
-    paddingHorizontal: 16,
-    paddingVertical: 8,
-    borderRadius: 12,
     gap: 6,
   },
+  scoreBox: {
+    flex: 1,
+    flexDirection: "column",
+    alignItems: "center",
+    paddingHorizontal: 6,
+    paddingVertical: 6,
+    borderRadius: 10,
+    gap: 2,
+  },
   scoreIcon: {
-    fontSize: 16,
+    fontSize: 14,
     fontWeight: "700",
     color: "#FFFFFF",
   },
   scoreValue: {
-    fontSize: 22,
+    fontSize: 18,
     fontWeight: "800",
   },
   scoreLabel: {
-    fontSize: 12,
+    fontSize: 10,
     fontWeight: "500",
   },
   scoreDivider: {
     width: 1,
-    height: 32,
+    height: 40,
     backgroundColor: "rgba(255,255,255,0.2)",
   },
   progressContainer: {
@@ -278,22 +337,25 @@ const styles = StyleSheet.create({
     lineHeight: 24,
   },
   actionsArea: {
-    paddingHorizontal: 24,
+    paddingHorizontal: 16,
     paddingBottom: 16,
     gap: 12,
   },
-  resultButtons: {
+  resultButtonsContainer: {
+    gap: 10,
+  },
+  resultButtonsRow: {
     flexDirection: "row",
-    gap: 12,
+    gap: 10,
   },
   resultBtn: {
     flex: 1,
-    flexDirection: "row",
+    flexDirection: "column",
     alignItems: "center",
     justifyContent: "center",
-    paddingVertical: 16,
-    borderRadius: 14,
-    gap: 8,
+    paddingVertical: 12,
+    borderRadius: 12,
+    gap: 4,
   },
   wrongBtn: {
     backgroundColor: "#E74C3C",
@@ -301,13 +363,19 @@ const styles = StyleSheet.create({
   correctBtn: {
     backgroundColor: "#27AE60",
   },
+  notSureBtn: {
+    backgroundColor: "#F59E0B",
+  },
+  notRememberBtn: {
+    backgroundColor: "#A855F7",
+  },
   resultBtnIcon: {
-    fontSize: 20,
+    fontSize: 18,
     fontWeight: "800",
     color: "#FFFFFF",
   },
   resultBtnText: {
-    fontSize: 17,
+    fontSize: 13,
     fontWeight: "700",
     color: "#FFFFFF",
   },

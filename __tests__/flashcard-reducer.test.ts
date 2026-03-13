@@ -10,6 +10,8 @@ interface Flashcard {
   enabled: boolean;
   correctCount: number;
   wrongCount: number;
+  notSureCount: number;
+  notRememberCount: number;
 }
 
 interface State {
@@ -17,6 +19,8 @@ interface State {
   currentIndex: number;
   sessionCorrect: number;
   sessionWrong: number;
+  sessionNotSure: number;
+  sessionNotRemember: number;
   isFlipped: boolean;
 }
 
@@ -28,6 +32,8 @@ type Action =
   | { type: "TOGGLE_CARD"; id: string }
   | { type: "MARK_CORRECT"; id: string }
   | { type: "MARK_WRONG"; id: string }
+  | { type: "MARK_NOT_SURE"; id: string }
+  | { type: "MARK_NOT_REMEMBER"; id: string }
   | { type: "NEXT_CARD" }
   | { type: "PREV_CARD" }
   | { type: "FLIP_CARD" }
@@ -56,6 +62,18 @@ function reducer(state: State, action: Action): State {
       );
       return { ...state, cards: updated, sessionWrong: state.sessionWrong + 1 };
     }
+    case "MARK_NOT_SURE": {
+      const updated = state.cards.map((c) =>
+        c.id === action.id ? { ...c, notSureCount: c.notSureCount + 1 } : c
+      );
+      return { ...state, cards: updated, sessionNotSure: state.sessionNotSure + 1 };
+    }
+    case "MARK_NOT_REMEMBER": {
+      const updated = state.cards.map((c) =>
+        c.id === action.id ? { ...c, notRememberCount: c.notRememberCount + 1 } : c
+      );
+      return { ...state, cards: updated, sessionNotRemember: state.sessionNotRemember + 1 };
+    }
     case "NEXT_CARD": {
       const enabled = getEnabledCards(state.cards);
       if (enabled.length === 0) return state;
@@ -71,10 +89,10 @@ function reducer(state: State, action: Action): State {
     case "FLIP_CARD":
       return { ...state, isFlipped: !state.isFlipped };
     case "RESET_SESSION":
-      return { ...state, sessionCorrect: 0, sessionWrong: 0, currentIndex: 0, isFlipped: false };
+      return { ...state, sessionCorrect: 0, sessionWrong: 0, sessionNotSure: 0, sessionNotRemember: 0, currentIndex: 0, isFlipped: false };
     case "RESET_ALL_STATS": {
-      const reset = state.cards.map((c) => ({ ...c, correctCount: 0, wrongCount: 0 }));
-      return { ...state, cards: reset, sessionCorrect: 0, sessionWrong: 0, currentIndex: 0, isFlipped: false };
+      const reset = state.cards.map((c) => ({ ...c, correctCount: 0, wrongCount: 0, notSureCount: 0, notRememberCount: 0 }));
+      return { ...state, cards: reset, sessionCorrect: 0, sessionWrong: 0, sessionNotSure: 0, sessionNotRemember: 0, currentIndex: 0, isFlipped: false };
     }
     default:
       return state;
@@ -90,6 +108,8 @@ function makeCards(n = 5): Flashcard[] {
     enabled: true,
     correctCount: 0,
     wrongCount: 0,
+    notSureCount: 0,
+    notRememberCount: 0,
   }));
 }
 
@@ -98,6 +118,8 @@ const baseState: State = {
   currentIndex: 0,
   sessionCorrect: 0,
   sessionWrong: 0,
+  sessionNotSure: 0,
+  sessionNotRemember: 0,
   isFlipped: false,
 };
 
@@ -147,6 +169,18 @@ describe("Flashcard reducer", () => {
     expect(state.cards.find((c) => c.id === "c0")!.wrongCount).toBe(1);
   });
 
+  it("MARK_NOT_SURE increments sessionNotSure and card notSureCount", () => {
+    const state = reducer(baseState, { type: "MARK_NOT_SURE", id: "c0" });
+    expect(state.sessionNotSure).toBe(1);
+    expect(state.cards.find((c) => c.id === "c0")!.notSureCount).toBe(1);
+  });
+
+  it("MARK_NOT_REMEMBER increments sessionNotRemember and card notRememberCount", () => {
+    const state = reducer(baseState, { type: "MARK_NOT_REMEMBER", id: "c0" });
+    expect(state.sessionNotRemember).toBe(1);
+    expect(state.cards.find((c) => c.id === "c0")!.notRememberCount).toBe(1);
+  });
+
   it("NEXT_CARD advances index and resets flip", () => {
     const flipped = { ...baseState, isFlipped: true };
     const state = reducer(flipped, { type: "NEXT_CARD" });
@@ -178,16 +212,17 @@ describe("Flashcard reducer", () => {
 
   it("TOGGLE_CARD adjusts currentIndex if needed", () => {
     const atEnd = { ...baseState, currentIndex: 4 };
-    // Disable the last card — index should clamp
     const state = reducer(atEnd, { type: "TOGGLE_CARD", id: "c4" });
-    expect(state.currentIndex).toBe(3); // 4 enabled cards remain, max index = 3
+    expect(state.currentIndex).toBe(3);
   });
 
-  it("RESET_SESSION resets session counters and index", () => {
-    const dirty = { ...baseState, sessionCorrect: 5, sessionWrong: 3, currentIndex: 2, isFlipped: true };
+  it("RESET_SESSION resets all session counters and index", () => {
+    const dirty = { ...baseState, sessionCorrect: 5, sessionWrong: 3, sessionNotSure: 2, sessionNotRemember: 1, currentIndex: 2, isFlipped: true };
     const state = reducer(dirty, { type: "RESET_SESSION" });
     expect(state.sessionCorrect).toBe(0);
     expect(state.sessionWrong).toBe(0);
+    expect(state.sessionNotSure).toBe(0);
+    expect(state.sessionNotRemember).toBe(0);
     expect(state.currentIndex).toBe(0);
     expect(state.isFlipped).toBe(false);
   });
@@ -195,16 +230,22 @@ describe("Flashcard reducer", () => {
   it("RESET_ALL_STATS resets all card counts and session", () => {
     const dirty = {
       ...baseState,
-      cards: makeCards().map((c) => ({ ...c, correctCount: 3, wrongCount: 2 })),
+      cards: makeCards().map((c) => ({ ...c, correctCount: 3, wrongCount: 2, notSureCount: 1, notRememberCount: 1 })),
       sessionCorrect: 5,
       sessionWrong: 3,
+      sessionNotSure: 2,
+      sessionNotRemember: 1,
     };
     const state = reducer(dirty, { type: "RESET_ALL_STATS" });
     expect(state.sessionCorrect).toBe(0);
     expect(state.sessionWrong).toBe(0);
+    expect(state.sessionNotSure).toBe(0);
+    expect(state.sessionNotRemember).toBe(0);
     state.cards.forEach((c) => {
       expect(c.correctCount).toBe(0);
       expect(c.wrongCount).toBe(0);
+      expect(c.notSureCount).toBe(0);
+      expect(c.notRememberCount).toBe(0);
     });
   });
 });
