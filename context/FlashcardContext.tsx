@@ -63,12 +63,16 @@ function reducer(state: FlashcardState, action: FlashcardAction): FlashcardState
 
     case "MARK_CORRECT": {
       const updated = state.cards.map((c) =>
-        c.id === action.id ? { ...c, correctCount: c.correctCount + 1 } : c
+        c.id === action.id ? { ...c, correctCount: c.correctCount + 1, enabled: false } : c
       );
+      const enabledCards = getEnabledCards(updated);
+      const newIndex = Math.min(state.currentIndex, Math.max(0, enabledCards.length - 1));
       return {
         ...state,
         cards: updated,
+        currentIndex: newIndex,
         sessionCorrect: state.sessionCorrect + 1,
+        isFlipped: false,
       };
     }
 

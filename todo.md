@@ -21,3 +21,10 @@
 - [x] Atualizar tela de cards com novos contadores
 - [x] Escrever testes para novos contadores
 - [x] Salvar checkpoint final
+- [x] Desabilitar automaticamente cards após marcar como "Acertei"
+- [x] Atualizar testes para validar auto-disable
+- [x] Aumentar tamanho dos textos de pergunta e resposta
+- [x] Gerar logo Batista
+- [x] Integrar logo Batista no header do app
+- [x] Integrar logo da Convenção Batista de Alagoas
+- [x] Integrar logo da Ordem dos Pastores Batistas do Brasil

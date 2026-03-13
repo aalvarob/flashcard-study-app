@@ -175,15 +175,15 @@ const styles = StyleSheet.create({
     textTransform: "uppercase",
   },
   questionText: {
-    fontSize: 20,
-    fontWeight: "600",
-    lineHeight: 30,
+    fontSize: 28,
+    fontWeight: "700",
+    lineHeight: 40,
     textAlign: "center",
   },
   answerText: {
-    fontSize: 17,
-    fontWeight: "500",
-    lineHeight: 26,
+    fontSize: 24,
+    fontWeight: "600",
+    lineHeight: 36,
     textAlign: "center",
   },
   cardFooter: {

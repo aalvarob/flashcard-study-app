@@ -5,6 +5,7 @@ import {
   Pressable,
   StyleSheet,
   Platform,
+  Image,
 } from "react-native";
 import { ScreenContainer } from "@/components/screen-container";
 import { FlashCard } from "@/components/FlashCard";
@@ -42,7 +43,7 @@ export default function StudyScreen() {
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
     }
     markCorrect();
-    nextCard();
+    // nextCard() é chamado automaticamente pelo contexto ao desabilitar o card
   }
 
   function handleWrong() {
@@ -89,7 +90,17 @@ export default function StudyScreen() {
     <ScreenContainer containerClassName="bg-background">
       {/* Header com Score */}
       <View style={[styles.header, { backgroundColor: colors.primary, borderBottomColor: colors.primary }]}>
-        <Text style={styles.headerTitle}>Simulado Concílio</Text>
+        <View style={styles.headerContent}>
+          <Image
+            source={require("@/assets/images/cba-logo.webp")}
+            style={styles.cbaLogo}
+          />
+          <Text style={styles.headerTitle}>Simulado Concílio</Text>
+          <Image
+            source={require("@/assets/images/opbb-logo.webp")}
+            style={styles.opbbLogo}
+          />
+        </View>
         <View style={styles.scoreRow}>
           <View style={[styles.scoreBox, { backgroundColor: "rgba(39,174,96,0.25)" }]}>
             <Text style={styles.scoreIcon}>✓</Text>
@@ -254,12 +265,28 @@ const styles = StyleSheet.create({
     paddingTop: 16,
     paddingBottom: 12,
   },
+  headerContent: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    gap: 12,
+    marginBottom: 10,
+  },
+  cbaLogo: {
+    width: 45,
+    height: 45,
+    resizeMode: "contain",
+  },
+  opbbLogo: {
+    width: 45,
+    height: 45,
+    resizeMode: "contain",
+  },
   headerTitle: {
     fontSize: 18,
     fontWeight: "700",
     color: "#FFFFFF",
     textAlign: "center",
-    marginBottom: 10,
     letterSpacing: 0.5,
   },
   scoreRow: {

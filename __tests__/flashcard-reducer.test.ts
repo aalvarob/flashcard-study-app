@@ -52,9 +52,11 @@ function reducer(state: State, action: Action): State {
     }
     case "MARK_CORRECT": {
       const updated = state.cards.map((c) =>
-        c.id === action.id ? { ...c, correctCount: c.correctCount + 1 } : c
+        c.id === action.id ? { ...c, correctCount: c.correctCount + 1, enabled: false } : c
       );
-      return { ...state, cards: updated, sessionCorrect: state.sessionCorrect + 1 };
+      const enabledCards = getEnabledCards(updated);
+      const newIndex = Math.min(state.currentIndex, Math.max(0, enabledCards.length - 1));
+      return { ...state, cards: updated, currentIndex: newIndex, sessionCorrect: state.sessionCorrect + 1, isFlipped: false };
     }
     case "MARK_WRONG": {
       const updated = state.cards.map((c) =>
@@ -157,10 +159,21 @@ describe("Flashcard reducer", () => {
     expect(s2.isFlipped).toBe(false);
   });
 
-  it("MARK_CORRECT increments sessionCorrect and card correctCount", () => {
+  it("MARK_CORRECT increments sessionCorrect, card correctCount, and disables the card", () => {
     const state = reducer(baseState, { type: "MARK_CORRECT", id: "c0" });
     expect(state.sessionCorrect).toBe(1);
-    expect(state.cards.find((c) => c.id === "c0")!.correctCount).toBe(1);
+    const card = state.cards.find((c) => c.id === "c0");
+    expect(card!.correctCount).toBe(1);
+    expect(card!.enabled).toBe(false);
+  });
+
+  it("MARK_CORRECT adjusts currentIndex when card is disabled", () => {
+    const atEnd = { ...baseState, currentIndex: 4 };
+    const state = reducer(atEnd, { type: "MARK_CORRECT", id: "c4" });
+    // After disabling c4 (which was at index 4), enabled cards are c0, c1, c2, c3 (4 cards)
+    // currentIndex gets clamped to min(4, max(0, 3)) = min(4, 3) = 3
+    expect(state.currentIndex).toBe(3);
+    expect(state.isFlipped).toBe(false);
   });
 
   it("MARK_WRONG increments sessionWrong and card wrongCount", () => {
