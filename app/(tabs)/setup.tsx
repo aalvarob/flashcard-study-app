@@ -21,7 +21,7 @@ type AreaType = FlashcardArea;
 
 export default function SetupScreen() {
   const colors = useColors();
-  const { initializeSession } = useFlashcards();
+  const { initializeSession, state } = useFlashcards();
 
   const [candidateName, setCandidateName] = useState("");
   const [selectedAreas, setSelectedAreas] = useState<Set<AreaType>>(new Set());
@@ -57,6 +57,11 @@ export default function SetupScreen() {
   ];
 
   const cardCounts = ["5", "10", "15", "20", "25", "30", "40", "50"];
+
+  const getAreaStats = (area: string) => {
+    const areaCards = state.cards.filter((c) => c.area === area);
+    return { total: areaCards.length };
+  };
 
   function toggleArea(areaId: AreaType) {
     const newSelected = new Set(selectedAreas);
@@ -359,7 +364,9 @@ export default function SetupScreen() {
                     onPress={() => toggleArea(area.id)}
                   >
                     <Text style={styles.areaLabel}>{area.label}</Text>
-                    <Text style={styles.areaDescription}>{area.description}</Text>
+                    <Text style={styles.areaDescription}>
+                      {getAreaStats(area.id).total} cards
+                    </Text>
                   </Pressable>
                 ))}
               </View>
