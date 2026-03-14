@@ -21,7 +21,7 @@ type AreaType = FlashcardArea;
 
 export default function SetupScreen() {
   const colors = useColors();
-  const { initializeSession, state } = useFlashcards();
+  const { initializeSession, state, toggleAllCards } = useFlashcards();
 
   const [candidateName, setCandidateName] = useState("");
   const [selectedAreas, setSelectedAreas] = useState<Set<AreaType>>(new Set());
@@ -81,13 +81,8 @@ export default function SetupScreen() {
   }
 
   function toggleAllAreas() {
-    if (selectedAreas.size === areas.length) {
-      // Se todas estão selecionadas, desseleciona todas
-      setSelectedAreas(new Set());
-    } else {
-      // Seleciona todas
-      setSelectedAreas(new Set(areas.map((area) => area.id)));
-    }
+    const allEnabled = state.cards.every((c) => c.enabled);
+    toggleAllCards(!allEnabled);
   }
 
   function handleStartStudy() {
