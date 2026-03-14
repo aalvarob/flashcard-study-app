@@ -42,3 +42,4 @@
 - [x] Criar tela de resultado final com estatísticas
 - [x] Integrar lógica de detecção de conclusão de cards
 - [x] Adicionar botão para retornar à tela inicial
+- [x] Atualizar dados dos flashcards com documento revisado V2 (129 cards em 8 áreas)

@@ -15,7 +15,7 @@ import * as Haptics from "expo-haptics";
 import { useFlashcards } from "@/context/FlashcardContext";
 import { router } from "expo-router";
 
-type AreaType = "all" | "teologia" | "relacionamento" | "pratica" | "denominacao";
+type AreaType = "all" | "escrituras" | "deus" | "homem" | "salvacao" | "igreja" | "batismo" | "pratica" | "historia";
 
 export default function SetupScreen() {
   const colors = useColors();
@@ -26,11 +26,15 @@ export default function SetupScreen() {
   const [cardsPerArea, setCardsPerArea] = useState("10");
 
   const areas = [
-    { id: "all" as AreaType, label: "Todas as Áreas", description: "133 cards", color: colors.primary },
-    { id: "teologia" as AreaType, label: "Teologia", description: "108 cards", color: colors.primary },
-    { id: "relacionamento" as AreaType, label: "Relacionamento", description: "2 cards", color: "#3B82F6" },
-    { id: "pratica" as AreaType, label: "Prática", description: "18 cards", color: "#10B981" },
-    { id: "denominacao" as AreaType, label: "Denominação", description: "3 cards", color: "#8B5CF6" },
+    { id: "all" as AreaType, label: "Todas as Áreas", description: "129 cards", color: colors.primary },
+    { id: "escrituras" as AreaType, label: "Escrituras Sagradas", description: "22 cards", color: colors.primary },
+    { id: "deus" as AreaType, label: "Deus", description: "26 cards", color: "#3B82F6" },
+    { id: "homem" as AreaType, label: "O Homem", description: "4 cards", color: "#8B5CF6" },
+    { id: "salvacao" as AreaType, label: "Salvação", description: "9 cards", color: "#EC4899" },
+    { id: "igreja" as AreaType, label: "Igreja", description: "27 cards", color: "#10B981" },
+    { id: "batismo" as AreaType, label: "Batismo e Ceia", description: "9 cards", color: "#F59E0B" },
+    { id: "pratica" as AreaType, label: "Prática", description: "29 cards", color: "#6366F1" },
+    { id: "historia" as AreaType, label: "História", description: "3 cards", color: "#14B8A6" },
   ];
 
   const cardCounts = ["5", "10", "15", "20", "25", "30", "40", "50"];

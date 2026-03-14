@@ -54,8 +54,28 @@ export function FlashCard({ card, isFlipped, onFlip }: FlashCardProps) {
     };
   });
 
-  const areaLabel = card.area === "teologia" ? "Teologia" : "Eclesiologia";
-  const areaColor = card.area === "teologia" ? colors.primary : "#6B46C1";
+  const areaLabels: Record<string, string> = {
+    escrituras: "Escrituras",
+    deus: "Deus",
+    homem: "Homem",
+    salvacao: "Salvação",
+    igreja: "Igreja",
+    batismo: "Batismo",
+    pratica: "Prática",
+    historia: "História",
+  };
+  const areaColors: Record<string, string> = {
+    escrituras: colors.primary,
+    deus: "#3B82F6",
+    homem: "#8B5CF6",
+    salvacao: "#EC4899",
+    igreja: "#10B981",
+    batismo: "#F59E0B",
+    pratica: "#6366F1",
+    historia: "#14B8A6",
+  };
+  const areaLabel = areaLabels[card.area] || card.area;
+  const areaColor = areaColors[card.area] || colors.primary;
 
   return (
     <Pressable

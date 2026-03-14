@@ -6,7 +6,7 @@ interface Flashcard {
   id: string;
   question: string;
   answer: string;
-  area: "teologia" | "relacionamento" | "pratica" | "denominacao";
+  area: "escrituras" | "deus" | "homem" | "salvacao" | "igreja" | "batismo" | "pratica" | "historia";
   enabled: boolean;
   correctCount: number;
   wrongCount: number;
@@ -163,20 +163,28 @@ function reducer(state: State, action: Action): State {
 }
 
 describe("Flashcard data", () => {
-  it("should have 133 flashcards total", () => {
-    expect(FLASHCARDS_DATA.length).toBe(133);
+  it("should have 129 flashcards total", () => {
+    expect(FLASHCARDS_DATA.length).toBe(129);
   });
 
   it("should have cards from all areas", () => {
     expect(FLASHCARDS_DATA.length).toBeGreaterThan(0);
-    const teologia = FLASHCARDS_DATA.filter((c) => c.area === "teologia");
-    const relacionamento = FLASHCARDS_DATA.filter((c) => c.area === "relacionamento");
+    const escrituras = FLASHCARDS_DATA.filter((c) => c.area === "escrituras");
+    const deus = FLASHCARDS_DATA.filter((c) => c.area === "deus");
+    const homem = FLASHCARDS_DATA.filter((c) => c.area === "homem");
+    const salvacao = FLASHCARDS_DATA.filter((c) => c.area === "salvacao");
+    const igreja = FLASHCARDS_DATA.filter((c) => c.area === "igreja");
+    const batismo = FLASHCARDS_DATA.filter((c) => c.area === "batismo");
     const pratica = FLASHCARDS_DATA.filter((c) => c.area === "pratica");
-    const denominacao = FLASHCARDS_DATA.filter((c) => c.area === "denominacao");
-    expect(teologia.length).toBeGreaterThan(0);
-    expect(relacionamento.length).toBeGreaterThan(0);
+    const historia = FLASHCARDS_DATA.filter((c) => c.area === "historia");
+    expect(escrituras.length).toBeGreaterThan(0);
+    expect(deus.length).toBeGreaterThan(0);
+    expect(homem.length).toBeGreaterThan(0);
+    expect(salvacao.length).toBeGreaterThan(0);
+    expect(igreja.length).toBeGreaterThan(0);
+    expect(batismo.length).toBeGreaterThan(0);
     expect(pratica.length).toBeGreaterThan(0);
-    expect(denominacao.length).toBeGreaterThan(0);
+    expect(historia.length).toBeGreaterThan(0);
   });
 
   it("should have unique IDs", () => {

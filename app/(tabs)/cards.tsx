@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from "react";
+import React, { useState } from "react";
 import {
   View,
   Text,
@@ -14,7 +14,7 @@ import { useColors } from "@/hooks/use-colors";
 import * as Haptics from "expo-haptics";
 
 type FilterType = "all" | "enabled" | "disabled";
-type AreaFilterType = "all" | "teologia" | "relacionamento" | "pratica" | "denominacao";
+type AreaFilterType = "all" | "escrituras" | "deus" | "homem" | "salvacao" | "igreja" | "batismo" | "pratica" | "historia";
 
 export default function CardsScreen() {
   const colors = useColors();
@@ -43,188 +43,218 @@ export default function CardsScreen() {
 
   const getAreaLabel = (area: string): string => {
     switch (area) {
-      case "teologia":
-        return "Teologia";
-      case "relacionamento":
-        return "Relacionamento";
+      case "escrituras":
+        return "Escrituras";
+      case "deus":
+        return "Deus";
+      case "homem":
+        return "Homem";
+      case "salvacao":
+        return "Salvação";
+      case "igreja":
+        return "Igreja";
+      case "batismo":
+        return "Batismo";
       case "pratica":
         return "Prática";
-      case "denominacao":
-        return "Denominação";
+      case "historia":
+        return "História";
       default:
-        return "Desconhecido";
+        return area;
     }
   };
 
   const getAreaColor = (area: string): string => {
     switch (area) {
-      case "teologia":
+      case "escrituras":
         return colors.primary;
-      case "relacionamento":
+      case "deus":
         return "#3B82F6";
-      case "pratica":
-        return "#10B981";
-      case "denominacao":
+      case "homem":
         return "#8B5CF6";
+      case "salvacao":
+        return "#EC4899";
+      case "igreja":
+        return "#10B981";
+      case "batismo":
+        return "#F59E0B";
+      case "pratica":
+        return "#6366F1";
+      case "historia":
+        return "#14B8A6";
       default:
         return colors.primary;
     }
   };
 
-  const renderItem = useCallback(
-    ({ item }: { item: Flashcard }) => {
-      const areaLabel = getAreaLabel(item.area);
-      const areaColor = getAreaColor(item.area);
-
-      return (
-        <View
-          style={[
-            styles.cardItem,
-            {
-              backgroundColor: colors.surface,
-              borderColor: colors.border,
-              opacity: item.enabled ? 1 : 0.5,
-            },
-          ]}
-        >
-          <View style={styles.cardItemContent}>
-            <View style={[styles.areaBadge, { backgroundColor: areaColor + "15" }]}>
-              <Text style={[styles.areaText, { color: areaColor }]}>{areaLabel}</Text>
-            </View>
-            <Text
-              style={[styles.questionText, { color: colors.foreground }]}
-              numberOfLines={2}
-            >
-              {item.question}
-            </Text>
-            {(item.correctCount > 0 || item.wrongCount > 0 || item.notSureCount > 0 || item.notRememberCount > 0) && (
-              <View style={styles.statsRow}>
-                {item.correctCount > 0 && (
-                  <Text style={[styles.statText, { color: "#27AE60" }]}>
-                    ✓ {item.correctCount}
-                  </Text>
-                )}
-                {item.wrongCount > 0 && (
-                  <Text style={[styles.statText, { color: "#E74C3C" }]}>
-                    ✗ {item.wrongCount}
-                  </Text>
-                )}
-                {item.notSureCount > 0 && (
-                  <Text style={[styles.statText, { color: "#F59E0B" }]}>
-                    ? {item.notSureCount}
-                  </Text>
-                )}
-                {item.notRememberCount > 0 && (
-                  <Text style={[styles.statText, { color: "#A855F7" }]}>
-                    ! {item.notRememberCount}
-                  </Text>
-                )}
-              </View>
-            )}
-          </View>
-          <Switch
-            value={item.enabled}
-            onValueChange={() => handleToggle(item.id)}
-            trackColor={{ false: colors.border, true: colors.accent + "80" }}
-            thumbColor={item.enabled ? colors.accent : colors.muted}
-            ios_backgroundColor={colors.border}
-          />
-        </View>
-      );
-    },
-    [colors, handleToggle]
-  );
-
-  const keyExtractor = useCallback((item: Flashcard) => item.id, []);
-
   return (
-    <ScreenContainer containerClassName="bg-background">
-      {/* Header */}
-      <View style={[styles.header, { backgroundColor: colors.primary }]}>
-        <Text style={styles.headerTitle}>Gerenciar Cards</Text>
-        <View style={styles.statsHeader}>
-          <Text style={[styles.statsHeaderText, { color: "rgba(255,255,255,0.85)" }]}>
-            {enabledCount} habilitados · {disabledCount} desabilitados · {state.cards.length} total
-          </Text>
+    <ScreenContainer className="p-4">
+      <View style={styles.header}>
+        <Text style={[styles.title, { color: colors.foreground }]}>
+          Gerenciar Cards
+        </Text>
+        <View style={styles.stats}>
+          <View style={styles.statItem}>
+            <Text style={[styles.statLabel, { color: colors.muted }]}>
+              Ativados
+            </Text>
+            <Text style={[styles.statValue, { color: colors.success }]}>
+              {enabledCount}
+            </Text>
+          </View>
+          <View style={styles.statItem}>
+            <Text style={[styles.statLabel, { color: colors.muted }]}>
+              Desativados
+            </Text>
+            <Text style={[styles.statValue, { color: colors.error }]}>
+              {disabledCount}
+            </Text>
+          </View>
         </View>
       </View>
 
-      {/* Filtros de Status */}
-      <View style={[styles.filtersContainer, { backgroundColor: colors.surface, borderBottomColor: colors.border }]}>
-        <View style={styles.filterRow}>
-          {(["all", "enabled", "disabled"] as FilterType[]).map((f) => (
+      {/* Filtros */}
+      <View style={styles.filterSection}>
+        <Text style={[styles.filterTitle, { color: colors.foreground }]}>
+          Filtrar por Status
+        </Text>
+        <View style={styles.filterButtons}>
+          {(["all", "enabled", "disabled"] as const).map((f) => (
             <Pressable
               key={f}
               onPress={() => setFilter(f)}
-              style={({ pressed }) => [
-                styles.filterBtn,
+              style={[
+                styles.filterButton,
                 {
-                  backgroundColor: filter === f ? colors.primary : colors.background,
+                  backgroundColor:
+                    filter === f ? colors.primary : colors.surface,
                   borderColor: filter === f ? colors.primary : colors.border,
-                  opacity: pressed ? 0.8 : 1,
                 },
               ]}
             >
               <Text
                 style={[
-                  styles.filterBtnText,
-                  { color: filter === f ? "#FFFFFF" : colors.muted },
+                  styles.filterButtonText,
+                  {
+                    color: filter === f ? "white" : colors.foreground,
+                  },
                 ]}
               >
-                {f === "all" ? "Todos" : f === "enabled" ? "Habilitados" : "Desabilitados"}
+                {f === "all"
+                  ? "Todos"
+                  : f === "enabled"
+                  ? "Ativados"
+                  : "Desativados"}
               </Text>
             </Pressable>
           ))}
         </View>
+      </View>
 
-        {/* Filtro de Área */}
-        <View style={styles.filterRow}>
-          {(["all", "teologia", "relacionamento", "pratica", "denominacao"] as const).map((a) => {
-            const isSelected = areaFilter === a;
-            const selectedColor = a === "all" ? colors.primary : getAreaColor(a);
-            const label = a === "all" ? "Todas" : getAreaLabel(a);
-
-            return (
-              <Pressable
-                key={a}
-                onPress={() => setAreaFilter(a)}
-                style={({ pressed }) => [
-                  styles.filterBtn,
+      {/* Filtro por Área */}
+      <View style={styles.filterSection}>
+        <Text style={[styles.filterTitle, { color: colors.foreground }]}>
+          Filtrar por Área
+        </Text>
+        <FlatList
+          horizontal
+          data={[
+            "all",
+            "escrituras",
+            "deus",
+            "homem",
+            "salvacao",
+            "igreja",
+            "batismo",
+            "pratica",
+            "historia",
+          ] as AreaFilterType[]}
+          keyExtractor={(item) => item}
+          renderItem={({ item }) => (
+            <Pressable
+              onPress={() => setAreaFilter(item)}
+              style={[
+                styles.areaButton,
+                {
+                  backgroundColor:
+                    areaFilter === item
+                      ? getAreaColor(item)
+                      : colors.surface,
+                  borderColor:
+                    areaFilter === item
+                      ? getAreaColor(item)
+                      : colors.border,
+                },
+              ]}
+            >
+              <Text
+                style={[
+                  styles.areaButtonText,
                   {
-                    backgroundColor: isSelected ? selectedColor : colors.background,
-                    borderColor: isSelected ? selectedColor : colors.border,
-                    opacity: pressed ? 0.8 : 1,
+                    color:
+                      areaFilter === item ? "white" : colors.foreground,
                   },
                 ]}
               >
-                <Text
-                  style={[
-                    styles.filterBtnText,
-                    { color: isSelected ? "#FFFFFF" : colors.muted },
-                  ]}
-                >
-                  {label}
-                </Text>
-              </Pressable>
-            );
-          })}
-        </View>
+                {item === "all" ? "Todas" : getAreaLabel(item)}
+              </Text>
+            </Pressable>
+          )}
+          scrollEnabled
+          showsHorizontalScrollIndicator={false}
+        />
       </View>
 
-      {/* Lista */}
+      {/* Lista de Cards */}
       <FlatList
         data={filteredCards}
-        renderItem={renderItem}
-        keyExtractor={keyExtractor}
-        contentContainerStyle={styles.listContent}
-        ItemSeparatorComponent={() => <View style={{ height: 8 }} />}
-        ListEmptyComponent={
-          <View style={styles.emptyContainer}>
-            <Text style={[styles.emptyText, { color: colors.muted }]}>
-              Nenhum card encontrado com os filtros selecionados.
-            </Text>
+        keyExtractor={(item) => item.id}
+        renderItem={({ item }) => (
+          <View
+            style={[
+              styles.cardItem,
+              {
+                backgroundColor: colors.surface,
+                borderColor: colors.border,
+              },
+            ]}
+          >
+            <View style={styles.cardContent}>
+              <View
+                style={[
+                  styles.areaTag,
+                  { backgroundColor: getAreaColor(item.area) },
+                ]}
+              >
+                <Text style={styles.areaTagText}>
+                  {getAreaLabel(item.area)}
+                </Text>
+              </View>
+              <Text
+                style={[styles.cardQuestion, { color: colors.foreground }]}
+                numberOfLines={2}
+              >
+                {item.question}
+              </Text>
+              <View style={styles.cardStats}>
+                <Text style={[styles.cardStat, { color: colors.muted }]}>
+                  ✓ {item.correctCount} | ✗ {item.wrongCount} | ? {item.notSureCount} | ! {item.notRememberCount}
+                </Text>
+              </View>
+            </View>
+            <Switch
+              value={item.enabled}
+              onValueChange={() => handleToggle(item.id)}
+              trackColor={{
+                false: colors.border,
+                true: colors.success,
+              }}
+              thumbColor={item.enabled ? colors.success : colors.muted}
+            />
           </View>
-        }
+        )}
+        scrollEnabled
+        nestedScrollEnabled
       />
     </ScreenContainer>
   );
@@ -232,95 +262,97 @@ export default function CardsScreen() {
 
 const styles = StyleSheet.create({
   header: {
-    paddingHorizontal: 20,
-    paddingTop: 16,
-    paddingBottom: 16,
+    marginBottom: 20,
   },
-  headerTitle: {
-    fontSize: 18,
-    fontWeight: "700",
-    color: "#FFFFFF",
-    textAlign: "center",
-    marginBottom: 4,
-    letterSpacing: 0.5,
+  title: {
+    fontSize: 24,
+    fontWeight: "bold",
+    marginBottom: 12,
   },
-  statsHeader: {
+  stats: {
+    flexDirection: "row",
+    gap: 16,
+  },
+  statItem: {
+    flex: 1,
     alignItems: "center",
   },
-  statsHeaderText: {
-    fontSize: 13,
-    fontWeight: "500",
+  statLabel: {
+    fontSize: 12,
+    marginBottom: 4,
   },
-  filtersContainer: {
-    paddingHorizontal: 16,
-    paddingVertical: 12,
-    gap: 8,
-    borderBottomWidth: StyleSheet.hairlineWidth,
+  statValue: {
+    fontSize: 20,
+    fontWeight: "bold",
   },
-  filterRow: {
+  filterSection: {
+    marginBottom: 16,
+  },
+  filterTitle: {
+    fontSize: 14,
+    fontWeight: "600",
+    marginBottom: 8,
+  },
+  filterButtons: {
     flexDirection: "row",
     gap: 8,
   },
-  filterBtn: {
+  filterButton: {
     flex: 1,
-    paddingVertical: 7,
-    paddingHorizontal: 8,
+    paddingVertical: 8,
+    paddingHorizontal: 12,
     borderRadius: 8,
     borderWidth: 1,
     alignItems: "center",
   },
-  filterBtnText: {
+  filterButtonText: {
     fontSize: 12,
     fontWeight: "600",
   },
-  listContent: {
-    padding: 16,
-    paddingBottom: 32,
+  areaButton: {
+    paddingVertical: 8,
+    paddingHorizontal: 12,
+    borderRadius: 8,
+    borderWidth: 1,
+    marginRight: 8,
+  },
+  areaButtonText: {
+    fontSize: 12,
+    fontWeight: "600",
   },
   cardItem: {
     flexDirection: "row",
     alignItems: "center",
-    padding: 14,
-    borderRadius: 12,
+    padding: 12,
+    marginBottom: 8,
+    borderRadius: 8,
     borderWidth: 1,
-    gap: 12,
   },
-  cardItemContent: {
+  cardContent: {
     flex: 1,
-    gap: 6,
+    marginRight: 12,
   },
-  areaBadge: {
+  areaTag: {
     alignSelf: "flex-start",
+    paddingVertical: 4,
     paddingHorizontal: 8,
-    paddingVertical: 2,
-    borderRadius: 6,
+    borderRadius: 4,
+    marginBottom: 6,
   },
-  areaText: {
+  areaTagText: {
     fontSize: 10,
-    fontWeight: "700",
-    textTransform: "uppercase",
-    letterSpacing: 0.5,
+    fontWeight: "bold",
+    color: "white",
   },
-  questionText: {
+  cardQuestion: {
     fontSize: 14,
-    fontWeight: "500",
-    lineHeight: 20,
-  },
-  statsRow: {
-    flexDirection: "row",
-    gap: 12,
-  },
-  statText: {
-    fontSize: 12,
     fontWeight: "600",
+    marginBottom: 6,
   },
-  emptyContainer: {
-    padding: 40,
-    alignItems: "center",
+  cardStats: {
+    marginTop: 4,
   },
-  emptyText: {
-    fontSize: 15,
-    textAlign: "center",
-    lineHeight: 22,
+  cardStat: {
+    fontSize: 11,
   },
 });
