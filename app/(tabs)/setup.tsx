@@ -238,6 +238,14 @@ export default function SetupScreen() {
     cardCountTextActive: {
       color: colors.background,
     },
+    toggleAllButton: {
+      paddingVertical: 8,
+      paddingHorizontal: 12,
+      borderRadius: 6,
+      borderWidth: 1,
+      alignItems: "center",
+      minWidth: 100,
+    },
     cardCountTextInactive: {
       color: colors.foreground,
     },
@@ -325,7 +333,7 @@ export default function SetupScreen() {
                 <Text style={styles.sectionTitle}>Selecione as Áreas</Text>
                 <Pressable
                   style={[
-                    styles.cardCountButton,
+                    styles.toggleAllButton,
                     selectedAreas.size === areas.length ? styles.cardCountButtonActive : styles.cardCountButtonInactive,
                   ]}
                   onPress={toggleAllAreas}
