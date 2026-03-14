@@ -282,9 +282,15 @@ export default function CardsScreen() {
             "estrutura_e_funcionamento_cbb",
           ] as AreaFilterType[]}
           keyExtractor={(item) => item}
-          renderItem={({ item }) => (
-            <Pressable
-              onPress={() => setAreaFilter(item)}
+          renderItem={({ item }) => {
+            const isSelected = areaFilter === item;
+            console.log('Rendering area button:', {item, areaFilter, isSelected});
+            return (
+              <Pressable
+                onPress={() => {
+                console.log('Setting areaFilter to:', item);
+                setAreaFilter(item);
+              }}
               style={[
                 styles.areaButton,
                 {
@@ -329,7 +335,8 @@ export default function CardsScreen() {
                 )}
               </View>
             </Pressable>
-          )}
+            );
+          }}
           scrollEnabled
           showsHorizontalScrollIndicator={false}
         />

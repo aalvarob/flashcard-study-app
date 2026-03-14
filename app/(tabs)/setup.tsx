@@ -367,8 +367,14 @@ export default function SetupScreen() {
                     ]}
                     onPress={() => toggleArea(area.id)}
                   >
-                    <Text style={styles.areaLabel}>{area.label}</Text>
-                    <Text style={styles.areaDescription}>
+                    <Text style={[
+                      styles.areaLabel,
+                      selectedAreas.has(area.id) && { color: '#FFFFFF' }
+                    ]}>{area.label}</Text>
+                    <Text style={[
+                      styles.areaDescription,
+                      selectedAreas.has(area.id) && { color: '#FFFFFF', opacity: 0.95 }
+                    ]}>
                       {areaStats[area.id]?.enabled || 0}/{areaStats[area.id]?.total || 0} cards
                     </Text>
                   </Pressable>
