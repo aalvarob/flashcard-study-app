@@ -1,4 +1,4 @@
-import { useState } from "react";
+import React, { useState } from "react";
 import {
   View,
   Text,
@@ -161,6 +161,37 @@ export default function StudyScreen() {
         </View>
       </View>
 
+      {/* Botões de Resultado na Parte Superior — aparecem após virar */}
+      {currentCard && isFlipped && (
+        <View style={styles.topResultButtonsArea}>
+          <View style={styles.resultButtonsRow}>
+            <Pressable
+              onPress={handleWrong}
+              style={({ pressed }) => [
+                styles.resultBtn,
+                styles.wrongBtn,
+                { opacity: pressed ? 0.8 : 1, transform: [{ scale: pressed ? 0.97 : 1 }] },
+              ]}
+            >
+              <Text style={styles.resultBtnIcon}>✗</Text>
+              <Text style={styles.resultBtnText}>Errei</Text>
+            </Pressable>
+
+            <Pressable
+              onPress={handleCorrect}
+              style={({ pressed }) => [
+                styles.resultBtn,
+                styles.correctBtn,
+                { opacity: pressed ? 0.8 : 1, transform: [{ scale: pressed ? 0.97 : 1 }] },
+              ]}
+            >
+              <Text style={styles.resultBtnIcon}>✓</Text>
+              <Text style={styles.resultBtnText}>Acertei</Text>
+            </Pressable>
+          </View>
+        </View>
+      )}
+
       {/* Botões de Ação Rápida — aparecem antes de virar */}
       {currentCard && !isFlipped && (
         <View style={styles.quickActionsArea}>
@@ -212,36 +243,7 @@ export default function StudyScreen() {
       {/* Botões de Ação */}
       {currentCard && (
         <View style={styles.actionsArea}>
-          {isFlipped ? (
-            /* Botões de Resultado — aparecem após virar */
-            <View style={styles.resultButtonsContainer}>
-              <View style={styles.resultButtonsRow}>
-                <Pressable
-                  onPress={handleWrong}
-                  style={({ pressed }) => [
-                    styles.resultBtn,
-                    styles.wrongBtn,
-                    { opacity: pressed ? 0.8 : 1, transform: [{ scale: pressed ? 0.97 : 1 }] },
-                  ]}
-                >
-                  <Text style={styles.resultBtnIcon}>✗</Text>
-                  <Text style={styles.resultBtnText}>Errei</Text>
-                </Pressable>
-
-                <Pressable
-                  onPress={handleCorrect}
-                  style={({ pressed }) => [
-                    styles.resultBtn,
-                    styles.correctBtn,
-                    { opacity: pressed ? 0.8 : 1, transform: [{ scale: pressed ? 0.97 : 1 }] },
-                  ]}
-                >
-                  <Text style={styles.resultBtnIcon}>✓</Text>
-                  <Text style={styles.resultBtnText}>Acertei</Text>
-                </Pressable>
-              </View>
-            </View>
-          ) : (
+          {!isFlipped && (
             /* Botão Virar */
             <Pressable
               onPress={handleFlip}
@@ -359,6 +361,10 @@ const styles = StyleSheet.create({
     height: "100%",
     borderRadius: 2,
   },
+  topResultButtonsArea: {
+    paddingHorizontal: 16,
+    paddingVertical: 12,
+  },
   quickActionsArea: {
     paddingHorizontal: 16,
     paddingVertical: 12,
@@ -416,9 +422,6 @@ const styles = StyleSheet.create({
     paddingBottom: 16,
     gap: 12,
   },
-  resultButtonsContainer: {
-    gap: 8,
-  },
   resultButtonsRow: {
     flexDirection: "row",
     gap: 8,
@@ -449,29 +452,29 @@ const styles = StyleSheet.create({
     paddingVertical: 14,
     borderRadius: 8,
     alignItems: "center",
+    justifyContent: "center",
   },
   flipBtnText: {
     fontSize: 16,
-    fontWeight: "bold",
+    fontWeight: "600",
     color: "white",
   },
   navRow: {
     flexDirection: "row",
-    gap: 8,
+    gap: 12,
   },
   navBtn: {
     flex: 1,
     paddingVertical: 12,
-    paddingHorizontal: 12,
+    paddingHorizontal: 16,
     borderRadius: 8,
+    alignItems: "center",
+    backgroundColor: "#f0f0f0",
     borderWidth: 2,
     borderColor: "#333",
-    backgroundColor: "#f0f0f0",
-    alignItems: "center",
   },
   navBtnText: {
     fontSize: 14,
     fontWeight: "700",
-    color: "#333",
   },
 });
