@@ -363,7 +363,7 @@ export default function SetupScreen() {
                     key={area.id}
                     style={[
                       styles.areaButton,
-                      selectedAreas.has(area.id) ? styles.areaButtonSelected : styles.areaButtonUnselected,
+                      selectedAreas.has(area.id) ? [styles.areaButtonSelected, { backgroundColor: area.color }] : styles.areaButtonUnselected,
                     ]}
                     onPress={() => toggleArea(area.id)}
                   >
