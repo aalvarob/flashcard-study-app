@@ -73,3 +73,4 @@
 - [x] Mover botões "Errei" e "Acertei" para a parte superior da tela de teste
 - [x] Diminuir tamanho do card em 20%
 - [x] Mover card para cima na tela de teste
+- [x] Corrigir sobreposição dos botões Anterior e Próximo sobre o card

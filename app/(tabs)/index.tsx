@@ -401,8 +401,8 @@ const styles = StyleSheet.create({
     alignItems: "center",
     paddingHorizontal: 16,
     paddingVertical: 8,
-    maxHeight: "30%",
-    marginTop: 80,
+    marginTop: 12,
+    marginBottom: 12,
   },
   emptyCard: {
     borderWidth: 2,
