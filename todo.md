@@ -55,3 +55,4 @@
 - [x] Atualizar testes para validar múltiplas áreas
 - [x] Reorganizar botões para "Não Sei" e "Não Lembro" aparecerem antes de virar o card
 - [x] Ajustar layout para botões "Não Sei" e "Não Lembro" não ficarem encobrindo pelo card
+- [x] Reduzir tamanho do card na vertical para mostrar melhor os botões
