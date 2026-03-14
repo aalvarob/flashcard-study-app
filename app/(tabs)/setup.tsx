@@ -60,7 +60,8 @@ export default function SetupScreen() {
 
   const getAreaStats = (area: string) => {
     const areaCards = state.cards.filter((c) => c.area === area);
-    return { total: areaCards.length };
+    const enabledCards = areaCards.filter((c) => c.enabled);
+    return { enabled: enabledCards.length, total: areaCards.length };
   };
 
   function toggleArea(areaId: AreaType) {
@@ -365,7 +366,7 @@ export default function SetupScreen() {
                   >
                     <Text style={styles.areaLabel}>{area.label}</Text>
                     <Text style={styles.areaDescription}>
-                      {getAreaStats(area.id).total} cards
+                      {getAreaStats(area.id).enabled}/{getAreaStats(area.id).total} cards
                     </Text>
                   </Pressable>
                 ))}
