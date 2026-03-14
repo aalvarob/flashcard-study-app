@@ -277,7 +277,7 @@ describe("Flashcard reducer", () => {
 
 describe("Flashcard data", () => {
   it("should have 130 flashcards total", () => {
-    expect(FLASHCARDS_DATA.length).toBe(130);
+    expect(FLASHCARDS_DATA.length).toBe(132);
   });
 
   it("should have cards from all areas", () => {
