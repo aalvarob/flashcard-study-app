@@ -350,10 +350,10 @@ export default function SetupScreen() {
                   <Text
                     style={[
                       styles.cardCountText,
-                      selectedAreas.size === areas.length ? styles.cardCountTextActive : styles.cardCountTextInactive,
+                      state.cards.every((c) => c.enabled) ? styles.cardCountTextActive : styles.cardCountTextInactive,
                     ]}
                   >
-                    {selectedAreas.size === areas.length ? "Desativar Todos" : "Ativar Todos"}
+                    {state.cards.every((c) => c.enabled) ? "Desativar Todos" : "Ativar Todos"}
                   </Text>
                 </Pressable>
               </View>
