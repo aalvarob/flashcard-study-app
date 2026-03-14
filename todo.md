@@ -76,3 +76,4 @@
 - [x] Corrigir sobreposição dos botões Anterior e Próximo sobre o card
 - [x] Aumentar espaçamento entre botões "Não Sei" e "Não Lembro" e o card
 - [x] Criar opção para ativar cards por área ou todos
+- [x] Mostrar quantidade de cards ativados e desativados na tela de listagem de áreas

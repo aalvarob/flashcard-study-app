@@ -47,6 +47,13 @@ export default function CardsScreen() {
   const enabledCount = state.cards.filter((c) => c.enabled).length;
   const disabledCount = state.cards.filter((c) => !c.enabled).length;
 
+  const getAreaStats = (area: string) => {
+    const areaCards = state.cards.filter((c) => c.area === area);
+    const enabled = areaCards.filter((c) => c.enabled).length;
+    const disabled = areaCards.filter((c) => !c.enabled).length;
+    return { enabled, disabled, total: areaCards.length };
+  };
+
   function handleToggle(id: string) {
     if (Platform.OS !== "web") {
       Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
@@ -292,17 +299,32 @@ export default function CardsScreen() {
                 },
               ]}
             >
-              <Text
-                style={[
-                  styles.areaButtonText,
-                  {
-                    color:
-                      areaFilter === item ? "white" : colors.foreground,
-                  },
-                ]}
-              >
-                {item === "all" ? "Todas" : getAreaLabel(item)}
-              </Text>
+              <View>
+                <Text
+                  style={[
+                    styles.areaButtonText,
+                    {
+                      color:
+                        areaFilter === item ? "white" : colors.foreground,
+                    },
+                  ]}
+                >
+                  {item === "all" ? "Todas" : getAreaLabel(item)}
+                </Text>
+                {item !== "all" && (
+                  <Text
+                    style={[
+                      styles.areaButtonSubtext,
+                      {
+                        color:
+                          areaFilter === item ? "white" : colors.muted,
+                      },
+                    ]}
+                  >
+                    {getAreaStats(item as FlashcardArea).enabled}/{getAreaStats(item as FlashcardArea).total}
+                  </Text>
+                )}
+              </View>
             </Pressable>
           )}
           scrollEnabled
@@ -461,6 +483,10 @@ const styles = StyleSheet.create({
   areaButtonText: {
     fontSize: 12,
     fontWeight: "600",
+  },
+  areaButtonSubtext: {
+    fontSize: 10,
+    marginTop: 2,
   },
   cardItem: {
     flexDirection: "row",
