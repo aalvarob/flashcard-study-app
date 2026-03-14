@@ -402,7 +402,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     paddingVertical: 8,
     maxHeight: "30%",
-    marginTop: 120,
+    marginTop: 60,
   },
   emptyCard: {
     borderWidth: 2,
