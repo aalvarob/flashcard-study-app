@@ -74,3 +74,4 @@
 - [x] Diminuir tamanho do card em 20%
 - [x] Mover card para cima na tela de teste
 - [x] Corrigir sobreposição dos botões Anterior e Próximo sobre o card
+- [x] Aumentar espaçamento entre botões "Não Sei" e "Não Lembro" e o card
