@@ -203,7 +203,7 @@ export default function SetupScreen() {
     },
     areaButtonSelected: {
       borderColor: colors.primary,
-      backgroundColor: colors.surface,
+      backgroundColor: colors.primary,
     },
     areaButtonUnselected: {
       borderColor: colors.border,
