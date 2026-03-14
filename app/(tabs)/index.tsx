@@ -34,12 +34,19 @@ export default function StudyScreen() {
   const total = enabledCards.length;
   const totalAnswered = sessionCorrect + sessionWrong + sessionNotSure + sessionNotRemember;
 
-  // Verificar se todos os cards foram respondidos
+  // Verificar se não há cards habilitados ou se todos foram respondidos
   useEffect(() => {
-    if (total > 0 && totalAnswered === total) {
-      // Todos os cards foram respondidos, ir para a tela de resultado
-      router.push("/result");
-    }
+    // Usar um timeout pequeno para garantir que o layout raiz está montado
+    const timer = setTimeout(() => {
+      if (total === 0) {
+        // Nenhum card habilitado, ir para a tela de resultado
+        router.push("/result");
+      } else if (total > 0 && totalAnswered === total) {
+        // Todos os cards foram respondidos, ir para a tela de resultado
+        router.push("/result");
+      }
+    }, 100);
+    return () => clearTimeout(timer);
   }, [totalAnswered, total]);
 
   function handleFlip() {

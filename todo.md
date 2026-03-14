@@ -69,3 +69,4 @@
 - [x] Implementar persistência de alterações no servidor
 - [x] Escrever testes para funcionalidade de edição
 - [x] Testar edição e criação de cards
+- [x] Redirecionar para página de resultado quando não houver cards habilitados para continuar o teste
