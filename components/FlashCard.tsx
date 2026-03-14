@@ -12,7 +12,7 @@ import { Flashcard } from "@/context/FlashcardContext";
 
 const { width: SCREEN_WIDTH } = Dimensions.get("window");
 const CARD_WIDTH = SCREEN_WIDTH - 48;
-const CARD_HEIGHT = CARD_WIDTH * 1.25;
+const CARD_HEIGHT = CARD_WIDTH * 1.0;
 
 interface FlashCardProps {
   card: Flashcard;
