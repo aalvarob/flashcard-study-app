@@ -53,3 +53,4 @@
 - [x] Atualizar tela de configuração com checkboxes para múltiplas áreas
 - [x] Atualizar lógica de filtro de cards para múltiplas áreas
 - [x] Atualizar testes para validar múltiplas áreas
+- [x] Reorganizar botões para "Não Sei" e "Não Lembro" aparecerem antes de virar o card

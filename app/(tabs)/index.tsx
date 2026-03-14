@@ -1,4 +1,4 @@
-import React from "react";
+import { useState } from "react";
 import {
   View,
   Text,
@@ -154,6 +154,37 @@ export default function StudyScreen() {
         </View>
       </View>
 
+      {/* Botões de Ação Rápida — aparecem antes de virar */}
+      {currentCard && !isFlipped && (
+        <View style={styles.quickActionsArea}>
+          <View style={styles.quickActionsRow}>
+            <Pressable
+              onPress={handleNotSure}
+              style={({ pressed }) => [
+                styles.quickActionBtn,
+                styles.notSureBtn,
+                { opacity: pressed ? 0.8 : 1, transform: [{ scale: pressed ? 0.97 : 1 }] },
+              ]}
+            >
+              <Text style={styles.quickActionBtnIcon}>?</Text>
+              <Text style={styles.quickActionBtnText}>Não Sei</Text>
+            </Pressable>
+
+            <Pressable
+              onPress={handleNotRemember}
+              style={({ pressed }) => [
+                styles.quickActionBtn,
+                styles.notRememberBtn,
+                { opacity: pressed ? 0.8 : 1, transform: [{ scale: pressed ? 0.97 : 1 }] },
+              ]}
+            >
+              <Text style={styles.quickActionBtnIcon}>!</Text>
+              <Text style={styles.quickActionBtnText}>Não Lembro</Text>
+            </Pressable>
+          </View>
+        </View>
+      )}
+
       {/* Área do Card */}
       <View style={styles.cardArea}>
         {currentCard ? (
@@ -202,32 +233,6 @@ export default function StudyScreen() {
                   <Text style={styles.resultBtnText}>Acertei</Text>
                 </Pressable>
               </View>
-
-              <View style={styles.resultButtonsRow}>
-                <Pressable
-                  onPress={handleNotSure}
-                  style={({ pressed }) => [
-                    styles.resultBtn,
-                    styles.notSureBtn,
-                    { opacity: pressed ? 0.8 : 1, transform: [{ scale: pressed ? 0.97 : 1 }] },
-                  ]}
-                >
-                  <Text style={styles.resultBtnIcon}>?</Text>
-                  <Text style={styles.resultBtnText}>Não Sei</Text>
-                </Pressable>
-
-                <Pressable
-                  onPress={handleNotRemember}
-                  style={({ pressed }) => [
-                    styles.resultBtn,
-                    styles.notRememberBtn,
-                    { opacity: pressed ? 0.8 : 1, transform: [{ scale: pressed ? 0.97 : 1 }] },
-                  ]}
-                >
-                  <Text style={styles.resultBtnIcon}>!</Text>
-                  <Text style={styles.resultBtnText}>Não Lembro</Text>
-                </Pressable>
-              </View>
             </View>
           ) : (
             /* Botão Virar */
@@ -248,7 +253,7 @@ export default function StudyScreen() {
               onPress={handlePrev}
               style={({ pressed }) => [
                 styles.navBtn,
-                { backgroundColor: colors.surface, borderColor: colors.border, opacity: pressed ? 0.7 : 1 },
+                { opacity: pressed ? 0.7 : 1, transform: [{ scale: pressed ? 0.97 : 1 }] },
               ]}
             >
               <Text style={[styles.navBtnText, { color: colors.foreground }]}>← Anterior</Text>
@@ -258,7 +263,7 @@ export default function StudyScreen() {
               onPress={handleNext}
               style={({ pressed }) => [
                 styles.navBtn,
-                { backgroundColor: colors.surface, borderColor: colors.border, opacity: pressed ? 0.7 : 1 },
+                { opacity: pressed ? 0.7 : 1, transform: [{ scale: pressed ? 0.97 : 1 }] },
               ]}
             >
               <Text style={[styles.navBtnText, { color: colors.foreground }]}>Próximo →</Text>
@@ -272,61 +277,56 @@ export default function StudyScreen() {
 
 const styles = StyleSheet.create({
   header: {
+    paddingVertical: 12,
     paddingHorizontal: 12,
-    paddingTop: 16,
-    paddingBottom: 12,
+    borderBottomWidth: 1,
   },
   headerContent: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
-    gap: 12,
-    marginBottom: 10,
+    gap: 8,
+    marginBottom: 8,
   },
   cbaLogo: {
-    width: 45,
-    height: 45,
+    width: 24,
+    height: 24,
     resizeMode: "contain",
   },
   opbbLogo: {
-    width: 45,
-    height: 45,
+    width: 24,
+    height: 24,
     resizeMode: "contain",
   },
   headerTitle: {
     fontSize: 18,
-    fontWeight: "700",
-    color: "#FFFFFF",
-    textAlign: "center",
-    letterSpacing: 0.5,
+    fontWeight: "bold",
+    color: "white",
   },
   scoreRow: {
     flexDirection: "row",
-    justifyContent: "center",
+    justifyContent: "space-around",
     alignItems: "center",
-    gap: 6,
+    gap: 4,
   },
   scoreBox: {
     flex: 1,
-    flexDirection: "column",
     alignItems: "center",
-    paddingHorizontal: 6,
     paddingVertical: 6,
-    borderRadius: 10,
-    gap: 2,
+    borderRadius: 6,
   },
   scoreIcon: {
-    fontSize: 14,
-    fontWeight: "700",
-    color: "#FFFFFF",
+    fontSize: 16,
+    fontWeight: "bold",
+    marginBottom: 2,
   },
   scoreValue: {
-    fontSize: 18,
-    fontWeight: "800",
+    fontSize: 16,
+    fontWeight: "bold",
   },
   scoreLabel: {
     fontSize: 10,
-    fontWeight: "500",
+    marginTop: 2,
   },
   scoreDivider: {
     width: 1,
@@ -334,14 +334,13 @@ const styles = StyleSheet.create({
     backgroundColor: "rgba(255,255,255,0.2)",
   },
   progressContainer: {
-    paddingHorizontal: 20,
-    paddingVertical: 10,
-    borderBottomWidth: StyleSheet.hairlineWidth,
+    paddingHorizontal: 16,
+    paddingVertical: 12,
+    borderBottomWidth: 1,
   },
   progressText: {
     fontSize: 12,
-    fontWeight: "500",
-    marginBottom: 6,
+    marginBottom: 8,
     textAlign: "center",
   },
   progressBarBg: {
@@ -350,56 +349,32 @@ const styles = StyleSheet.create({
     overflow: "hidden",
   },
   progressBarFill: {
-    height: 4,
+    height: "100%",
     borderRadius: 2,
   },
-  cardArea: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    paddingHorizontal: 24,
-  },
-  emptyCard: {
-    width: "100%",
-    aspectRatio: 0.8,
-    borderRadius: 20,
-    borderWidth: 1,
-    borderStyle: "dashed",
-    justifyContent: "center",
-    alignItems: "center",
-    padding: 24,
-  },
-  emptyText: {
-    fontSize: 16,
-    textAlign: "center",
-    lineHeight: 24,
-  },
-  actionsArea: {
+  quickActionsArea: {
     paddingHorizontal: 16,
-    paddingBottom: 16,
-    gap: 12,
-  },
-  resultButtonsContainer: {
-    gap: 10,
-  },
-  resultButtonsRow: {
-    flexDirection: "row",
-    gap: 10,
-  },
-  resultBtn: {
-    flex: 1,
-    flexDirection: "column",
-    alignItems: "center",
-    justifyContent: "center",
     paddingVertical: 12,
-    borderRadius: 12,
+  },
+  quickActionsRow: {
+    flexDirection: "row",
+    gap: 8,
+  },
+  quickActionBtn: {
+    flex: 1,
+    paddingVertical: 10,
+    paddingHorizontal: 12,
+    borderRadius: 8,
+    alignItems: "center",
     gap: 4,
   },
-  wrongBtn: {
-    backgroundColor: "#E74C3C",
+  quickActionBtnIcon: {
+    fontSize: 20,
+    fontWeight: "bold",
   },
-  correctBtn: {
-    backgroundColor: "#27AE60",
+  quickActionBtnText: {
+    fontSize: 12,
+    fontWeight: "600",
   },
   notSureBtn: {
     backgroundColor: "#F59E0B",
@@ -407,42 +382,85 @@ const styles = StyleSheet.create({
   notRememberBtn: {
     backgroundColor: "#A855F7",
   },
-  resultBtnIcon: {
-    fontSize: 18,
-    fontWeight: "800",
-    color: "#FFFFFF",
+  cardArea: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    paddingHorizontal: 16,
+    paddingVertical: 20,
   },
-  resultBtnText: {
-    fontSize: 13,
-    fontWeight: "700",
-    color: "#FFFFFF",
-  },
-  flipBtn: {
-    paddingVertical: 16,
-    borderRadius: 14,
+  emptyCard: {
+    borderWidth: 2,
+    borderRadius: 12,
+    padding: 24,
     alignItems: "center",
     justifyContent: "center",
+    minHeight: 200,
+  },
+  emptyText: {
+    fontSize: 14,
+    textAlign: "center",
+    lineHeight: 20,
+  },
+  actionsArea: {
+    paddingHorizontal: 16,
+    paddingBottom: 16,
+    gap: 12,
+  },
+  resultButtonsContainer: {
+    gap: 8,
+  },
+  resultButtonsRow: {
+    flexDirection: "row",
+    gap: 8,
+  },
+  resultBtn: {
+    flex: 1,
+    paddingVertical: 12,
+    paddingHorizontal: 12,
+    borderRadius: 8,
+    alignItems: "center",
+    gap: 4,
+  },
+  resultBtnIcon: {
+    fontSize: 20,
+    fontWeight: "bold",
+  },
+  resultBtnText: {
+    fontSize: 12,
+    fontWeight: "600",
+  },
+  correctBtn: {
+    backgroundColor: "#4ADE80",
+  },
+  wrongBtn: {
+    backgroundColor: "#F87171",
+  },
+  flipBtn: {
+    paddingVertical: 14,
+    borderRadius: 8,
+    alignItems: "center",
   },
   flipBtnText: {
-    fontSize: 17,
-    fontWeight: "700",
-    color: "#FFFFFF",
-    letterSpacing: 0.3,
+    fontSize: 16,
+    fontWeight: "bold",
+    color: "white",
   },
   navRow: {
     flexDirection: "row",
-    gap: 12,
+    gap: 8,
   },
   navBtn: {
     flex: 1,
-    paddingVertical: 12,
-    borderRadius: 12,
+    paddingVertical: 10,
+    paddingHorizontal: 12,
+    borderRadius: 6,
     borderWidth: 1,
+    borderColor: "#ccc",
     alignItems: "center",
-    justifyContent: "center",
   },
   navBtnText: {
-    fontSize: 14,
+    fontSize: 12,
     fontWeight: "600",
   },
 });
