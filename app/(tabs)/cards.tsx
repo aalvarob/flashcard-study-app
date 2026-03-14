@@ -317,8 +317,9 @@ export default function CardsScreen() {
                       styles.areaButtonSubtext,
                       {
                         color:
-                          areaFilter === item ? "white" : colors.foreground,
-                        opacity: areaFilter === item ? 1 : 0.7,
+                          areaFilter === item ? "#FFFFFF" : colors.foreground,
+                        opacity: areaFilter === item ? 0.95 : 0.7,
+                        fontWeight: areaFilter === item ? "700" : "400",
                       },
                     ]}
                   >
