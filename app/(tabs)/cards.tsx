@@ -317,7 +317,8 @@ export default function CardsScreen() {
                       styles.areaButtonSubtext,
                       {
                         color:
-                          areaFilter === item ? "white" : colors.muted,
+                          areaFilter === item ? "white" : colors.foreground,
+                        opacity: areaFilter === item ? 1 : 0.7,
                       },
                     ]}
                   >
@@ -474,19 +475,23 @@ const styles = StyleSheet.create({
     fontWeight: "600",
   },
   areaButton: {
-    paddingVertical: 8,
+    paddingVertical: 10,
     paddingHorizontal: 12,
     borderRadius: 8,
     borderWidth: 1,
     marginRight: 8,
+    minHeight: 50,
+    justifyContent: "center",
+    alignItems: "center",
   },
   areaButtonText: {
     fontSize: 12,
     fontWeight: "600",
   },
   areaButtonSubtext: {
-    fontSize: 10,
+    fontSize: 9,
     marginTop: 2,
+    lineHeight: 12,
   },
   cardItem: {
     flexDirection: "row",
