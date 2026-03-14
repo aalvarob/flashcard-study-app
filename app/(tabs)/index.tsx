@@ -387,7 +387,8 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     paddingHorizontal: 16,
-    paddingVertical: 20,
+    paddingVertical: 12,
+    maxHeight: "45%",
   },
   emptyCard: {
     borderWidth: 2,
