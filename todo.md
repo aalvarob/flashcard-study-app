@@ -59,3 +59,4 @@
 - [x] Deslocar o card um pouco mais para baixo
 - [x] Aumentar deslocamento do card para 200px (10x mais para baixo)
 - [x] Ajustar deslocamento final para 150px (equilíbrio ideal)
+- [x] Reduzir maxHeight do card de 35% para 30%

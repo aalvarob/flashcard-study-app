@@ -388,7 +388,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     paddingHorizontal: 16,
     paddingVertical: 8,
-    maxHeight: "35%",
+    maxHeight: "30%",
     marginTop: 100,
   },
   emptyCard: {
