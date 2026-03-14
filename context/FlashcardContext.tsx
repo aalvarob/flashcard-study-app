@@ -195,7 +195,7 @@ interface FlashcardContextValue {
   totalWrong: number;
   totalNotSure: number;
   totalNotRemember: number;
-  initializeSession: (config: { candidateName: string; area: "all" | "escrituras" | "deus" | "homem" | "salvacao" | "igreja" | "batismo" | "pratica" | "historia"; cardsPerArea: number }) => void;
+  initializeSession: (config: { candidateName: string; area: "all" | FlashcardArea | FlashcardArea[]; cardsPerArea: number }) => void;
 }
 
 const FlashcardContext = createContext<FlashcardContextValue | null>(null);
@@ -294,16 +294,26 @@ export function FlashcardProvider({ children }: { children: React.ReactNode }) {
   const totalNotRemember = state.cards.reduce((sum, c) => sum + c.notRememberCount, 0);
 
   const initializeSession = useCallback(
-    (config: { candidateName: string; area: "all" | FlashcardArea; cardsPerArea: number }) => {
+    (config: { candidateName: string; area: "all" | FlashcardArea | FlashcardArea[]; cardsPerArea: number }) => {
       let selectedIds: Set<string>;
+      
       if (config.area === "all") {
+        // Selecionar todas as áreas
         const allAreas = Array.from(new Set(state.cards.map(c => c.area)));
         selectedIds = new Set();
         allAreas.forEach(area => {
           const areaCards = state.cards.filter((c) => c.area === area).slice(0, config.cardsPerArea);
           areaCards.forEach(c => selectedIds.add(c.id));
         });
+      } else if (Array.isArray(config.area)) {
+        // Múltiplas áreas selecionadas
+        selectedIds = new Set();
+        config.area.forEach(area => {
+          const areaCards = state.cards.filter((c) => c.area === area).slice(0, config.cardsPerArea);
+          areaCards.forEach(c => selectedIds.add(c.id));
+        });
       } else {
+        // Uma única área
         const areaCards = state.cards.filter((c) => c.area === config.area).slice(0, config.cardsPerArea);
         selectedIds = new Set(areaCards.map(c => c.id));
       }

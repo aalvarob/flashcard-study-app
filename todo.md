@@ -49,3 +49,7 @@
 - [x] Atualizar contexto para suportar 26 áreas
 - [x] Atualizar testes para validar 26 áreas
 - [x] Corrigir distribuição conforme informado (132 cards finais)
+- [x] Adicionar suporte a múltiplas áreas selecionadas no contexto
+- [x] Atualizar tela de configuração com checkboxes para múltiplas áreas
+- [x] Atualizar lógica de filtro de cards para múltiplas áreas
+- [x] Atualizar testes para validar múltiplas áreas
