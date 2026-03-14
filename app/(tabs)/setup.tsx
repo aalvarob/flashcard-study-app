@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import {
   View,
   Text,
@@ -58,11 +58,17 @@ export default function SetupScreen() {
 
   const cardCounts = ["5", "10", "15", "20", "25", "30", "40", "50"];
 
-  const getAreaStats = (area: string) => {
-    const areaCards = state.cards.filter((c) => c.area === area);
-    const enabledCards = areaCards.filter((c) => c.enabled);
-    return { enabled: enabledCards.length, total: areaCards.length };
-  };
+  const areaStats = useMemo(() => {
+    const stats: Record<string, { enabled: number; total: number }> = {};
+    areas.forEach((area) => {
+      const areaCards = state.cards.filter((c) => c.area === area.id);
+      const enabledCards = areaCards.filter((c) => c.enabled);
+      stats[area.id] = { enabled: enabledCards.length, total: areaCards.length };
+    });
+    return stats;
+  }, [state.cards, areas]);
+
+  const getAreaStats = (area: string) => areaStats[area] || { enabled: 0, total: 0 };
 
   function toggleArea(areaId: AreaType) {
     const newSelected = new Set(selectedAreas);
@@ -368,7 +374,7 @@ export default function SetupScreen() {
                   >
                     <Text style={styles.areaLabel}>{area.label}</Text>
                     <Text style={styles.areaDescription}>
-                      {getAreaStats(area.id).enabled}/{getAreaStats(area.id).total} cards
+                      {areaStats[area.id]?.enabled || 0}/{areaStats[area.id]?.total || 0} cards
                     </Text>
                   </Pressable>
                 ))}
