@@ -188,7 +188,6 @@ export default function SetupScreen() {
     areaGrid: {
       flexDirection: "row",
       flexWrap: "wrap",
-      gap: 8,
       marginBottom: 16,
     },
     areaButton: {
@@ -198,6 +197,8 @@ export default function SetupScreen() {
       borderRadius: 8,
       borderWidth: 2,
       alignItems: "center",
+      marginRight: "4%",
+      marginBottom: 8,
     },
     areaButtonSelected: {
       borderColor: colors.primary,
@@ -220,7 +221,6 @@ export default function SetupScreen() {
     cardCountGrid: {
       flexDirection: "row",
       flexWrap: "wrap",
-      gap: 8,
     },
     cardCountButton: {
       width: "23%",
@@ -228,6 +228,8 @@ export default function SetupScreen() {
       borderRadius: 6,
       borderWidth: 1,
       alignItems: "center",
+      marginRight: "2%",
+      marginBottom: 8,
     },
     cardCountButtonActive: {
       backgroundColor: colors.primary,
