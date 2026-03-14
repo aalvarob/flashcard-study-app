@@ -65,6 +65,13 @@ export default function TabLayout() {
           ),
         }}
       />
+      <Tabs.Screen
+        name="result"
+        options={{
+          title: "Resultado",
+          tabBarButton: () => null,
+        }}
+      />
     </Tabs>
   );
 }

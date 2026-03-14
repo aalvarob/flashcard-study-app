@@ -12,6 +12,8 @@ import { FlashCard } from "@/components/FlashCard";
 import { useFlashcards } from "@/context/FlashcardContext";
 import { useColors } from "@/hooks/use-colors";
 import * as Haptics from "expo-haptics";
+import { router } from "expo-router";
+import { useEffect } from "react";
 
 export default function StudyScreen() {
   const colors = useColors();
@@ -30,6 +32,15 @@ export default function StudyScreen() {
 
   const { sessionCorrect, sessionWrong, sessionNotSure, sessionNotRemember, isFlipped, currentIndex } = state;
   const total = enabledCards.length;
+  const totalAnswered = sessionCorrect + sessionWrong + sessionNotSure + sessionNotRemember;
+
+  // Verificar se todos os cards foram respondidos
+  useEffect(() => {
+    if (total > 0 && totalAnswered === total) {
+      // Todos os cards foram respondidos, ir para a tela de resultado
+      router.push("/result");
+    }
+  }, [totalAnswered, total]);
 
   function handleFlip() {
     if (Platform.OS !== "web") {
@@ -84,7 +95,7 @@ export default function StudyScreen() {
     nextCard();
   }
 
-  const progress = total > 0 ? (currentIndex + 1) / total : 0;
+  const progress = total > 0 ? totalAnswered / total : 0;
 
   return (
     <ScreenContainer containerClassName="bg-background">

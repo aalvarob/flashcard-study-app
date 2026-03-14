@@ -39,3 +39,6 @@
 - [x] Atualizar telas de cards e estatísticas com 4 áreas
 - [x] Atualizar contexto para suportar 4 áreas
 - [x] Atualizar testes para validar 4 áreas
+- [x] Criar tela de resultado final com estatísticas
+- [x] Integrar lógica de detecção de conclusão de cards
+- [x] Adicionar botão para retornar à tela inicial
