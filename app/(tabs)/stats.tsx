@@ -12,6 +12,7 @@ import { ScreenContainer } from "@/components/screen-container";
 import { useFlashcards } from "@/context/FlashcardContext";
 import { useColors } from "@/hooks/use-colors";
 import * as Haptics from "expo-haptics";
+import { FlashcardArea } from "@/data/flashcards";
 
 export default function StatsScreen() {
   const colors = useColors();
@@ -27,7 +28,15 @@ export default function StatsScreen() {
     sessionTotal > 0 ? Math.round((sessionCorrect / sessionTotal) * 100) : 0;
 
   // Get stats for each area
-  const areas = ["escrituras", "deus", "homem", "salvacao", "igreja", "batismo", "pratica", "historia"] as const;
+  const areas: FlashcardArea[] = [
+    "escrituras_sagradas", "deus_pai", "deus_filho", "deus_espirito_santo",
+    "homem", "pecado", "salvacao", "eleicao", "reino_de_deus",
+    "igreja", "dia_do_senhor", "ministerio_da_palavra", "liberdade_religiosa",
+    "morte", "justos_e_impios", "anjos", "amor_ao_proximo_e_etica",
+    "batismo_e_ceia", "mordomia", "evangelismo_e_missoes",
+    "educacao_religiosa", "ordem_social", "familia",
+    "principios_batistas", "historia_dos_batistas", "estrutura_e_funcionamento_cbb"
+  ];
   const areaStats = areas.map((area) => {
     const cards = getCardsByArea(area);
     const correct = cards.reduce((s, c) => s + c.correctCount, 0);
@@ -46,49 +55,67 @@ export default function StatsScreen() {
     .slice(0, 5);
 
   const getAreaLabel = (area: string): string => {
-    switch (area) {
-      case "escrituras":
-        return "Escrituras";
-      case "deus":
-        return "Deus";
-      case "homem":
-        return "Homem";
-      case "salvacao":
-        return "Salvação";
-      case "igreja":
-        return "Igreja";
-      case "batismo":
-        return "Batismo";
-      case "pratica":
-        return "Prática";
-      case "historia":
-        return "História";
-      default:
-        return area;
-    }
+    const labels: { [key: string]: string } = {
+      "escrituras_sagradas": "Escrituras",
+      "deus_pai": "Deus Pai",
+      "deus_filho": "Deus Filho",
+      "deus_espirito_santo": "Esp. Santo",
+      "homem": "Homem",
+      "pecado": "Pecado",
+      "salvacao": "Salvação",
+      "eleicao": "Eleição",
+      "reino_de_deus": "Reino",
+      "igreja": "Igreja",
+      "dia_do_senhor": "Domingo",
+      "ministerio_da_palavra": "Ministério",
+      "liberdade_religiosa": "Liberdade",
+      "morte": "Morte",
+      "justos_e_impios": "Justos/Ímpios",
+      "anjos": "Anjos",
+      "amor_ao_proximo_e_etica": "Amor/Ética",
+      "batismo_e_ceia": "Batismo/Ceia",
+      "mordomia": "Mordomia",
+      "evangelismo_e_missoes": "Evangelismo",
+      "educacao_religiosa": "Educação",
+      "ordem_social": "Ordem Social",
+      "familia": "Família",
+      "principios_batistas": "Princípios",
+      "historia_dos_batistas": "História",
+      "estrutura_e_funcionamento_cbb": "CBB",
+    };
+    return labels[area] || area;
   };
 
   const getAreaColor = (area: string): string => {
-    switch (area) {
-      case "escrituras":
-        return colors.primary;
-      case "deus":
-        return "#3B82F6";
-      case "homem":
-        return "#8B5CF6";
-      case "salvacao":
-        return "#EC4899";
-      case "igreja":
-        return "#10B981";
-      case "batismo":
-        return "#F59E0B";
-      case "pratica":
-        return "#6366F1";
-      case "historia":
-        return "#14B8A6";
-      default:
-        return colors.primary;
-    }
+    const colorMap: { [key: string]: string } = {
+      "escrituras_sagradas": colors.primary,
+      "deus_pai": "#3B82F6",
+      "deus_filho": "#3B82F6",
+      "deus_espirito_santo": "#3B82F6",
+      "homem": "#8B5CF6",
+      "pecado": "#8B5CF6",
+      "salvacao": "#EC4899",
+      "eleicao": "#EC4899",
+      "reino_de_deus": "#EC4899",
+      "igreja": "#10B981",
+      "dia_do_senhor": "#10B981",
+      "ministerio_da_palavra": "#10B981",
+      "liberdade_religiosa": "#10B981",
+      "morte": "#F59E0B",
+      "justos_e_impios": "#F59E0B",
+      "anjos": "#F59E0B",
+      "amor_ao_proximo_e_etica": "#6366F1",
+      "batismo_e_ceia": "#6366F1",
+      "mordomia": "#6366F1",
+      "evangelismo_e_missoes": "#6366F1",
+      "educacao_religiosa": "#14B8A6",
+      "ordem_social": "#14B8A6",
+      "familia": "#14B8A6",
+      "principios_batistas": "#14B8A6",
+      "historia_dos_batistas": "#14B8A6",
+      "estrutura_e_funcionamento_cbb": "#14B8A6",
+    };
+    return colorMap[area] || colors.primary;
   };
 
   function handleResetSession() {

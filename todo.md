@@ -43,3 +43,8 @@
 - [x] Integrar lógica de detecção de conclusão de cards
 - [x] Adicionar botão para retornar à tela inicial
 - [x] Atualizar dados dos flashcards com documento revisado V2 (129 cards em 8 áreas)
+- [ ] Reorganizar flashcards com as 26 áreas específicas
+- [ ] Atualizar tipos de áreas em todos os arquivos
+- [ ] Atualizar telas de cards, stats e setup com as 26 áreas
+- [ ] Atualizar contexto para suportar 26 áreas
+- [ ] Atualizar testes para validar 26 áreas

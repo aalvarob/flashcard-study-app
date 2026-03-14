@@ -15,7 +15,9 @@ import * as Haptics from "expo-haptics";
 import { useFlashcards } from "@/context/FlashcardContext";
 import { router } from "expo-router";
 
-type AreaType = "all" | "escrituras" | "deus" | "homem" | "salvacao" | "igreja" | "batismo" | "pratica" | "historia";
+import { FlashcardArea } from "@/data/flashcards";
+
+type AreaType = "all" | FlashcardArea;
 
 export default function SetupScreen() {
   const colors = useColors();
@@ -26,15 +28,33 @@ export default function SetupScreen() {
   const [cardsPerArea, setCardsPerArea] = useState("10");
 
   const areas = [
-    { id: "all" as AreaType, label: "Todas as Áreas", description: "129 cards", color: colors.primary },
-    { id: "escrituras" as AreaType, label: "Escrituras Sagradas", description: "22 cards", color: colors.primary },
-    { id: "deus" as AreaType, label: "Deus", description: "26 cards", color: "#3B82F6" },
-    { id: "homem" as AreaType, label: "O Homem", description: "4 cards", color: "#8B5CF6" },
-    { id: "salvacao" as AreaType, label: "Salvação", description: "9 cards", color: "#EC4899" },
-    { id: "igreja" as AreaType, label: "Igreja", description: "27 cards", color: "#10B981" },
-    { id: "batismo" as AreaType, label: "Batismo e Ceia", description: "9 cards", color: "#F59E0B" },
-    { id: "pratica" as AreaType, label: "Prática", description: "29 cards", color: "#6366F1" },
-    { id: "historia" as AreaType, label: "História", description: "3 cards", color: "#14B8A6" },
+    { id: "all" as AreaType, label: "Todas as Áreas", description: "130 cards", color: colors.primary },
+    { id: "escrituras_sagradas" as AreaType, label: "Escrituras Sagradas", description: "22 cards", color: colors.primary },
+    { id: "deus_pai" as AreaType, label: "Deus Pai", description: "14 cards", color: "#3B82F6" },
+    { id: "deus_filho" as AreaType, label: "Deus Filho", description: "5 cards", color: "#3B82F6" },
+    { id: "deus_espirito_santo" as AreaType, label: "Deus Espírito Santo", description: "7 cards", color: "#3B82F6" },
+    { id: "homem" as AreaType, label: "O Homem", description: "2 cards", color: "#8B5CF6" },
+    { id: "pecado" as AreaType, label: "O Pecado", description: "2 cards", color: "#8B5CF6" },
+    { id: "salvacao" as AreaType, label: "Salvação", description: "6 cards", color: "#EC4899" },
+    { id: "eleicao" as AreaType, label: "Eleição", description: "3 cards", color: "#EC4899" },
+    { id: "reino_de_deus" as AreaType, label: "Reino de Deus", description: "4 cards", color: "#EC4899" },
+    { id: "igreja" as AreaType, label: "Igreja", description: "16 cards", color: "#10B981" },
+    { id: "dia_do_senhor" as AreaType, label: "O Dia do Senhor", description: "3 cards", color: "#10B981" },
+    { id: "ministerio_da_palavra" as AreaType, label: "Ministério da Palavra", description: "4 cards", color: "#10B981" },
+    { id: "liberdade_religiosa" as AreaType, label: "Liberdade Religiosa", description: "3 cards", color: "#10B981" },
+    { id: "morte" as AreaType, label: "Morte", description: "7 cards", color: "#F59E0B" },
+    { id: "justos_e_impios" as AreaType, label: "Justos e Ímpios", description: "5 cards", color: "#F59E0B" },
+    { id: "anjos" as AreaType, label: "Anjos", description: "2 cards", color: "#F59E0B" },
+    { id: "amor_ao_proximo_e_etica" as AreaType, label: "Amor ao Próximo e Ética", description: "2 cards", color: "#6366F1" },
+    { id: "batismo_e_ceia" as AreaType, label: "Batismo e Ceia do Senhor", description: "9 cards", color: "#6366F1" },
+    { id: "mordomia" as AreaType, label: "Mordomia", description: "0 cards", color: "#6366F1" },
+    { id: "evangelismo_e_missoes" as AreaType, label: "Evangelismo e Missões", description: "3 cards", color: "#6366F1" },
+    { id: "educacao_religiosa" as AreaType, label: "Educação Religiosa", description: "2 cards", color: "#14B8A6" },
+    { id: "ordem_social" as AreaType, label: "Ordem Social", description: "2 cards", color: "#14B8A6" },
+    { id: "familia" as AreaType, label: "Família", description: "3 cards", color: "#14B8A6" },
+    { id: "principios_batistas" as AreaType, label: "Princípios Batistas", description: "1 card", color: "#14B8A6" },
+    { id: "historia_dos_batistas" as AreaType, label: "História dos Batistas", description: "2 cards", color: "#14B8A6" },
+    { id: "estrutura_e_funcionamento_cbb" as AreaType, label: "Estrutura e Funcionamento da CBB", description: "1 card", color: "#14B8A6" },
   ];
 
   const cardCounts = ["5", "10", "15", "20", "25", "30", "40", "50"];

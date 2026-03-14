@@ -294,44 +294,18 @@ export function FlashcardProvider({ children }: { children: React.ReactNode }) {
   const totalNotRemember = state.cards.reduce((sum, c) => sum + c.notRememberCount, 0);
 
   const initializeSession = useCallback(
-    (config: { candidateName: string; area: "all" | "escrituras" | "deus" | "homem" | "salvacao" | "igreja" | "batismo" | "pratica" | "historia"; cardsPerArea: number }) => {
-      const escriturasCards = state.cards.filter((c) => c.area === "escrituras").slice(0, config.cardsPerArea);
-      const deusCards = state.cards.filter((c) => c.area === "deus").slice(0, config.cardsPerArea);
-      const homemCards = state.cards.filter((c) => c.area === "homem").slice(0, config.cardsPerArea);
-      const salvacaoCards = state.cards.filter((c) => c.area === "salvacao").slice(0, config.cardsPerArea);
-      const igrejaCards = state.cards.filter((c) => c.area === "igreja").slice(0, config.cardsPerArea);
-      const batismoCards = state.cards.filter((c) => c.area === "batismo").slice(0, config.cardsPerArea);
-      const praticaCards = state.cards.filter((c) => c.area === "pratica").slice(0, config.cardsPerArea);
-      const historiaCards = state.cards.filter((c) => c.area === "historia").slice(0, config.cardsPerArea);
-      
+    (config: { candidateName: string; area: "all" | FlashcardArea; cardsPerArea: number }) => {
       let selectedIds: Set<string>;
       if (config.area === "all") {
-        selectedIds = new Set([
-          ...escriturasCards.map(c => c.id),
-          ...deusCards.map(c => c.id),
-          ...homemCards.map(c => c.id),
-          ...salvacaoCards.map(c => c.id),
-          ...igrejaCards.map(c => c.id),
-          ...batismoCards.map(c => c.id),
-          ...praticaCards.map(c => c.id),
-          ...historiaCards.map(c => c.id),
-        ]);
-      } else if (config.area === "escrituras") {
-        selectedIds = new Set(escriturasCards.map(c => c.id));
-      } else if (config.area === "deus") {
-        selectedIds = new Set(deusCards.map(c => c.id));
-      } else if (config.area === "homem") {
-        selectedIds = new Set(homemCards.map(c => c.id));
-      } else if (config.area === "salvacao") {
-        selectedIds = new Set(salvacaoCards.map(c => c.id));
-      } else if (config.area === "igreja") {
-        selectedIds = new Set(igrejaCards.map(c => c.id));
-      } else if (config.area === "batismo") {
-        selectedIds = new Set(batismoCards.map(c => c.id));
-      } else if (config.area === "pratica") {
-        selectedIds = new Set(praticaCards.map(c => c.id));
+        const allAreas = Array.from(new Set(state.cards.map(c => c.area)));
+        selectedIds = new Set();
+        allAreas.forEach(area => {
+          const areaCards = state.cards.filter((c) => c.area === area).slice(0, config.cardsPerArea);
+          areaCards.forEach(c => selectedIds.add(c.id));
+        });
       } else {
-        selectedIds = new Set(historiaCards.map(c => c.id));
+        const areaCards = state.cards.filter((c) => c.area === config.area).slice(0, config.cardsPerArea);
+        selectedIds = new Set(areaCards.map(c => c.id));
       }
 
       const updated = state.cards.map((c) => ({
