@@ -454,15 +454,17 @@ const styles = StyleSheet.create({
   },
   navBtn: {
     flex: 1,
-    paddingVertical: 10,
+    paddingVertical: 12,
     paddingHorizontal: 12,
-    borderRadius: 6,
-    borderWidth: 1,
-    borderColor: "#ccc",
+    borderRadius: 8,
+    borderWidth: 2,
+    borderColor: "#333",
+    backgroundColor: "#f0f0f0",
     alignItems: "center",
   },
   navBtnText: {
-    fontSize: 12,
-    fontWeight: "600",
+    fontSize: 14,
+    fontWeight: "700",
+    color: "#333",
   },
 });
