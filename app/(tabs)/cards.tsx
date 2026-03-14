@@ -11,17 +11,29 @@ import {
 import { ScreenContainer } from "@/components/screen-container";
 import { useFlashcards, Flashcard } from "@/context/FlashcardContext";
 import { useColors } from "@/hooks/use-colors";
+import { useAuth } from "@/hooks/use-auth";
+import { trpc } from "@/lib/trpc";
 import * as Haptics from "expo-haptics";
 import { FlashcardArea } from "@/data/flashcards";
+import { EditFlashcardModal } from "@/components/EditFlashcardModal";
 
 type FilterType = "all" | "enabled" | "disabled";
 type AreaFilterType = "all" | FlashcardArea;
 
 export default function CardsScreen() {
   const colors = useColors();
+  const { user } = useAuth();
   const { state, toggleCard } = useFlashcards();
   const [filter, setFilter] = useState<FilterType>("all");
   const [areaFilter, setAreaFilter] = useState<AreaFilterType>("all");
+  const [editingCard, setEditingCard] = useState<{ id: number; question: string; answer: string; area: string } | null>(null);
+  const [showEditModal, setShowEditModal] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+
+  const updateMutation = trpc.flashcards.update.useMutation();
+  const createMutation = trpc.flashcards.create.useMutation();
+
+  const isAdmin = user?.role === "admin";
 
   const filteredCards = state.cards.filter((card) => {
     const matchesStatus =
@@ -40,6 +52,46 @@ export default function CardsScreen() {
       Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
     }
     toggleCard(id);
+  }
+
+  function handleEditCard(card: Flashcard) {
+    if (!isAdmin) return;
+    setEditingCard({
+      id: parseInt(card.id),
+      question: card.question,
+      answer: card.answer,
+      area: card.area,
+    });
+    setShowEditModal(true);
+  }
+
+  function handleCreateCard() {
+    if (!isAdmin) return;
+    setEditingCard(null);
+    setShowEditModal(true);
+  }
+
+  async function handleSaveCard(data: { question: string; answer: string; area: string }) {
+    setIsLoading(true);
+    try {
+      if (editingCard?.id) {
+        // Update existing card
+        await updateMutation.mutateAsync({
+          id: editingCard.id,
+          ...data,
+        });
+      } else {
+        // Create new card
+        await createMutation.mutateAsync(data);
+      }
+      setShowEditModal(false);
+      setEditingCard(null);
+    } catch (error) {
+      console.error("Error saving card:", error);
+      throw error;
+    } finally {
+      setIsLoading(false);
+    }
   }
 
   const getAreaLabel = (area: string): string => {
@@ -131,6 +183,22 @@ export default function CardsScreen() {
           </View>
         </View>
       </View>
+
+      {/* Admin Actions */}
+      {isAdmin && (
+        <Pressable
+          onPress={handleCreateCard}
+          style={({ pressed }) => [
+            styles.createButton,
+            {
+              backgroundColor: colors.primary,
+              opacity: pressed ? 0.8 : 1,
+            },
+          ]}
+        >
+          <Text style={styles.createButtonText}>+ Novo Card</Text>
+        </Pressable>
+      )}
 
       {/* Filtros */}
       <View style={styles.filterSection}>
@@ -279,19 +347,44 @@ export default function CardsScreen() {
                 </Text>
               </View>
             </View>
-            <Switch
-              value={item.enabled}
-              onValueChange={() => handleToggle(item.id)}
-              trackColor={{
-                false: colors.border,
-                true: colors.success,
-              }}
-              thumbColor={item.enabled ? colors.success : colors.muted}
-            />
+            <View style={styles.cardActions}>
+              {isAdmin && (
+                <Pressable
+                  onPress={() => handleEditCard(item)}
+                  style={({ pressed }) => [
+                    styles.editButton,
+                    { opacity: pressed ? 0.6 : 1 },
+                  ]}
+                >
+                  <Text style={styles.editButtonText}>✎</Text>
+                </Pressable>
+              )}
+              <Switch
+                value={item.enabled}
+                onValueChange={() => handleToggle(item.id)}
+                trackColor={{
+                  false: colors.border,
+                  true: colors.success,
+                }}
+                thumbColor={item.enabled ? colors.success : colors.muted}
+              />
+            </View>
           </View>
         )}
         scrollEnabled
         nestedScrollEnabled
+      />
+
+      {/* Edit Modal */}
+      <EditFlashcardModal
+        visible={showEditModal}
+        flashcard={editingCard || undefined}
+        onClose={() => {
+          setShowEditModal(false);
+          setEditingCard(null);
+        }}
+        onSave={handleSaveCard}
+        isLoading={isLoading}
       />
     </ScreenContainer>
   );
@@ -321,6 +414,18 @@ const styles = StyleSheet.create({
   statValue: {
     fontSize: 20,
     fontWeight: "bold",
+  },
+  createButton: {
+    paddingVertical: 12,
+    paddingHorizontal: 16,
+    borderRadius: 8,
+    alignItems: "center",
+    marginBottom: 16,
+  },
+  createButtonText: {
+    color: "white",
+    fontSize: 16,
+    fontWeight: "600",
   },
   filterSection: {
     marginBottom: 16,
@@ -391,5 +496,17 @@ const styles = StyleSheet.create({
   },
   cardStat: {
     fontSize: 11,
+  },
+  cardActions: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 8,
+  },
+  editButton: {
+    padding: 8,
+  },
+  editButtonText: {
+    fontSize: 18,
+    color: "#666",
   },
 });

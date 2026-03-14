@@ -89,4 +89,50 @@ export async function getUserByOpenId(openId: string) {
   return result.length > 0 ? result[0] : undefined;
 }
 
+// Flashcard operations
+import { flashcards, InsertFlashcard, Flashcard } from "../drizzle/schema";
+
+export async function getAllFlashcards() {
+  const db = await getDb();
+  if (!db) {
+    console.warn("[Database] Cannot get flashcards: database not available");
+    return [];
+  }
+
+  return db.select().from(flashcards);
+}
+
+export async function createFlashcard(data: InsertFlashcard) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+
+  const result = await db.insert(flashcards).values(data);
+  return (result as any).insertId || 0;
+}
+
+export async function updateFlashcard(id: number, data: Partial<InsertFlashcard>) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+
+  await db.update(flashcards).set(data).where(eq(flashcards.id, id));
+}
+
+export async function deleteFlashcard(id: number) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+
+  await db.delete(flashcards).where(eq(flashcards.id, id));
+}
+
+export async function getFlashcardById(id: number) {
+  const db = await getDb();
+  if (!db) {
+    console.warn("[Database] Cannot get flashcard: database not available");
+    return undefined;
+  }
+
+  const result = await db.select().from(flashcards).where(eq(flashcards.id, id)).limit(1);
+  return result.length > 0 ? result[0] : undefined;
+}
+
 // TODO: add feature queries here as your schema grows.

@@ -61,3 +61,11 @@
 - [x] Ajustar deslocamento final para 150px (equilíbrio ideal)
 - [x] Reduzir maxHeight do card de 35% para 30%
 - [x] Corrigir visibilidade dos botões "Anterior" e "Próximo" (aumentar opacidade, adicionar background e melhorar contraste)
+- [x] Implementar autenticação de administrador
+- [x] Criar endpoints no servidor para CRUD de flashcards
+- [x] Criar componentes de edição de cards
+- [x] Criar componente de criação de novo card
+- [x] Integrar edição na tela de listagem de cards (cards.tsx)
+- [x] Implementar persistência de alterações no servidor
+- [x] Escrever testes para funcionalidade de edição
+- [x] Testar edição e criação de cards
