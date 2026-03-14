@@ -75,3 +75,4 @@
 - [x] Mover card para cima na tela de teste
 - [x] Corrigir sobreposição dos botões Anterior e Próximo sobre o card
 - [x] Aumentar espaçamento entre botões "Não Sei" e "Não Lembro" e o card
+- [x] Criar opção para ativar cards por área ou todos

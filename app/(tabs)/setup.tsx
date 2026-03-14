@@ -68,6 +68,16 @@ export default function SetupScreen() {
     setSelectedAreas(newSelected);
   }
 
+  function toggleAllAreas() {
+    if (selectedAreas.size === areas.length) {
+      // Se todas estão selecionadas, desseleciona todas
+      setSelectedAreas(new Set());
+    } else {
+      // Seleciona todas
+      setSelectedAreas(new Set(areas.map((area) => area.id)));
+    }
+  }
+
   function handleStartStudy() {
     if (!candidateName.trim()) {
       Alert.alert("Atenção", "Por favor, informe seu nome para continuar.");
@@ -311,7 +321,25 @@ export default function SetupScreen() {
           {/* Seleção de Áreas (apenas no modo múltiplo) */}
           {selectionMode === "multiple" && (
             <View style={styles.section}>
-              <Text style={styles.sectionTitle}>Selecione as Áreas</Text>
+              <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center", marginBottom: 12 }}>
+                <Text style={styles.sectionTitle}>Selecione as Áreas</Text>
+                <Pressable
+                  style={[
+                    styles.cardCountButton,
+                    selectedAreas.size === areas.length ? styles.cardCountButtonActive : styles.cardCountButtonInactive,
+                  ]}
+                  onPress={toggleAllAreas}
+                >
+                  <Text
+                    style={[
+                      styles.cardCountText,
+                      selectedAreas.size === areas.length ? styles.cardCountTextActive : styles.cardCountTextInactive,
+                    ]}
+                  >
+                    {selectedAreas.size === areas.length ? "Desativar Todos" : "Ativar Todos"}
+                  </Text>
+                </Pressable>
+              </View>
               <View style={styles.areaGrid}>
                 {areas.map((area) => (
                   <Pressable
