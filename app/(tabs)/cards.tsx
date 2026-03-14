@@ -305,7 +305,8 @@ export default function CardsScreen() {
                     styles.areaButtonText,
                     {
                       color:
-                        areaFilter === item ? "white" : colors.foreground,
+                        areaFilter === item ? "#FFFFFF" : colors.foreground,
+                      fontWeight: areaFilter === item ? "700" : "600",
                     },
                   ]}
                 >
