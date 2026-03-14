@@ -389,7 +389,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     paddingVertical: 8,
     maxHeight: "35%",
-    marginTop: 20,
+    marginTop: 150,
   },
   emptyCard: {
     borderWidth: 2,
