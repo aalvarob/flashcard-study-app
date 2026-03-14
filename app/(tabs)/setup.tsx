@@ -245,7 +245,7 @@ export default function SetupScreen() {
       fontWeight: "600",
     },
     cardCountTextActive: {
-      color: colors.background,
+      color: colors.foreground,
     },
     toggleAllButton: {
       paddingVertical: 8,
