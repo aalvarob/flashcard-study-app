@@ -80,10 +80,14 @@ function reducer(state: FlashcardState, action: FlashcardAction): FlashcardState
       const updated = state.cards.map((c) =>
         c.id === action.id ? { ...c, wrongCount: c.wrongCount + 1 } : c
       );
+      const enabledCards = getEnabledCards(updated);
+      const newIndex = Math.min(state.currentIndex, Math.max(0, enabledCards.length - 1));
       return {
         ...state,
         cards: updated,
+        currentIndex: newIndex,
         sessionWrong: state.sessionWrong + 1,
+        isFlipped: false,
       };
     }
 
@@ -91,10 +95,14 @@ function reducer(state: FlashcardState, action: FlashcardAction): FlashcardState
       const updated = state.cards.map((c) =>
         c.id === action.id ? { ...c, notSureCount: c.notSureCount + 1 } : c
       );
+      const enabledCards = getEnabledCards(updated);
+      const newIndex = Math.min(state.currentIndex, Math.max(0, enabledCards.length - 1));
       return {
         ...state,
         cards: updated,
+        currentIndex: newIndex,
         sessionNotSure: state.sessionNotSure + 1,
+        isFlipped: false,
       };
     }
 
@@ -102,10 +110,14 @@ function reducer(state: FlashcardState, action: FlashcardAction): FlashcardState
       const updated = state.cards.map((c) =>
         c.id === action.id ? { ...c, notRememberCount: c.notRememberCount + 1 } : c
       );
+      const enabledCards = getEnabledCards(updated);
+      const newIndex = Math.min(state.currentIndex, Math.max(0, enabledCards.length - 1));
       return {
         ...state,
         cards: updated,
+        currentIndex: newIndex,
         sessionNotRemember: state.sessionNotRemember + 1,
+        isFlipped: false,
       };
     }
 
@@ -183,6 +195,7 @@ interface FlashcardContextValue {
   totalWrong: number;
   totalNotSure: number;
   totalNotRemember: number;
+  initializeSession: (config: { candidateName: string; area: "all" | "teologia" | "eclesiologia"; cardsPerArea: number }) => void;
 }
 
 const FlashcardContext = createContext<FlashcardContextValue | null>(null);
@@ -190,14 +203,12 @@ const FlashcardContext = createContext<FlashcardContextValue | null>(null);
 export function FlashcardProvider({ children }: { children: React.ReactNode }) {
   const [state, dispatch] = useReducer(reducer, initialState);
 
-  // Load persisted state on mount
   useEffect(() => {
     async function load() {
       try {
         const stored = await AsyncStorage.getItem(STORAGE_KEY);
         if (stored) {
           const parsed: Flashcard[] = JSON.parse(stored);
-          // Merge with fresh data to pick up any new cards
           const merged = FLASHCARDS_DATA.map((fd) => {
             const existing = parsed.find((p) => p.id === fd.id);
             return existing
@@ -231,7 +242,6 @@ export function FlashcardProvider({ children }: { children: React.ReactNode }) {
     load();
   }, []);
 
-  // Persist cards state when it changes
   useEffect(() => {
     if (state.cards.length > 0) {
       AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(state.cards)).catch(() => {});
@@ -283,6 +293,31 @@ export function FlashcardProvider({ children }: { children: React.ReactNode }) {
   const totalNotSure = state.cards.reduce((sum, c) => sum + c.notSureCount, 0);
   const totalNotRemember = state.cards.reduce((sum, c) => sum + c.notRememberCount, 0);
 
+  const initializeSession = useCallback(
+    (config: { candidateName: string; area: "all" | "teologia" | "eclesiologia"; cardsPerArea: number }) => {
+      const teologiaCards = state.cards.filter((c) => c.area === "teologia").slice(0, config.cardsPerArea);
+      const eclesiologiaCards = state.cards.filter((c) => c.area === "eclesiologia").slice(0, config.cardsPerArea);
+      
+      let selectedIds: Set<string>;
+      if (config.area === "all") {
+        selectedIds = new Set([...teologiaCards.map(c => c.id), ...eclesiologiaCards.map(c => c.id)]);
+      } else if (config.area === "teologia") {
+        selectedIds = new Set(teologiaCards.map(c => c.id));
+      } else {
+        selectedIds = new Set(eclesiologiaCards.map(c => c.id));
+      }
+
+      const updated = state.cards.map((c) => ({
+        ...c,
+        enabled: selectedIds.has(c.id),
+      }));
+
+      dispatch({ type: "INIT", payload: updated });
+      dispatch({ type: "RESET_SESSION" });
+    },
+    [state.cards]
+  );
+
   return (
     <FlashcardContext.Provider
       value={{
@@ -304,6 +339,7 @@ export function FlashcardProvider({ children }: { children: React.ReactNode }) {
         totalWrong,
         totalNotSure,
         totalNotRemember,
+        initializeSession,
       }}
     >
       {children}
@@ -312,7 +348,9 @@ export function FlashcardProvider({ children }: { children: React.ReactNode }) {
 }
 
 export function useFlashcards() {
-  const ctx = useContext(FlashcardContext);
-  if (!ctx) throw new Error("useFlashcards must be used within FlashcardProvider");
-  return ctx;
+  const context = useContext(FlashcardContext);
+  if (!context) {
+    throw new Error("useFlashcards must be used within FlashcardProvider");
+  }
+  return context;
 }

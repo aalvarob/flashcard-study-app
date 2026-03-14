@@ -29,3 +29,8 @@
 - [x] Integrar logo da Convenção Batista de Alagoas
 - [x] Integrar logo da Ordem dos Pastores Batistas do Brasil
 - [x] Aumentar tamanho dos textos para ocupar máximo da tela
+- [x] Criar tela de configuração inicial (Setup Screen)
+- [x] Adicionar campos para nome, área e quantidade de cards
+- [x] Integrar configuração com o contexto de flashcards
+- [x] Atualizar contexto para suportar filtros por área e quantidade
+- [x] Escrever testes para a nova funcionalidade
