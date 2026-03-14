@@ -34,3 +34,8 @@
 - [x] Integrar configuração com o contexto de flashcards
 - [x] Atualizar contexto para suportar filtros por área e quantidade
 - [x] Escrever testes para a nova funcionalidade
+- [x] Atualizar dados dos flashcards com novo documento (133 cards em 4 áreas)
+- [x] Adicionar suporte a 4 áreas na tela de configuração
+- [x] Atualizar telas de cards e estatísticas com 4 áreas
+- [x] Atualizar contexto para suportar 4 áreas
+- [x] Atualizar testes para validar 4 áreas

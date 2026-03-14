@@ -15,18 +15,22 @@ import * as Haptics from "expo-haptics";
 import { useFlashcards } from "@/context/FlashcardContext";
 import { router } from "expo-router";
 
+type AreaType = "all" | "teologia" | "relacionamento" | "pratica" | "denominacao";
+
 export default function SetupScreen() {
   const colors = useColors();
   const { initializeSession } = useFlashcards();
 
   const [candidateName, setCandidateName] = useState("");
-  const [selectedArea, setSelectedArea] = useState<"all" | "teologia" | "eclesiologia">("all");
+  const [selectedArea, setSelectedArea] = useState<AreaType>("all");
   const [cardsPerArea, setCardsPerArea] = useState("10");
 
   const areas = [
-    { id: "all", label: "Todas as Áreas", description: "Teologia + Eclesiologia" },
-    { id: "teologia", label: "Teologia", description: "46 cards" },
-    { id: "eclesiologia", label: "Eclesiologia", description: "33 cards" },
+    { id: "all" as AreaType, label: "Todas as Áreas", description: "133 cards", color: colors.primary },
+    { id: "teologia" as AreaType, label: "Teologia", description: "108 cards", color: colors.primary },
+    { id: "relacionamento" as AreaType, label: "Relacionamento", description: "2 cards", color: "#3B82F6" },
+    { id: "pratica" as AreaType, label: "Prática", description: "18 cards", color: "#10B981" },
+    { id: "denominacao" as AreaType, label: "Denominação", description: "3 cards", color: "#8B5CF6" },
   ];
 
   const cardCounts = ["5", "10", "15", "20", "25", "30", "40", "50"];
@@ -44,7 +48,7 @@ export default function SetupScreen() {
     // Inicializar a sessão com as configurações
     initializeSession({
       candidateName: candidateName.trim(),
-      area: selectedArea as "all" | "teologia" | "eclesiologia",
+      area: selectedArea,
       cardsPerArea: parseInt(cardsPerArea),
     });
 
@@ -89,52 +93,25 @@ export default function SetupScreen() {
             <Text style={[styles.sectionTitle, { color: colors.foreground }]}>
               Área de Estudo
             </Text>
-            <View style={styles.areaGrid}>
+            <View style={styles.areasGrid}>
               {areas.map((area) => (
                 <Pressable
                   key={area.id}
-                  onPress={() => {
-                    if (Platform.OS !== "web") {
-                      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-                    }
-                    setSelectedArea(area.id as any);
-                  }}
+                  onPress={() => setSelectedArea(area.id)}
                   style={({ pressed }) => [
-                    styles.areaButton,
+                    styles.areaCard,
                     {
-                      backgroundColor:
-                        selectedArea === area.id
-                          ? colors.primary
-                          : colors.surface,
-                      borderColor: colors.border,
-                      opacity: pressed ? 0.7 : 1,
+                      backgroundColor: selectedArea === area.id ? area.color + "20" : colors.surface,
+                      borderColor: selectedArea === area.id ? area.color : colors.border,
+                      opacity: pressed ? 0.8 : 1,
                     },
                   ]}
                 >
-                  <Text
-                    style={[
-                      styles.areaButtonLabel,
-                      {
-                        color:
-                          selectedArea === area.id
-                            ? "#FFFFFF"
-                            : colors.foreground,
-                      },
-                    ]}
-                  >
+                  <View style={[styles.areaColorIndicator, { backgroundColor: area.color }]} />
+                  <Text style={[styles.areaLabel, { color: colors.foreground }]}>
                     {area.label}
                   </Text>
-                  <Text
-                    style={[
-                      styles.areaButtonDescription,
-                      {
-                        color:
-                          selectedArea === area.id
-                            ? "rgba(255,255,255,0.8)"
-                            : colors.muted,
-                      },
-                    ]}
-                  >
+                  <Text style={[styles.areaDescription, { color: colors.muted }]}>
                     {area.description}
                   </Text>
                 </Pressable>
@@ -147,37 +124,24 @@ export default function SetupScreen() {
             <Text style={[styles.sectionTitle, { color: colors.foreground }]}>
               Cards por Área
             </Text>
-            <View style={styles.cardCountGrid}>
+            <View style={styles.cardsGrid}>
               {cardCounts.map((count) => (
                 <Pressable
                   key={count}
-                  onPress={() => {
-                    if (Platform.OS !== "web") {
-                      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-                    }
-                    setCardsPerArea(count);
-                  }}
+                  onPress={() => setCardsPerArea(count)}
                   style={({ pressed }) => [
-                    styles.cardCountButton,
+                    styles.countButton,
                     {
-                      backgroundColor:
-                        cardsPerArea === count
-                          ? colors.accent
-                          : colors.surface,
-                      borderColor: colors.border,
-                      opacity: pressed ? 0.7 : 1,
+                      backgroundColor: cardsPerArea === count ? colors.primary : colors.surface,
+                      borderColor: cardsPerArea === count ? colors.primary : colors.border,
+                      opacity: pressed ? 0.8 : 1,
                     },
                   ]}
                 >
                   <Text
                     style={[
-                      styles.cardCountButtonText,
-                      {
-                        color:
-                          cardsPerArea === count
-                            ? "#FFFFFF"
-                            : colors.foreground,
-                      },
+                      styles.countButtonText,
+                      { color: cardsPerArea === count ? "#FFFFFF" : colors.foreground },
                     ]}
                   >
                     {count}
@@ -187,50 +151,18 @@ export default function SetupScreen() {
             </View>
           </View>
 
-          {/* Resumo */}
-          <View
-            style={[
-              styles.summary,
-              {
-                backgroundColor: colors.surface,
-                borderColor: colors.border,
-              },
-            ]}
-          >
-            <Text style={[styles.summaryTitle, { color: colors.foreground }]}>
-              Resumo da Sessão
-            </Text>
-            <Text style={[styles.summaryText, { color: colors.muted }]}>
-              Candidato: <Text style={{ color: colors.foreground, fontWeight: "600" }}>
-                {candidateName || "Não informado"}
-              </Text>
-            </Text>
-            <Text style={[styles.summaryText, { color: colors.muted }]}>
-              Área: <Text style={{ color: colors.foreground, fontWeight: "600" }}>
-                {areas.find((a) => a.id === selectedArea)?.label}
-              </Text>
-            </Text>
-            <Text style={[styles.summaryText, { color: colors.muted }]}>
-              Cards por Área: <Text style={{ color: colors.foreground, fontWeight: "600" }}>
-                {cardsPerArea}
-              </Text>
-            </Text>
-          </View>
-
           {/* Botão Iniciar */}
-          <Pressable
-            onPress={handleStartStudy}
-            style={({ pressed }) => [
-              styles.startButton,
-              {
-                backgroundColor: colors.accent,
-                opacity: pressed ? 0.8 : 1,
-                transform: [{ scale: pressed ? 0.97 : 1 }],
-              },
-            ]}
-          >
-            <Text style={styles.startButtonText}>Iniciar Estudo</Text>
-          </Pressable>
+          <View style={styles.buttonContainer}>
+            <Pressable
+              onPress={handleStartStudy}
+              style={({ pressed }) => [
+                styles.startButton,
+                { backgroundColor: colors.primary, opacity: pressed ? 0.8 : 1 },
+              ]}
+            >
+              <Text style={styles.startButtonText}>Iniciar Estudo</Text>
+            </Pressable>
+          </View>
         </View>
       </ScrollView>
     </ScreenContainer>
@@ -240,101 +172,101 @@ export default function SetupScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    paddingBottom: 24,
   },
   header: {
-    paddingHorizontal: 16,
-    paddingVertical: 24,
+    paddingHorizontal: 20,
+    paddingTop: 24,
+    paddingBottom: 20,
     alignItems: "center",
-    marginBottom: 24,
+    gap: 4,
   },
   headerTitle: {
-    fontSize: 28,
+    fontSize: 24,
     fontWeight: "700",
     color: "#FFFFFF",
-    marginBottom: 4,
+    letterSpacing: 0.5,
   },
   headerSubtitle: {
     fontSize: 14,
+    fontWeight: "500",
     color: "rgba(255,255,255,0.8)",
   },
   section: {
     paddingHorizontal: 16,
-    marginBottom: 24,
+    paddingVertical: 20,
+    gap: 12,
   },
   sectionTitle: {
     fontSize: 16,
     fontWeight: "700",
-    marginBottom: 12,
+    letterSpacing: 0.3,
   },
   input: {
     borderWidth: 1,
     borderRadius: 8,
-    paddingHorizontal: 12,
+    paddingHorizontal: 14,
     paddingVertical: 12,
     fontSize: 16,
+    fontWeight: "500",
   },
-  areaGrid: {
+  areasGrid: {
+    gap: 10,
+  },
+  areaCard: {
+    borderWidth: 1,
+    borderRadius: 10,
+    padding: 14,
+    flexDirection: "row",
+    alignItems: "center",
     gap: 12,
   },
-  areaButton: {
-    borderWidth: 1,
-    borderRadius: 8,
-    paddingHorizontal: 16,
-    paddingVertical: 14,
-    alignItems: "center",
+  areaColorIndicator: {
+    width: 10,
+    height: 10,
+    borderRadius: 5,
   },
-  areaButtonLabel: {
-    fontSize: 16,
-    fontWeight: "600",
-    marginBottom: 4,
+  areaLabel: {
+    fontSize: 14,
+    fontWeight: "700",
+    flex: 1,
   },
-  areaButtonDescription: {
+  areaDescription: {
     fontSize: 12,
+    fontWeight: "500",
   },
-  cardCountGrid: {
+  cardsGrid: {
     flexDirection: "row",
     flexWrap: "wrap",
     gap: 8,
   },
-  cardCountButton: {
+  countButton: {
     flex: 1,
-    minWidth: "22%",
-    borderWidth: 1,
+    minWidth: "20%",
+    paddingVertical: 10,
+    paddingHorizontal: 8,
     borderRadius: 8,
-    paddingVertical: 12,
+    borderWidth: 1,
     alignItems: "center",
   },
-  cardCountButtonText: {
-    fontSize: 16,
-    fontWeight: "600",
-  },
-  summary: {
-    marginHorizontal: 16,
-    marginBottom: 24,
-    borderWidth: 1,
-    borderRadius: 8,
-    padding: 16,
-  },
-  summaryTitle: {
+  countButtonText: {
     fontSize: 14,
     fontWeight: "700",
-    marginBottom: 12,
   },
-  summaryText: {
-    fontSize: 14,
-    marginBottom: 8,
-    lineHeight: 20,
+  buttonContainer: {
+    paddingHorizontal: 16,
+    paddingBottom: 32,
+    paddingTop: 12,
   },
   startButton: {
-    marginHorizontal: 16,
-    borderRadius: 8,
-    paddingVertical: 16,
+    paddingVertical: 14,
+    paddingHorizontal: 20,
+    borderRadius: 10,
     alignItems: "center",
   },
   startButtonText: {
-    fontSize: 18,
+    fontSize: 16,
     fontWeight: "700",
     color: "#FFFFFF",
+    letterSpacing: 0.5,
   },
 });

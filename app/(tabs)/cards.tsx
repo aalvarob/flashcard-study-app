@@ -14,12 +14,13 @@ import { useColors } from "@/hooks/use-colors";
 import * as Haptics from "expo-haptics";
 
 type FilterType = "all" | "enabled" | "disabled";
+type AreaFilterType = "all" | "teologia" | "relacionamento" | "pratica" | "denominacao";
 
 export default function CardsScreen() {
   const colors = useColors();
   const { state, toggleCard } = useFlashcards();
   const [filter, setFilter] = useState<FilterType>("all");
-  const [areaFilter, setAreaFilter] = useState<"all" | "teologia" | "eclesiologia">("all");
+  const [areaFilter, setAreaFilter] = useState<AreaFilterType>("all");
 
   const filteredCards = state.cards.filter((card) => {
     const matchesStatus =
@@ -40,10 +41,40 @@ export default function CardsScreen() {
     toggleCard(id);
   }
 
+  const getAreaLabel = (area: string): string => {
+    switch (area) {
+      case "teologia":
+        return "Teologia";
+      case "relacionamento":
+        return "Relacionamento";
+      case "pratica":
+        return "Prática";
+      case "denominacao":
+        return "Denominação";
+      default:
+        return "Desconhecido";
+    }
+  };
+
+  const getAreaColor = (area: string): string => {
+    switch (area) {
+      case "teologia":
+        return colors.primary;
+      case "relacionamento":
+        return "#3B82F6";
+      case "pratica":
+        return "#10B981";
+      case "denominacao":
+        return "#8B5CF6";
+      default:
+        return colors.primary;
+    }
+  };
+
   const renderItem = useCallback(
     ({ item }: { item: Flashcard }) => {
-      const areaLabel = item.area === "teologia" ? "Teologia" : "Eclesiologia";
-      const areaColor = item.area === "teologia" ? colors.primary : "#6B46C1";
+      const areaLabel = getAreaLabel(item.area);
+      const areaColor = getAreaColor(item.area);
 
       return (
         <View
@@ -148,29 +179,35 @@ export default function CardsScreen() {
 
         {/* Filtro de Área */}
         <View style={styles.filterRow}>
-          {(["all", "teologia", "eclesiologia"] as const).map((a) => (
-            <Pressable
-              key={a}
-              onPress={() => setAreaFilter(a)}
-              style={({ pressed }) => [
-                styles.filterBtn,
-                {
-                  backgroundColor: areaFilter === a ? "#6B46C1" : colors.background,
-                  borderColor: areaFilter === a ? "#6B46C1" : colors.border,
-                  opacity: pressed ? 0.8 : 1,
-                },
-              ]}
-            >
-              <Text
-                style={[
-                  styles.filterBtnText,
-                  { color: areaFilter === a ? "#FFFFFF" : colors.muted },
+          {(["all", "teologia", "relacionamento", "pratica", "denominacao"] as const).map((a) => {
+            const isSelected = areaFilter === a;
+            const selectedColor = a === "all" ? colors.primary : getAreaColor(a);
+            const label = a === "all" ? "Todas" : getAreaLabel(a);
+
+            return (
+              <Pressable
+                key={a}
+                onPress={() => setAreaFilter(a)}
+                style={({ pressed }) => [
+                  styles.filterBtn,
+                  {
+                    backgroundColor: isSelected ? selectedColor : colors.background,
+                    borderColor: isSelected ? selectedColor : colors.border,
+                    opacity: pressed ? 0.8 : 1,
+                  },
                 ]}
               >
-                {a === "all" ? "Todas as Áreas" : a === "teologia" ? "Teologia" : "Eclesiologia"}
-              </Text>
-            </Pressable>
-          ))}
+                <Text
+                  style={[
+                    styles.filterBtnText,
+                    { color: isSelected ? "#FFFFFF" : colors.muted },
+                  ]}
+                >
+                  {label}
+                </Text>
+              </Pressable>
+            );
+          })}
         </View>
       </View>
 

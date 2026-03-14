@@ -195,7 +195,7 @@ interface FlashcardContextValue {
   totalWrong: number;
   totalNotSure: number;
   totalNotRemember: number;
-  initializeSession: (config: { candidateName: string; area: "all" | "teologia" | "eclesiologia"; cardsPerArea: number }) => void;
+  initializeSession: (config: { candidateName: string; area: "all" | "teologia" | "relacionamento" | "pratica" | "denominacao"; cardsPerArea: number }) => void;
 }
 
 const FlashcardContext = createContext<FlashcardContextValue | null>(null);
@@ -294,17 +294,28 @@ export function FlashcardProvider({ children }: { children: React.ReactNode }) {
   const totalNotRemember = state.cards.reduce((sum, c) => sum + c.notRememberCount, 0);
 
   const initializeSession = useCallback(
-    (config: { candidateName: string; area: "all" | "teologia" | "eclesiologia"; cardsPerArea: number }) => {
+    (config: { candidateName: string; area: "all" | "teologia" | "relacionamento" | "pratica" | "denominacao"; cardsPerArea: number }) => {
       const teologiaCards = state.cards.filter((c) => c.area === "teologia").slice(0, config.cardsPerArea);
-      const eclesiologiaCards = state.cards.filter((c) => c.area === "eclesiologia").slice(0, config.cardsPerArea);
+      const relacionamentoCards = state.cards.filter((c) => c.area === "relacionamento").slice(0, config.cardsPerArea);
+      const praticaCards = state.cards.filter((c) => c.area === "pratica").slice(0, config.cardsPerArea);
+      const denominacaoCards = state.cards.filter((c) => c.area === "denominacao").slice(0, config.cardsPerArea);
       
       let selectedIds: Set<string>;
       if (config.area === "all") {
-        selectedIds = new Set([...teologiaCards.map(c => c.id), ...eclesiologiaCards.map(c => c.id)]);
+        selectedIds = new Set([
+          ...teologiaCards.map(c => c.id),
+          ...relacionamentoCards.map(c => c.id),
+          ...praticaCards.map(c => c.id),
+          ...denominacaoCards.map(c => c.id),
+        ]);
       } else if (config.area === "teologia") {
         selectedIds = new Set(teologiaCards.map(c => c.id));
+      } else if (config.area === "relacionamento") {
+        selectedIds = new Set(relacionamentoCards.map(c => c.id));
+      } else if (config.area === "pratica") {
+        selectedIds = new Set(praticaCards.map(c => c.id));
       } else {
-        selectedIds = new Set(eclesiologiaCards.map(c => c.id));
+        selectedIds = new Set(denominacaoCards.map(c => c.id));
       }
 
       const updated = state.cards.map((c) => ({
