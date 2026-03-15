@@ -333,24 +333,32 @@ export function FlashcardProvider({ children }: { children: React.ReactNode }) {
       
       if (config.area === "all") {
         // Selecionar um total de cardsPerArea cards distribuido entre TODAS as areas
-        const allAreas = Array.from(new Set(state.cards.map(c => c.area)));
-        const cardsPerAreaDistributed = Math.ceil(config.cardsPerArea / allAreas.length);
         selectedIds = new Set();
-        allAreas.forEach(area => {
-          const areaCards = state.cards.filter((c) => c.area === area).slice(0, cardsPerAreaDistributed);
-          areaCards.forEach(c => selectedIds.add(c.id));
-        });
-        // Se ultrapassou o total, remover cards extras
-        if (selectedIds.size > config.cardsPerArea) {
-          let count = 0;
-          const idsToRemove = [];
-          for (const id of selectedIds) {
-            count++;
-            if (count > config.cardsPerArea) {
-              idsToRemove.push(id);
+        let cardsAdded = 0;
+        const allAreas = Array.from(new Set(state.cards.map(c => c.area)));
+        
+        // Tentar distribuir cards entre areas
+        let areaIndex = 0;
+        while (cardsAdded < config.cardsPerArea && allAreas.length > 0) {
+          const area = allAreas[areaIndex % allAreas.length];
+          const areaCards = state.cards.filter((c) => c.area === area && !selectedIds.has(c.id));
+          
+          if (areaCards.length > 0) {
+            selectedIds.add(areaCards[0].id);
+            cardsAdded++;
+          }
+          areaIndex++;
+        }
+        
+        // Se ainda nao atingiu o total, pegar mais cards de qualquer area
+        if (cardsAdded < config.cardsPerArea) {
+          for (const card of state.cards) {
+            if (!selectedIds.has(card.id)) {
+              selectedIds.add(card.id);
+              cardsAdded++;
+              if (cardsAdded >= config.cardsPerArea) break;
             }
           }
-          idsToRemove.forEach(id => selectedIds.delete(id));
         }
       } else if (Array.isArray(config.area)) {
         // Múltiplas áreas selecionadas - usar cardsPerArea
