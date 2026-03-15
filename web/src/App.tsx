@@ -7,6 +7,7 @@ import SetupPage from './pages/SetupPage'
 import StudyPage from './pages/StudyPage'
 import StudyResultPage from './pages/StudyResultPage'
 import StatsPage from './pages/StatsPage'
+import AdminPage from './pages/AdminPage'
 import './App.css'
 
 function App() {
@@ -20,6 +21,7 @@ function App() {
           <Route path="/study" element={<StudyPage />} />
           <Route path="/study-result" element={<StudyResultPage />} />
           <Route path="/stats" element={<StatsPage />} />
+          <Route path="/admin" element={<AdminPage />} />
         </Routes>
       </Router>
     </QueryClientProvider>

@@ -39,6 +39,12 @@ export default function Header() {
           >
             Estatísticas
           </button>
+          <button
+            className={`nav-button ${isActive('/admin') ? 'active' : ''}`}
+            onClick={() => navigate('/admin')}
+          >
+            Admin
+          </button>
         </nav>
       </div>
     </header>
