@@ -290,8 +290,8 @@ export default function AdminPage() {
         </div>
       </div>
 
-      {/* Connection Status */}
-      {isConnected && (
+      {/* Connection Status - Hidden until WebSocket is fully implemented */}
+      {/* {isConnected && (
         <div className="status-banner status-connected">
           <span className="status-icon">✓</span>
           <span>Sincronização em tempo real ativa</span>
@@ -302,7 +302,7 @@ export default function AdminPage() {
           <span className="status-icon">⚠</span>
           <span>Desconectado - mudanças serão sincronizadas quando conectar</span>
         </div>
-      )}
+      )} */}
 
       <div className="admin-container">
         {/* Left Panel - Form */}
