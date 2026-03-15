@@ -8,6 +8,7 @@ import {
   StyleSheet,
   Alert,
   Platform,
+  Dimensions,
 } from "react-native";
 import { ScreenContainer } from "@/components/screen-container";
 import { useColors } from "@/hooks/use-colors";
