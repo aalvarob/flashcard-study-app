@@ -335,7 +335,7 @@ export default function SetupScreen() {
                     selectionMode === "multiple" ? styles.modeButtonTextActive : styles.modeButtonTextInactive,
                   ]}
                 >
-                  Múltiplas
+                  Escolher Áreas
                 </Text>
               </Pressable>
             </View>
