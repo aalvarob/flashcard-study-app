@@ -32,6 +32,7 @@ type FlashcardAction =
   | { type: "INIT"; payload: Flashcard[] }
   | { type: "TOGGLE_CARD"; id: string }
   | { type: "TOGGLE_ALL_CARDS"; enable: boolean }
+  | { type: "TOGGLE_ALL_CARDS_BY_AREA"; enable: boolean; areas: string[] }
   | { type: "MARK_CORRECT"; id: string }
   | { type: "MARK_WRONG"; id: string }
   | { type: "MARK_NOT_SURE"; id: string }
@@ -64,6 +65,15 @@ function reducer(state: FlashcardState, action: FlashcardAction): FlashcardState
 
     case "TOGGLE_ALL_CARDS": {
       const updated = state.cards.map((c) => ({ ...c, enabled: action.enable }));
+      const enabledCards = getEnabledCards(updated);
+      const newIndex = Math.min(state.currentIndex, Math.max(0, enabledCards.length - 1));
+      return { ...state, cards: updated, currentIndex: newIndex, isFlipped: false };
+    }
+
+    case "TOGGLE_ALL_CARDS_BY_AREA": {
+      const updated = state.cards.map((c) =>
+        action.areas.includes(c.area) ? { ...c, enabled: action.enable } : c
+      );
       const enabledCards = getEnabledCards(updated);
       const newIndex = Math.min(state.currentIndex, Math.max(0, enabledCards.length - 1));
       return { ...state, cards: updated, currentIndex: newIndex, isFlipped: false };
@@ -190,6 +200,7 @@ interface FlashcardContextValue {
   currentCard: Flashcard | null;
   toggleCard: (id: string) => void;
   toggleAllCards: (enable: boolean) => void;
+  toggleAllCardsByArea: (enable: boolean, areas: string[]) => void;
   markCorrect: () => void;
   markWrong: () => void;
   markNotSure: () => void;
@@ -262,8 +273,6 @@ export function FlashcardProvider({ children }: { children: React.ReactNode }) {
 
   const toggleCard = useCallback((id: string) => dispatch({ type: "TOGGLE_CARD", id }), []);
 
-  const toggleAllCards = useCallback((enable: boolean) => dispatch({ type: "TOGGLE_ALL_CARDS", enable }), []);
-
   const markCorrect = useCallback(() => {
     if (currentCard) {
       dispatch({ type: "MARK_CORRECT", id: currentCard.id });
@@ -293,6 +302,20 @@ export function FlashcardProvider({ children }: { children: React.ReactNode }) {
   const flipCard = useCallback(() => dispatch({ type: "FLIP_CARD" }), []);
   const resetSession = useCallback(() => dispatch({ type: "RESET_SESSION" }), []);
   const resetAllStats = useCallback(() => dispatch({ type: "RESET_ALL_STATS" }), []);
+
+  const toggleAllCardsByArea = useCallback(
+    (enable: boolean, areas: string[]) => {
+      dispatch({ type: "TOGGLE_ALL_CARDS_BY_AREA", enable, areas });
+    },
+    []
+  );
+
+  const toggleAllCards = useCallback(
+    (enable: boolean) => {
+      dispatch({ type: "TOGGLE_ALL_CARDS", enable });
+    },
+    []
+  );
 
   const getCardsByArea = useCallback(
     (area: FlashcardArea) => state.cards.filter((c) => c.area === area),
@@ -348,6 +371,7 @@ export function FlashcardProvider({ children }: { children: React.ReactNode }) {
         currentCard,
         toggleCard,
         toggleAllCards,
+        toggleAllCardsByArea,
         markCorrect,
         markWrong,
         markNotSure,

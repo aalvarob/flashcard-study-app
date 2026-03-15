@@ -77,3 +77,4 @@
 - [x] Aumentar espaçamento entre botões "Não Sei" e "Não Lembro" e o card
 - [x] Criar opção para ativar cards por área ou todos
 - [x] Mostrar quantidade de cards ativados e desativados na tela de listagem de áreas
+- [x] Modificar "Ativar/Desativar Todos" para funcionar apenas com áreas selecionadas
