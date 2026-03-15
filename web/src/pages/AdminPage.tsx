@@ -52,6 +52,10 @@ export default function AdminPage() {
   const [selectedArea, setSelectedArea] = useState<string>('')
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+  const [currentPage, setCurrentPage] = useState(1)
+  const [itemsPerPage] = useState(5)
+  const [showImporter, setShowImporter] = useState(false)
+  const [showAreaManager, setShowAreaManager] = useState(false)
 
   // Toast notifications
   const toast = useToast()
@@ -84,7 +88,7 @@ export default function AdminPage() {
 
   function handleAddCard() {
     if (!formData.question.trim() || !formData.answer.trim()) {
-      alert('Pergunta e resposta são obrigatórias')
+      toast.showError('Pergunta e resposta são obrigatórias')
       return
     }
 
@@ -126,6 +130,7 @@ export default function AdminPage() {
             toast.showSuccess('Card criado com sucesso!')
             flashcardsQuery.refetch()
             setFormData({ question: '', answer: '', area: AREAS[0] })
+            setCurrentPage(1)
           },
           onError: () => {
             toast.showError('Erro ao criar card')
@@ -181,7 +186,8 @@ export default function AdminPage() {
             // WebSocket broadcast disabled
             if (successCount === importedCards.length) {
               flashcardsQuery.refetch()
-              alert(`${successCount} cards importados com sucesso!`)
+              toast.showSuccess(`${successCount} cards importados com sucesso!`)
+              setShowImporter(false)
             }
           },
         }
@@ -205,10 +211,22 @@ export default function AdminPage() {
     return matchesSearch && matchesArea
   })
 
+  // Pagination
+  const totalPages = Math.ceil(filteredCards.length / itemsPerPage)
+  const startIndex = (currentPage - 1) * itemsPerPage
+  const paginatedCards = filteredCards.slice(startIndex, startIndex + itemsPerPage)
+
+  // Statistics
+  const cardsByArea = areas.map((area) => ({
+    area,
+    count: cards.filter((c) => c.area === area).length,
+  }))
+
   if (loading) {
     return (
       <div className="admin-page">
-        <div style={{ textAlign: 'center', padding: '2rem' }}>
+        <div className="loading-container">
+          <div className="spinner"></div>
           <p>Carregando flashcards...</p>
         </div>
       </div>
@@ -217,167 +235,249 @@ export default function AdminPage() {
 
   return (
     <div className="admin-page">
+      {/* Header */}
+      <div className="admin-header">
+        <div className="header-content">
+          <h1>Gerenciamento de Flashcards</h1>
+          <p className="header-subtitle">Crie, edite e organize seus cards teológicos</p>
+        </div>
+        <div className="header-stats">
+          <div className="stat-card">
+            <span className="stat-number">{cards.length}</span>
+            <span className="stat-label">Total de Cards</span>
+          </div>
+          <div className="stat-card">
+            <span className="stat-number">{areas.length}</span>
+            <span className="stat-label">Áreas</span>
+          </div>
+          <div className="stat-card">
+            <span className="stat-number">{selectedArea ? cardsByArea.find(c => c.area === selectedArea)?.count || 0 : filteredCards.length}</span>
+            <span className="stat-label">Filtrados</span>
+          </div>
+        </div>
+      </div>
+
       {/* Connection Status */}
       {isConnected && (
-        <div style={{
-          backgroundColor: '#4CAF50',
-          color: 'white',
-          padding: '0.75rem',
-          textAlign: 'center',
-          marginBottom: '1rem',
-          borderRadius: '4px',
-          fontSize: '0.9rem'
-        }}>
-          ✓ Sincronização em tempo real ativa
+        <div className="status-banner status-connected">
+          <span className="status-icon">✓</span>
+          <span>Sincronização em tempo real ativa</span>
         </div>
       )}
       {!isConnected && (
-        <div style={{
-          backgroundColor: '#FFC107',
-          color: '#333',
-          padding: '0.75rem',
-          textAlign: 'center',
-          marginBottom: '1rem',
-          borderRadius: '4px',
-          fontSize: '0.9rem'
-        }}>
-          ⚠ Desconectado - mudanças serão sincronizadas quando conectar
+        <div className="status-banner status-disconnected">
+          <span className="status-icon">⚠</span>
+          <span>Desconectado - mudanças serão sincronizadas quando conectar</span>
         </div>
       )}
 
       <div className="admin-container">
-        {/* Form Section */}
-        <div className="admin-form-section">
-          <h2>{editingId ? 'Editar Card' : 'Novo Card'}</h2>
+        {/* Left Panel - Form */}
+        <div className="admin-left-panel">
+          {/* Form Card */}
+          <div className="form-card">
+            <div className="form-header">
+              <h2>{editingId ? '✏️ Editar Card' : '➕ Novo Card'}</h2>
+              {editingId && <span className="editing-badge">Editando</span>}
+            </div>
 
-          <div className="form-group">
-            <label>Pergunta</label>
-            <textarea
-              value={formData.question}
-              onChange={(e) => setFormData({ ...formData, question: e.target.value })}
-              placeholder="Digite a pergunta..."
-              rows={4}
-            />
-          </div>
+            <div className="form-group">
+              <label>Pergunta</label>
+              <textarea
+                value={formData.question}
+                onChange={(e) => setFormData({ ...formData, question: e.target.value })}
+                placeholder="Digite a pergunta..."
+                rows={4}
+                className="form-input"
+              />
+            </div>
 
-          <div className="form-group">
-            <label>Resposta</label>
-            <textarea
-              value={formData.answer}
-              onChange={(e) => setFormData({ ...formData, answer: e.target.value })}
-              placeholder="Digite a resposta..."
-              rows={4}
-            />
-          </div>
+            <div className="form-group">
+              <label>Resposta</label>
+              <textarea
+                value={formData.answer}
+                onChange={(e) => setFormData({ ...formData, answer: e.target.value })}
+                placeholder="Digite a resposta..."
+                rows={4}
+                className="form-input"
+              />
+            </div>
 
-          <div className="form-group">
-            <label>Área Teológica</label>
-            <select
-              value={formData.area}
-              onChange={(e) => setFormData({ ...formData, area: e.target.value })}
-            >
-              {areas.map((area) => (
-                <option key={area} value={area}>
-                  {area}
-                </option>
-              ))}
-            </select>
-          </div>
+            <div className="form-group">
+              <label>Área Teológica</label>
+              <select
+                value={formData.area}
+                onChange={(e) => setFormData({ ...formData, area: e.target.value })}
+                className="form-input"
+              >
+                {areas.map((area) => (
+                  <option key={area} value={area}>
+                    {area}
+                  </option>
+                ))}
+              </select>
+            </div>
 
-          <div className="form-actions">
-            <button onClick={handleAddCard} className="btn-primary" disabled={createMutation.isPending || updateMutation.isPending}>
-              {editingId ? 'Atualizar' : 'Adicionar'}
-            </button>
-            {editingId && (
-              <button onClick={handleCancel} className="btn-secondary">
-                Cancelar
+            <div className="form-actions">
+              <button 
+                onClick={handleAddCard} 
+                className="btn btn-primary"
+                disabled={createMutation.isPending || updateMutation.isPending}
+              >
+                {editingId ? '💾 Atualizar' : '➕ Adicionar'}
               </button>
-            )}
+              {editingId && (
+                <button onClick={handleCancel} className="btn btn-secondary">
+                  ✕ Cancelar
+                </button>
+              )}
+            </div>
+          </div>
+
+          {/* Tools */}
+          <div className="tools-section">
+            <button 
+              onClick={() => setShowImporter(!showImporter)}
+              className="tool-button"
+            >
+              <span className="tool-icon">📄</span>
+              <span>Importar do Word</span>
+            </button>
+            <button 
+              onClick={() => setShowAreaManager(!showAreaManager)}
+              className="tool-button"
+            >
+              <span className="tool-icon">🏷️</span>
+              <span>Gerenciar Áreas</span>
+            </button>
           </div>
 
           {/* Word Importer */}
-          <div style={{ marginTop: '2rem', paddingTop: '2rem', borderTop: '1px solid #e0e0e0' }}>
-            <h3>Importar do Word</h3>
-            <WordImporter onImport={handleImportCards} />
-          </div>
+          {showImporter && (
+            <div className="expandable-section">
+              <h3>Importar Flashcards do Word</h3>
+              <WordImporter onImport={handleImportCards} />
+            </div>
+          )}
 
           {/* Area Manager */}
-          <div style={{ marginTop: '2rem', paddingTop: '2rem', borderTop: '1px solid #e0e0e0' }}>
-            <h3>Gerenciar Áreas</h3>
-            <AreaManager areas={areas} onAreasChange={handleAreasChange} />
-          </div>
+          {showAreaManager && (
+            <div className="expandable-section">
+              <h3>Gerenciar Áreas Teológicas</h3>
+              <AreaManager areas={areas} onAreasChange={handleAreasChange} />
+            </div>
+          )}
         </div>
 
-        {/* Cards List Section */}
-        <div className="admin-cards-section">
-          <h2>Cards ({filteredCards.length})</h2>
+        {/* Right Panel - Cards List */}
+        <div className="admin-right-panel">
+          <div className="cards-header">
+            <h2>📚 Seus Flashcards</h2>
+            <span className="cards-count">{filteredCards.length} card(s)</span>
+          </div>
 
-          <div className="admin-filters">
-            <input
-              type="text"
-              placeholder="Buscar por pergunta ou resposta..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="search-input"
-            />
+          {/* Filters */}
+          <div className="filters-container">
+            <div className="search-box">
+              <input
+                type="text"
+                placeholder="🔍 Buscar pergunta ou resposta..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="search-input"
+              />
+            </div>
 
             <select
               value={selectedArea}
               onChange={(e) => setSelectedArea(e.target.value)}
               className="filter-select"
             >
-              <option value="">Todas as áreas</option>
-              {areas.map((area) => (
-                <option key={area} value={area}>
-                  {area}
+              <option value="">Todas as áreas ({cards.length})</option>
+              {cardsByArea.map((item) => (
+                <option key={item.area} value={item.area}>
+                  {item.area} ({item.count})
                 </option>
               ))}
             </select>
           </div>
 
+          {/* Cards List */}
           <div className="cards-list">
-            {filteredCards.length === 0 ? (
-              <p className="no-cards">Nenhum card encontrado</p>
+            {paginatedCards.length === 0 ? (
+              <div className="empty-state">
+                <div className="empty-icon">📭</div>
+                <p>Nenhum card encontrado</p>
+                <small>Crie um novo card ou ajuste seus filtros</small>
+              </div>
             ) : (
-              filteredCards.map((card) => (
+              paginatedCards.map((card) => (
                 <div key={card.id} className="card-item">
                   <div className="card-header">
-                    <span className="card-area">{card.area}</span>
+                    <span className="card-area-badge">{card.area}</span>
+                    <span className="card-id">#{card.id}</span>
                   </div>
                   <div className="card-content">
-                    <p className="card-question">
-                      <strong>P:</strong> {card.question}
-                    </p>
-                    <p className="card-answer">
-                      <strong>R:</strong> {card.answer}
-                    </p>
+                    <div className="card-question">
+                      <strong>❓ Pergunta:</strong>
+                      <p>{card.question}</p>
+                    </div>
+                    <div className="card-answer">
+                      <strong>✓ Resposta:</strong>
+                      <p>{card.answer}</p>
+                    </div>
                   </div>
                   <div className="card-actions">
                     <button
                       onClick={() => handleEditCard(card)}
-                      className="btn-edit"
+                      className="btn-action btn-edit"
                       disabled={updateMutation.isPending}
+                      title="Editar"
                     >
-                      Editar
+                      ✏️
                     </button>
                     <button
                       onClick={() => handleDeleteCard(card.id)}
-                      className="btn-delete"
+                      className="btn-action btn-delete"
                       disabled={deleteMutation.isPending}
+                      title="Deletar"
                     >
-                      Deletar
+                      🗑️
                     </button>
                   </div>
                 </div>
               ))
             )}
           </div>
+
+          {/* Pagination */}
+          {totalPages > 1 && (
+            <div className="pagination">
+              <button
+                onClick={() => setCurrentPage(Math.max(1, currentPage - 1))}
+                disabled={currentPage === 1}
+                className="pagination-btn"
+              >
+                ← Anterior
+              </button>
+              <span className="pagination-info">
+                Página {currentPage} de {totalPages}
+              </span>
+              <button
+                onClick={() => setCurrentPage(Math.min(totalPages, currentPage + 1))}
+                disabled={currentPage === totalPages}
+                className="pagination-btn"
+              >
+                Próxima →
+              </button>
+            </div>
+          )}
         </div>
       </div>
 
       {error && (
-        <div style={{ color: 'red', padding: '1rem', marginTop: '1rem' }}>
-          {error}
+        <div className="error-banner">
+          <span>❌</span> {error}
         </div>
       )}
     </div>
