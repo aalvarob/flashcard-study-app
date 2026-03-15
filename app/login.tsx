@@ -1,11 +1,10 @@
-import { View, Text, Pressable, ActivityIndicator, Platform } from "react-native";
+import { View, Text, Pressable, ActivityIndicator } from "react-native";
 import { ScreenContainer } from "@/components/screen-container";
 import { useColors } from "@/hooks/use-colors";
 import { useAuth } from "@/hooks/use-auth";
 import { useEffect } from "react";
 import { router } from "expo-router";
-import * as WebBrowser from "expo-web-browser";
-import * as Linking from "expo-linking";
+import { startOAuthLogin } from "@/constants/oauth";
 
 export default function LoginScreen() {
   const colors = useColors();
@@ -20,23 +19,7 @@ export default function LoginScreen() {
 
   const handleLogin = async () => {
     try {
-      if (Platform.OS === "web") {
-        // Web: redirect to OAuth login
-        const redirectUrl = `${window.location.origin}/oauth/callback`;
-        const loginUrl = `${process.env.EXPO_PUBLIC_API_URL || "https://api.manus.im"}/oauth/authorize?redirect_uri=${encodeURIComponent(redirectUrl)}`;
-        window.location.href = loginUrl;
-      } else {
-        // Native: use WebBrowser for OAuth
-        const redirectUrl = Linking.createURL("oauth/callback");
-        const loginUrl = `${process.env.EXPO_PUBLIC_API_URL || "https://api.manus.im"}/oauth/authorize?redirect_uri=${encodeURIComponent(redirectUrl)}`;
-        
-        const result = await WebBrowser.openAuthSessionAsync(loginUrl, redirectUrl);
-        
-        if (result.type === "success") {
-          // OAuth callback will handle token storage
-          router.replace("/(tabs)/setup");
-        }
-      }
+      await startOAuthLogin();
     } catch (error) {
       console.error("Login error:", error);
     }
@@ -79,13 +62,14 @@ export default function LoginScreen() {
 
         <Pressable
           onPress={handleLogin}
-          style={{
+          style={({ pressed }) => ({
             backgroundColor: colors.primary,
             paddingVertical: 14,
             paddingHorizontal: 32,
             borderRadius: 8,
             marginTop: 24,
-          }}
+            opacity: pressed ? 0.8 : 1,
+          })}
         >
           <Text
             style={{
