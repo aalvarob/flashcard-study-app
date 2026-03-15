@@ -337,15 +337,21 @@ export function FlashcardProvider({ children }: { children: React.ReactNode }) {
         let cardsAdded = 0;
         const allAreas = Array.from(new Set(state.cards.map(c => c.area)));
         
-        // Tentar distribuir cards entre areas
+        // Tentar distribuir cards entre areas de forma round-robin
         let areaIndex = 0;
-        while (cardsAdded < config.cardsPerArea && allAreas.length > 0) {
+        let consecutiveEmpty = 0;
+        const maxConsecutiveEmpty = allAreas.length;
+        
+        while (cardsAdded < config.cardsPerArea && consecutiveEmpty < maxConsecutiveEmpty) {
           const area = allAreas[areaIndex % allAreas.length];
           const areaCards = state.cards.filter((c) => c.area === area && !selectedIds.has(c.id));
           
           if (areaCards.length > 0) {
             selectedIds.add(areaCards[0].id);
             cardsAdded++;
+            consecutiveEmpty = 0;
+          } else {
+            consecutiveEmpty++;
           }
           areaIndex++;
         }
