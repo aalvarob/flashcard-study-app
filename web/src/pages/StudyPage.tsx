@@ -289,11 +289,11 @@ export default function StudyPage() {
           <div className="flashcard-inner">
             <div className="flashcard-front">
               <div className="card-area">{currentCard.area}</div>
-              <div className="card-question">{currentCard.question}</div>
+              <div className="study-card-question">{currentCard.question}</div>
               <div className="card-hint">Clique para ver a resposta</div>
             </div>
             <div className="flashcard-back">
-              <div className="card-answer">{currentCard.answer}</div>
+              <div className="study-card-answer">{currentCard.answer}</div>
             </div>
           </div>
         </div>

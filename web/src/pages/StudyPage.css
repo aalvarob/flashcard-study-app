@@ -181,7 +181,7 @@
   font-weight: 600;
 }
 
-.card-question {
+.study-card-question {
   font-size: 3.5rem;
   font-weight: 700;
   line-height: 1.6;
@@ -195,7 +195,7 @@
   max-width: 100%;
 }
 
-.card-answer {
+.study-card-answer {
   font-size: 2.8rem;
   font-weight: 600;
   line-height: 1.7;
@@ -359,11 +359,11 @@
     max-height: 700px;
   }
 
-  .card-question {
+  .study-card-question {
     font-size: 3.5rem;
   }
 
-  .card-answer {
+  .study-card-answer {
     font-size: 2.8rem;
   }
 
