@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import WordImporter from '../components/WordImporter'
 import AreaManager from '../components/AreaManager'
+import { migrateCardsAreas } from '../utils/migrationUtils'
 import './AdminPage.css'
 
 interface Card {
@@ -11,33 +12,32 @@ interface Card {
 }
 
 const AREAS = [
-  'Direito Constitucional',
-  'Direito Administrativo',
-  'Direito Civil',
-  'Direito Processual Civil',
-  'Direito Penal',
-  'Direito Processual Penal',
-  'Direito Tributário',
-  'Direito Comercial',
-  'Direito do Trabalho',
-  'Direito Previdenciário',
-  'Direito Ambiental',
-  'Direito Internacional',
-  'Direito Eleitoral',
-  'Direito Notarial e Registral',
-  'Direito de Família',
-  'Direito das Sucessões',
-  'Direito Imobiliário',
-  'Direito do Consumidor',
-  'Direito Autoral',
-  'Direito de Propriedade Intelectual',
-  'Direito Bancário',
-  'Direito Securitário',
-  'Direito Societário',
-  'Direito Contratual',
-  'Direito da Concorrência',
-  'Direito Regulatório',
-  'Direito Público',
+  'Escrituras Sagradas',
+  'Deus Pai',
+  'Deus Filho',
+  'Deus Espírito Santo',
+  'Homem',
+  'Pecado',
+  'Salvação',
+  'Eleição',
+  'Reino de Deus',
+  'Igreja',
+  'Dia do Senhor',
+  'Ministério da Palavra',
+  'Liberdade Religiosa',
+  'Morte',
+  'Justos e Ímpios',
+  'Anjos',
+  'Amor ao Próximo e Ética',
+  'Batismo e Ceia',
+  'Mordomia',
+  'Evangelismo e Missões',
+  'Educação Religiosa',
+  'Ordem Social',
+  'Família',
+  'Princípios Batistas',
+  'História dos Batistas',
+  'Estrutura e Funcionamento CBB',
 ]
 
 export default function AdminPage() {
@@ -50,7 +50,18 @@ export default function AdminPage() {
 
   useEffect(() => {
     // Load cards from localStorage
-    const savedCards = JSON.parse(localStorage.getItem('flashcards') || '[]')
+    let savedCards = JSON.parse(localStorage.getItem('flashcards') || '[]')
+    
+    // Verificar se eh necessario migrar areas
+    const needsMigration = savedCards.some((card: Card) => {
+      return !AREAS.includes(card.area) && card.area.includes('Direito')
+    })
+    
+    if (needsMigration) {
+      savedCards = migrateCardsAreas(savedCards)
+      localStorage.setItem('flashcards', JSON.stringify(savedCards))
+    }
+    
     setCards(savedCards)
     // Load areas from localStorage
     const savedAreas = JSON.parse(localStorage.getItem('areas') || 'null')
