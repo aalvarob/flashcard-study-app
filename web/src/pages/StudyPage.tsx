@@ -1,6 +1,6 @@
 import { useState, useEffect, useMemo } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { FLASHCARDS_DATA, type FlashcardArea } from '../../../data/flashcards'
+import { useFlashcardsFromAPI, type FlashcardArea } from '../hooks/useFlashcardsFromAPI'
 import './StudyPage.css'
 
 interface StudyConfig {
@@ -10,7 +10,7 @@ interface StudyConfig {
 }
 
 interface Card {
-  id: string
+  id: number | string
   question: string
   answer: string
   area: FlashcardArea
@@ -19,6 +19,7 @@ interface Card {
 
 export default function StudyPage() {
   const navigate = useNavigate()
+  const { flashcards, loading: flashcardsLoading, error: flashcardsError } = useFlashcardsFromAPI()
   const [config, setConfig] = useState<StudyConfig | null>(null)
   const [cards, setCards] = useState<Card[]>([])
   const [currentIndex, setCurrentIndex] = useState(0)
@@ -31,20 +32,27 @@ export default function StudyPage() {
     if (saved) {
       const parsedConfig = JSON.parse(saved) as StudyConfig
       setConfig(parsedConfig)
-      initializeCards(parsedConfig)
     } else {
       navigate('/setup')
     }
   }, [navigate])
 
-  function initializeCards(config: StudyConfig) {
-    let filtered = FLASHCARDS_DATA.filter(card => config.areas.includes(card.area))
+  // Inicializar cards quando flashcards e config estiverem prontos
+  useEffect(() => {
+    if (config && flashcards.length > 0 && !flashcardsLoading) {
+      initializeCards(config, flashcards)
+    }
+  }, [config, flashcards, flashcardsLoading])
+
+  function initializeCards(config: StudyConfig, allFlashcards: typeof flashcards) {
+    // Filtrar cards pelas áreas selecionadas
+    let filtered = allFlashcards.filter(card => config.areas.includes(card.area as FlashcardArea))
 
     // Distribuir cards por área
     if (config.mode === 'all') {
       const cardsPerArea = config.cardsPerArea
-      const selectedCards: typeof FLASHCARDS_DATA = []
-      const areaMap: Record<string, typeof FLASHCARDS_DATA> = {}
+      const selectedCards: typeof allFlashcards = []
+      const areaMap: Record<string, typeof allFlashcards> = {}
 
       // Agrupar cards por área
       filtered.forEach(card => {
@@ -65,8 +73,8 @@ export default function StudyPage() {
       filtered = selectedCards.slice(0, cardsPerArea * config.areas.length)
     } else {
       // Modo múltiplo: cardsPerArea por área selecionada
-      const selectedCards: typeof FLASHCARDS_DATA = []
-      const areaMap: Record<string, typeof FLASHCARDS_DATA> = {}
+      const selectedCards: typeof allFlashcards = []
+      const areaMap: Record<string, typeof allFlashcards> = {}
 
       filtered.forEach(card => {
         if (!areaMap[card.area]) {
@@ -161,8 +169,23 @@ export default function StudyPage() {
     navigate('/study-result', { state: { session } })
   }
 
-  if (!config || cards.length === 0) {
-    return <div className="loading">Carregando...</div>
+  // Estados de carregamento
+  if (flashcardsLoading || !config || cards.length === 0) {
+    return (
+      <div className="loading">
+        <div className="spinner"></div>
+        <p>Carregando flashcards...</p>
+      </div>
+    )
+  }
+
+  if (flashcardsError) {
+    return (
+      <div className="error-state">
+        <p>Erro ao carregar flashcards: {flashcardsError}</p>
+        <button onClick={() => navigate('/setup')}>Voltar ao Setup</button>
+      </div>
+    )
   }
 
   const currentCard = cards[currentIndex]
@@ -199,7 +222,7 @@ export default function StudyPage() {
         >
           <div className="flashcard-inner">
             <div className="flashcard-front">
-              <div className="card-area">{currentCard.area.replace(/_/g, ' ')}</div>
+              <div className="card-area">{currentCard.area}</div>
               <div className="card-question">{currentCard.question}</div>
               <div className="card-hint">Clique para ver a resposta</div>
             </div>
