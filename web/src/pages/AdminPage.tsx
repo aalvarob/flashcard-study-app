@@ -3,6 +3,7 @@ import WordImporter from '../components/WordImporter'
 import AreaManager from '../components/AreaManager'
 import { migrateCardsAreas } from '../utils/migrationUtils'
 import { trpc } from '../lib/trpc-client'
+import { useWebSocket, type FlashcardEvent } from '../hooks/useWebSocket'
 import './AdminPage.css'
 
 interface Card {
@@ -51,6 +52,28 @@ export default function AdminPage() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
 
+  // WebSocket connection for real-time sync
+  const { isConnected, send } = useWebSocket((event: FlashcardEvent) => {
+    // Handle incoming WebSocket events from other clients
+    if (event.type === 'create' && event.flashcard) {
+      setCards(prev => {
+        const cardId = typeof event.flashcard!.id === 'string' ? parseInt(event.flashcard!.id) : event.flashcard!.id
+        const exists = prev.some(c => c.id === cardId)
+        if (!exists) {
+          const { id: _, ...rest } = event.flashcard!
+          return [...prev, { id: cardId as number, ...rest }]
+        }
+        return prev
+      })
+    } else if (event.type === 'update' && event.flashcard) {
+      const cardId = typeof event.flashcard!.id === 'string' ? parseInt(event.flashcard!.id) : event.flashcard!.id
+      const { id: _, ...rest } = event.flashcard!
+      setCards(prev => prev.map(c => c.id === cardId ? { ...c, ...rest } : c))
+    } else if (event.type === 'delete' && event.id) {
+      setCards(prev => prev.filter(c => c.id !== event.id))
+    }
+  })
+
   // tRPC queries and mutations
   const flashcardsQuery = trpc.flashcards.list.useQuery()
   const createMutation = trpc.flashcards.create.useMutation()
@@ -90,6 +113,12 @@ export default function AdminPage() {
         },
         {
           onSuccess: () => {
+            // Broadcast update event via WebSocket
+            send({
+              type: 'update',
+              flashcard: { id: editingId, ...formData },
+              timestamp: Date.now(),
+            })
             flashcardsQuery.refetch()
             setEditingId(null)
             setFormData({ question: '', answer: '', area: AREAS[0] })
@@ -109,6 +138,12 @@ export default function AdminPage() {
         },
         {
           onSuccess: () => {
+            // Broadcast create event via WebSocket
+            send({
+              type: 'create',
+              flashcard: { id: Date.now(), ...formData },
+              timestamp: Date.now(),
+            })
             flashcardsQuery.refetch()
             setFormData({ question: '', answer: '', area: AREAS[0] })
           },
@@ -132,6 +167,12 @@ export default function AdminPage() {
         { id },
         {
           onSuccess: () => {
+            // Broadcast delete event via WebSocket
+            send({
+              type: 'delete',
+              id,
+              timestamp: Date.now(),
+            })
             flashcardsQuery.refetch()
           },
           onError: () => {
@@ -159,6 +200,12 @@ export default function AdminPage() {
         {
           onSuccess: () => {
             successCount++
+            // Broadcast create event via WebSocket
+            send({
+              type: 'create',
+              flashcard: { id: Date.now() + successCount, ...card },
+              timestamp: Date.now(),
+            })
             if (successCount === importedCards.length) {
               flashcardsQuery.refetch()
               alert(`${successCount} cards importados com sucesso!`)
@@ -197,6 +244,34 @@ export default function AdminPage() {
 
   return (
     <div className="admin-page">
+      {/* Connection Status */}
+      {isConnected && (
+        <div style={{
+          backgroundColor: '#4CAF50',
+          color: 'white',
+          padding: '0.75rem',
+          textAlign: 'center',
+          marginBottom: '1rem',
+          borderRadius: '4px',
+          fontSize: '0.9rem'
+        }}>
+          ✓ Sincronização em tempo real ativa
+        </div>
+      )}
+      {!isConnected && (
+        <div style={{
+          backgroundColor: '#FFC107',
+          color: '#333',
+          padding: '0.75rem',
+          textAlign: 'center',
+          marginBottom: '1rem',
+          borderRadius: '4px',
+          fontSize: '0.9rem'
+        }}>
+          ⚠ Desconectado - mudanças serão sincronizadas quando conectar
+        </div>
+      )}
+
       <div className="admin-container">
         {/* Form Section */}
         <div className="admin-form-section">
