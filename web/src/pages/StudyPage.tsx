@@ -300,18 +300,25 @@ export default function StudyPage() {
             ← Anterior
           </button>
           <div className="response-buttons">
-            <button className="response-button dont-know" onClick={handleDontKnow}>
-              Não Sei
-            </button>
-            <button className="response-button dont-remember" onClick={handleDontRemember}>
-              Não Lembro
-            </button>
-            <button className="response-button incorrect" onClick={handleIncorrect}>
-              Errei
-            </button>
-            <button className="response-button correct" onClick={handleCorrect}>
-              Acertei
-            </button>
+            {!isFlipped ? (
+              <>
+                <button className="response-button dont-know" onClick={handleDontKnow}>
+                  Não Sei
+                </button>
+                <button className="response-button dont-remember" onClick={handleDontRemember}>
+                  Não Lembro
+                </button>
+              </>
+            ) : (
+              <>
+                <button className="response-button incorrect" onClick={handleIncorrect}>
+                  Errei
+                </button>
+                <button className="response-button correct" onClick={handleCorrect}>
+                  Acertei
+                </button>
+              </>
+            )}
           </div>
           <button
             className="control-button next"
