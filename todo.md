@@ -78,4 +78,4 @@
 - [x] Criar opção para ativar cards por área ou todos
 - [x] Mostrar quantidade de cards ativados e desativados na tela de listagem de áreas
 - [x] Modificar "Ativar/Desativar Todos" para funcionar apenas com áreas selecionadas
-- [x] Alterar rótulos de modo de seleção para "Área da Teologia" e "Escolher"
+- [x] Alterar rótulo "Modo de Seleção" para "Área da Teologia"

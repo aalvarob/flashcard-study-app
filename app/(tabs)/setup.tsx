@@ -299,9 +299,9 @@ export default function SetupScreen() {
             />
           </View>
 
-          {/* Modo de Seleção */}
+          {/* Área da Teologia */}
           <View style={styles.section}>
-            <Text style={styles.sectionTitle}>Modo de Seleção</Text>
+            <Text style={styles.sectionTitle}>Área da Teologia</Text>
             <View style={styles.modeToggle}>
               <Pressable
                 style={[
@@ -319,7 +319,7 @@ export default function SetupScreen() {
                     selectionMode === "single" ? styles.modeButtonTextActive : styles.modeButtonTextInactive,
                   ]}
                 >
-                  Área da Teologia
+                  Todas
                 </Text>
               </Pressable>
               <Pressable
@@ -335,7 +335,7 @@ export default function SetupScreen() {
                     selectionMode === "multiple" ? styles.modeButtonTextActive : styles.modeButtonTextInactive,
                   ]}
                 >
-                  Escolher
+                  Múltiplas
                 </Text>
               </Pressable>
             </View>
