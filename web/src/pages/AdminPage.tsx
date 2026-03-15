@@ -54,7 +54,7 @@ export default function AdminPage() {
     
     // Verificar se eh necessario migrar areas
     const needsMigration = savedCards.some((card: Card) => {
-      return !AREAS.includes(card.area) && card.area.includes('Direito')
+      return card.area && !AREAS.includes(card.area) && card.area.includes('Direito')
     })
     
     if (needsMigration) {
