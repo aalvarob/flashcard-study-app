@@ -124,11 +124,12 @@
 /* Flashcard */
 .flashcard {
   width: 100%;
-  max-width: 600px;
-  height: 260px;
+  max-width: 95%;
+  height: 65vh;
   cursor: pointer;
   perspective: 1000px;
   flex-shrink: 0;
+  max-height: 500px;
 }
 
 .flashcard-inner {
@@ -153,7 +154,7 @@
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  padding: 1.2rem;
+  padding: 2.5rem 2rem;
   border-radius: 1rem;
   text-align: center;
 }
@@ -172,25 +173,33 @@
 }
 
 .card-area {
-  font-size: 0.7rem;
+  font-size: 0.9rem;
   opacity: 0.8;
-  margin-bottom: 0.5rem;
+  margin-bottom: 1rem;
   text-transform: uppercase;
   letter-spacing: 0.5px;
   font-weight: 600;
 }
 
 .card-question {
-  font-size: 1.1rem;
+  font-size: 1.8rem;
   font-weight: 600;
-  line-height: 1.3;
-  margin-bottom: 0.5rem;
+  line-height: 1.4;
+  margin-bottom: 1.5rem;
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .card-answer {
-  font-size: 1rem;
+  font-size: 1.4rem;
   font-weight: 500;
-  line-height: 1.4;
+  line-height: 1.5;
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .card-hint {
