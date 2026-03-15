@@ -1,0 +1,40 @@
+import { useNavigate, useLocation } from 'react-router-dom'
+import './Header.css'
+
+export default function Header() {
+  const navigate = useNavigate()
+  const location = useLocation()
+
+  const isActive = (path: string) => location.pathname === path
+
+  return (
+    <header className="header">
+      <div className="header-container">
+        <div className="header-logo">
+          <h1>Simulado Concílio</h1>
+        </div>
+        
+        <nav className="header-nav">
+          <button
+            className={`nav-button ${isActive('/setup') ? 'active' : ''}`}
+            onClick={() => navigate('/setup')}
+          >
+            Setup
+          </button>
+          <button
+            className={`nav-button ${isActive('/study') ? 'active' : ''}`}
+            onClick={() => navigate('/study')}
+          >
+            Estudar
+          </button>
+          <button
+            className={`nav-button ${isActive('/stats') ? 'active' : ''}`}
+            onClick={() => navigate('/stats')}
+          >
+            Estatísticas
+          </button>
+        </nav>
+      </div>
+    </header>
+  )
+}
