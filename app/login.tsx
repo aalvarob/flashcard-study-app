@@ -8,14 +8,19 @@ import { startOAuthLogin } from "@/constants/oauth";
 
 export default function LoginScreen() {
   const colors = useColors();
-  const { isAuthenticated, loading } = useAuth({ autoFetch: true });
+  const { isAuthenticated, loading, refresh } = useAuth({ autoFetch: false });
+
+  // Check authentication once on mount
+  useEffect(() => {
+    refresh?.();
+  }, [refresh]);
 
   // Redirect to tabs if already authenticated
   useEffect(() => {
     if (!loading && isAuthenticated) {
       router.replace("/(tabs)/setup");
     }
-  }, [isAuthenticated, loading]);
+  }, [isAuthenticated, loading, refresh]);
 
   const handleLogin = async () => {
     try {
