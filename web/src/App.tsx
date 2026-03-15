@@ -2,6 +2,7 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-d
 import { QueryClientProvider } from '@tanstack/react-query'
 import { queryClient } from './lib/query-client'
 import Header from './components/Header'
+import HomePage from './pages/HomePage'
 import SetupPage from './pages/SetupPage'
 import StudyPage from './pages/StudyPage'
 import StudyResultPage from './pages/StudyResultPage'
@@ -14,11 +15,11 @@ function App() {
       <Router>
         <Header />
         <Routes>
+          <Route path="/" element={<HomePage />} />
           <Route path="/setup" element={<SetupPage />} />
           <Route path="/study" element={<StudyPage />} />
           <Route path="/study-result" element={<StudyResultPage />} />
           <Route path="/stats" element={<StatsPage />} />
-          <Route path="/" element={<Navigate to="/setup" replace />} />
         </Routes>
       </Router>
     </QueryClientProvider>

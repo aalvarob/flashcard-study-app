@@ -10,11 +10,17 @@ export default function Header() {
   return (
     <header className="header">
       <div className="header-container">
-        <div className="header-logo">
+        <div className="header-logo" onClick={() => navigate('/')} style={{ cursor: 'pointer' }}>
           <h1>Simulado Concílio</h1>
         </div>
         
         <nav className="header-nav">
+          <button
+            className={`nav-button ${isActive('/') ? 'active' : ''}`}
+            onClick={() => navigate('/')}
+          >
+            Home
+          </button>
           <button
             className={`nav-button ${isActive('/setup') ? 'active' : ''}`}
             onClick={() => navigate('/setup')}
