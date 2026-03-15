@@ -77,6 +77,11 @@ export const appRouter = router({
       .query(async ({ input }) => {
         return db.getFlashcardById(input.id);
       }),
+
+    // Fix area mapping (temporary endpoint)
+    fixAreas: publicProcedure.mutation(async () => {
+      return db.fixAreaMapping();
+    }),
   }),
 });
 

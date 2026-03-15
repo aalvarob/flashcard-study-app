@@ -136,3 +136,52 @@ export async function getFlashcardById(id: number) {
 }
 
 // TODO: add feature queries here as your schema grows.
+
+
+// Mapeamento de IDs de áreas (snake_case) para nomes reais (Title Case)
+const areaMapping: Record<string, string> = {
+  'escrituras_sagradas': 'Escrituras Sagradas',
+  'deus_pai': 'Deus Pai',
+  'deus_filho': 'Deus Filho',
+  'deus_espirito_santo': 'Deus Espírito Santo',
+  'homem': 'Homem',
+  'pecado': 'Pecado',
+  'salvacao': 'Salvação',
+  'eleicao': 'Eleição',
+  'reino_de_deus': 'Reino de Deus',
+  'igreja': 'Igreja',
+  'dia_do_senhor': 'Dia do Senhor',
+  'ministerio_da_palavra': 'Ministério da Palavra',
+  'liberdade_religiosa': 'Liberdade Religiosa',
+  'morte': 'Morte',
+  'justos_e_impios': 'Justos e Ímpios',
+  'anjos': 'Anjos',
+  'amor_ao_proximo_e_etica': 'Amor ao Próximo e Ética',
+  'batismo_e_ceia': 'Batismo e Ceia',
+  'mordomia': 'Mordomia',
+  'evangelismo_e_missoes': 'Evangelismo e Missões',
+  'educacao_religiosa': 'Educação Religiosa',
+  'ordem_social': 'Ordem Social',
+  'familia': 'Família',
+  'principios_batistas': 'Princípios Batistas',
+  'historia_dos_batistas': 'História dos Batistas',
+  'estrutura_e_funcionamento_cbb': 'Estrutura e Funcionamento CBB',
+};
+
+export async function fixAreaMapping() {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+
+  let updated = 0;
+  const allFlashcards = await db.select().from(flashcards);
+  
+  for (const card of allFlashcards) {
+    const correctArea = areaMapping[card.area];
+    if (correctArea && correctArea !== card.area) {
+      await db.update(flashcards).set({ area: correctArea }).where(eq(flashcards.id, card.id));
+      updated++;
+    }
+  }
+  
+  return { updated, total: allFlashcards.length };
+}
