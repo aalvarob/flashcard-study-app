@@ -18,12 +18,8 @@ export default function TabLayout() {
     refresh?.();
   }, [refresh]);
 
-  // Redirect to login if not authenticated
-  useEffect(() => {
-    if (!loading && !isAuthenticated) {
-      router.replace("/login");
-    }
-  }, [isAuthenticated, loading]);
+  // Nota: Verificação de autenticação removida para permitir acesso sem login
+  // Em produção, adicionar verificação de permissão de admin
   const bottomPadding = Platform.OS === "web" ? 12 : Math.max(insets.bottom, 8);
   const tabBarHeight = 56 + bottomPadding;
 
