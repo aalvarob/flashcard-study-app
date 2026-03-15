@@ -330,21 +330,26 @@ export function FlashcardProvider({ children }: { children: React.ReactNode }) {
   const initializeSession = useCallback(
     (config: { candidateName: string; area: "all" | FlashcardArea | FlashcardArea[]; cardsPerArea: number }) => {
       let selectedIds: Set<string>;
+      console.log("[initializeSession] Config:", config);
       
       if (config.area === "all") {
         // Selecionar TODOS os cards quando "Todos" é selecionado
         selectedIds = new Set(state.cards.map(c => c.id));
+        console.log("[initializeSession] Modo 'Todos' - Cards selecionados:", selectedIds.size);
       } else if (Array.isArray(config.area)) {
         // Múltiplas áreas selecionadas - usar cardsPerArea
         selectedIds = new Set();
         config.area.forEach(area => {
           const areaCards = state.cards.filter((c) => c.area === area).slice(0, config.cardsPerArea);
+          console.log(`[initializeSession] Área ${area} - Cards encontrados: ${areaCards.length}`);
           areaCards.forEach(c => selectedIds.add(c.id));
         });
+        console.log("[initializeSession] Modo 'Múltiplas' - Total de cards selecionados:", selectedIds.size);
       } else {
         // Uma única área - usar cardsPerArea
         const areaCards = state.cards.filter((c) => c.area === config.area).slice(0, config.cardsPerArea);
         selectedIds = new Set(areaCards.map(c => c.id));
+        console.log("[initializeSession] Modo 'Uma área' - Cards selecionados:", selectedIds.size);
       }
 
       const updated = state.cards.map((c) => ({
