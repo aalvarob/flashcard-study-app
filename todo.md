@@ -79,3 +79,28 @@
 - [x] Mostrar quantidade de cards ativados e desativados na tela de listagem de áreas
 - [x] Modificar "Ativar/Desativar Todos" para funcionar apenas com áreas selecionadas
 - [x] Alterar rótulo "Modo de Seleção" para "Área da Teologia"
+
+
+## Novas Funcionalidades em Desenvolvimento
+
+### Modo Offline
+- [x] Criar hook `useOfflineMode` para detectar conexão
+- [x] Criar fila de sincronização para sessões offline
+- [x] Adicionar indicador visual de status de conexão
+- [x] Sincronizar dados quando reconectar
+- [ ] Implementar cache com IndexedDB (futuro)
+
+### Algoritmo SRS (Spaced Repetition System)
+- [x] Criar modelo de dados para rastreamento SRS
+- [x] Implementar cálculo de próxima revisão baseado em acertos/erros
+- [x] Criar fila de priorização de cards
+- [ ] Adicionar opção de "Revisão Inteligente" no setup (futuro)
+- [ ] Integrar com página de estudo (futuro)
+
+### Estatísticas Detalhadas
+- [x] Criar componente de gráficos com Recharts
+- [x] Criar gráfico de progresso por área
+- [x] Criar gráfico de tempo de estudo
+- [x] Criar gráfico de evolução de acertos
+- [x] Adicionar filtros por período (7 dias, 30 dias, tudo)
+- [ ] Integrar com página de estatísticas (futuro)
