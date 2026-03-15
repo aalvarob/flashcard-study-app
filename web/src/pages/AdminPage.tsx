@@ -56,30 +56,9 @@ export default function AdminPage() {
   // Toast notifications
   const toast = useToast()
 
-  // WebSocket connection for real-time sync
-  const { isConnected, send } = useWebSocket((event: FlashcardEvent) => {
-    // Handle incoming WebSocket events from other clients
-    if (event.type === 'create' && event.flashcard) {
-      setCards(prev => {
-        const cardId = typeof event.flashcard!.id === 'string' ? parseInt(event.flashcard!.id) : event.flashcard!.id
-        const exists = prev.some(c => c.id === cardId)
-        if (!exists) {
-          const { id: _, ...rest } = event.flashcard!
-          toast.showInfo(`Novo card criado: ${rest.question?.substring(0, 50)}...`)
-          return [...prev, { id: cardId as number, ...rest }]
-        }
-        return prev
-      })
-    } else if (event.type === 'update' && event.flashcard) {
-      const cardId = typeof event.flashcard!.id === 'string' ? parseInt(event.flashcard!.id) : event.flashcard!.id
-      const { id: _, ...rest } = event.flashcard!
-      toast.showInfo(`Card atualizado: ${rest.question?.substring(0, 50)}...`)
-      setCards(prev => prev.map(c => c.id === cardId ? { ...c, ...rest } : c))
-    } else if (event.type === 'delete' && event.id) {
-      toast.showWarning(`Card deletado`)
-      setCards(prev => prev.filter(c => c.id !== event.id))
-    }
-  })
+  // WebSocket connection for real-time sync (disabled until backend is ready)
+  const isConnected = false
+  const send = () => {} // Dummy function
 
   // tRPC queries and mutations
   const flashcardsQuery = trpc.flashcards.list.useQuery()
@@ -121,11 +100,7 @@ export default function AdminPage() {
         {
           onSuccess: () => {
             // Broadcast update event via WebSocket
-            send({
-              type: 'update',
-              flashcard: { id: editingId, ...formData },
-              timestamp: Date.now(),
-            })
+            // WebSocket broadcast disabled
             toast.showSuccess('Card atualizado com sucesso!')
             flashcardsQuery.refetch()
             setEditingId(null)
@@ -147,11 +122,7 @@ export default function AdminPage() {
         {
           onSuccess: () => {
             // Broadcast create event via WebSocket
-            send({
-              type: 'create',
-              flashcard: { id: Date.now(), ...formData },
-              timestamp: Date.now(),
-            })
+            // WebSocket broadcast disabled
             toast.showSuccess('Card criado com sucesso!')
             flashcardsQuery.refetch()
             setFormData({ question: '', answer: '', area: AREAS[0] })
@@ -177,11 +148,7 @@ export default function AdminPage() {
         {
           onSuccess: () => {
             // Broadcast delete event via WebSocket
-            send({
-              type: 'delete',
-              id,
-              timestamp: Date.now(),
-            })
+            // WebSocket broadcast disabled
             toast.showSuccess('Card deletado com sucesso!')
             flashcardsQuery.refetch()
           },
@@ -211,11 +178,7 @@ export default function AdminPage() {
           onSuccess: () => {
             successCount++
             // Broadcast create event via WebSocket
-            send({
-              type: 'create',
-              flashcard: { id: Date.now() + successCount, ...card },
-              timestamp: Date.now(),
-            })
+            // WebSocket broadcast disabled
             if (successCount === importedCards.length) {
               flashcardsQuery.refetch()
               alert(`${successCount} cards importados com sucesso!`)

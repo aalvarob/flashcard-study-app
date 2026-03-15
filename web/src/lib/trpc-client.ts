@@ -6,12 +6,13 @@ import type { AppRouter } from '../../../server/routers'
 export const trpc = createTRPCReact<AppRouter>()
 
 export function createTRPCClient() {
-  const apiUrl = (import.meta as any).env.VITE_API_URL || 'http://localhost:3000'
+  // Use relative URL for API calls (proxied by Vite dev server)
+  const apiUrl = '/api'
   
   return trpc.createClient({
     links: [
       httpBatchLink({
-        url: `${apiUrl}/api/trpc`,
+        url: `${apiUrl}/trpc`,
         transformer: superjson,
         fetch(url, options) {
           return fetch(url, {
