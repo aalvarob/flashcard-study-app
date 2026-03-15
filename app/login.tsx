@@ -35,9 +35,13 @@ export default function LoginScreen() {
       if (Platform.OS === "web") {
         // On web, use window.location to trigger redirect with cookie
         const apiBaseUrl = getApiBaseUrl();
-        const redirectUrl = window.location.origin;
+        // Get the current location but replace the port from 3000 to 8081
+        const currentUrl = window.location.href;
+        const redirectUrl = currentUrl.replace(/3000-/, "8081-").split("?")[0].split("#")[0];
         const devLoginUrl = `${apiBaseUrl}/api/dev/login?redirect=${encodeURIComponent(redirectUrl)}`;
-        console.log("[DevLogin] Redirecting to:", devLoginUrl);
+        console.log("[DevLogin] Current URL:", currentUrl);
+        console.log("[DevLogin] Redirect URL:", redirectUrl);
+        console.log("[DevLogin] Dev Login URL:", devLoginUrl);
         window.location.href = devLoginUrl;
       } else {
         // On native, open browser for dev login
