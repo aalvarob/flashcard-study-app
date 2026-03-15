@@ -45,3 +45,47 @@
 .login-button:active {
   opacity: 0.8;
 }
+
+.login-button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.dev-section {
+  margin-top: 2rem;
+  padding-top: 2rem;
+  border-top: 1px solid var(--color-border);
+}
+
+.dev-label {
+  font-size: 0.85rem;
+  color: var(--color-muted);
+  margin-bottom: 0.75rem;
+  font-weight: 500;
+}
+
+.dev-login-button {
+  width: 100%;
+  padding: 0.75rem 1.5rem;
+  background-color: #667eea;
+  color: white;
+  border-radius: 0.5rem;
+  font-size: 0.95rem;
+  font-weight: 600;
+  transition: opacity 0.2s;
+  border: none;
+  cursor: pointer;
+}
+
+.dev-login-button:hover {
+  opacity: 0.9;
+}
+
+.dev-login-button:active {
+  opacity: 0.8;
+}
+
+.dev-login-button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
