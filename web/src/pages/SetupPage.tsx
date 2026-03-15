@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react'
+import { useState, useEffect, useMemo } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { FLASHCARDS_DATA, type FlashcardArea } from '../../../data/flashcards'
 import './SetupPage.css'
@@ -39,6 +39,24 @@ export default function SetupPage() {
   const [selectionMode, setSelectionMode] = useState<SelectionMode>('all')
   const [selectedAreas, setSelectedAreas] = useState<Set<FlashcardArea>>(new Set())
   const [cardsPerArea, setCardsPerArea] = useState(10)
+  
+  // Limpar localStorage antigo ao carregar a página
+  useEffect(() => {
+    const stored = localStorage.getItem('studyConfig')
+    if (stored) {
+      try {
+        const config = JSON.parse(stored)
+        console.log('[SetupPage] Config anterior no localStorage:', config)
+        // Se as áreas estão em snake_case, limpar para forçar novo setup
+        if (config.areas && config.areas.some((area: string) => area.includes('_'))) {
+          console.log('[SetupPage] Limpando config antigo com IDs em snake_case')
+          localStorage.removeItem('studyConfig')
+        }
+      } catch (e) {
+        console.error('[SetupPage] Erro ao ler config anterior:', e)
+      }
+    }
+  }, [])
 
   const cardsByArea = useMemo(() => {
     const counts: Record<FlashcardArea, number> = {} as Record<FlashcardArea, number>
