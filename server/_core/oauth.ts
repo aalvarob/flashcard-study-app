@@ -173,7 +173,55 @@ export function registerOAuthRoutes(app: Express) {
   });
 
   // Development endpoint: Login without 2FA for testing
-  // Usage: POST /api/dev/login with { email: "test@example.com", name: "Test User" }
+  // Usage: GET /api/dev/login?redirect=URL for web redirect flow (sets cookie and redirects)
+  // Usage: POST /api/dev/login with { email: "test@example.com", name: "Test User" } for API flow
+  app.get("/api/dev/login", async (req: Request, res: Response) => {
+    if (process.env.NODE_ENV === "production") {
+      res.status(403).json({ error: "Dev endpoint not available in production" });
+      return;
+    }
+
+    try {
+      const redirect = getQueryParam(req, "redirect");
+      const email = "test@example.com";
+      const name = "Test User";
+
+      // Create a mock openId based on email
+      const openId = `dev-${email.replace(/[^a-z0-9]/gi, "-")}`;
+
+      // Sync user to database
+      const user = await syncUser({
+        openId,
+        name: name || email.split("@")[0],
+        email,
+        loginMethod: "dev",
+      });
+
+      // Create session token
+      const sessionToken = await sdk.createSessionToken(openId, {
+        name: user.name || "",
+        expiresInMs: ONE_YEAR_MS,
+      });
+
+      // Set cookie
+      const cookieOptions = getSessionCookieOptions(req);
+      res.cookie(COOKIE_NAME, sessionToken, { ...cookieOptions, maxAge: ONE_YEAR_MS });
+
+      // Redirect to frontend if redirect URL provided
+      if (redirect) {
+        res.redirect(302, redirect);
+      } else {
+        res.json({
+          app_session_id: sessionToken,
+          user: buildUserResponse(user),
+        });
+      }
+    } catch (error) {
+      console.error("[Dev] Login failed:", error);
+      res.status(500).json({ error: "Dev login failed" });
+    }
+  });
+
   app.post("/api/dev/login", async (req: Request, res: Response) => {
     if (process.env.NODE_ENV === "production") {
       res.status(403).json({ error: "Dev endpoint not available in production" });

@@ -1,15 +1,16 @@
-import { View, Text, Pressable, ActivityIndicator, Alert } from "react-native";
+import { View, Text, Pressable, ActivityIndicator } from "react-native";
 import { ScreenContainer } from "@/components/screen-container";
 import { useColors } from "@/hooks/use-colors";
 import { useAuth } from "@/hooks/use-auth";
 import { useEffect, useState } from "react";
 import { router } from "expo-router";
 import { startOAuthLogin, getApiBaseUrl } from "@/constants/oauth";
-import * as Auth from "@/lib/_core/auth";
+import * as WebBrowser from "expo-web-browser";
+import { Platform } from "react-native";
 
 export default function LoginScreen() {
   const colors = useColors();
-  const { isAuthenticated, loading, refresh } = useAuth({ autoFetch: true });
+  const { isAuthenticated, loading } = useAuth({ autoFetch: true });
   const [devLoading, setDevLoading] = useState(false);
 
   // Redirect to tabs if already authenticated
@@ -30,67 +31,24 @@ export default function LoginScreen() {
   const handleDevLogin = async () => {
     try {
       setDevLoading(true);
-      const apiBaseUrl = getApiBaseUrl();
-      console.log("[DevLogin] apiBaseUrl:", apiBaseUrl);
 
-      const url = `${apiBaseUrl}/api/dev/login`;
-      console.log("[DevLogin] URL:", url);
-
-      const response = await fetch(url, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        credentials: "include",
-        body: JSON.stringify({
-          email: "test@example.com",
-          name: "Test User",
-        }),
-      });
-
-      console.log("[DevLogin] Response status:", response.status, response.statusText);
-
-      if (!response.ok) {
-        const errorText = await response.text();
-        console.log("[DevLogin] Error response:", errorText);
-        throw new Error(`Dev login failed: ${response.status} ${response.statusText}`);
+      if (Platform.OS === "web") {
+        // On web, use window.location to trigger redirect with cookie
+        const apiBaseUrl = getApiBaseUrl();
+        const redirectUrl = window.location.origin;
+        const devLoginUrl = `${apiBaseUrl}/api/dev/login?redirect=${encodeURIComponent(redirectUrl)}`;
+        console.log("[DevLogin] Redirecting to:", devLoginUrl);
+        window.location.href = devLoginUrl;
+      } else {
+        // On native, open browser for dev login
+        const apiBaseUrl = getApiBaseUrl();
+        const devLoginUrl = `${apiBaseUrl}/api/dev/login`;
+        console.log("[DevLogin] Opening browser for:", devLoginUrl);
+        const result = await WebBrowser.openBrowserAsync(devLoginUrl);
+        console.log("[DevLogin] Browser result:", result);
       }
-
-      const data = await response.json();
-      console.log("[DevLogin] Success:", data);
-
-      // Save user info to localStorage (web) or SecureStore (native)
-      if (data.user) {
-        await Auth.setUserInfo({
-          id: data.user.id,
-          openId: data.user.openId,
-          name: data.user.name,
-          email: data.user.email,
-          loginMethod: data.user.loginMethod,
-          lastSignedIn: new Date(data.user.lastSignedIn),
-        });
-        console.log("[DevLogin] User info saved");
-      }
-
-      // Save session token for native platforms
-      if (data.app_session_id) {
-        await Auth.setSessionToken(data.app_session_id);
-        console.log("[DevLogin] Session token saved");
-      }
-
-      // Refresh auth state
-      await refresh?.();
-      console.log("[DevLogin] Auth state refreshed");
-
-      // Redirect to setup after successful login
-      router.replace("/(tabs)/setup");
     } catch (error) {
       console.error("Dev login error:", error);
-      Alert.alert(
-        "Erro",
-        `Falha ao fazer login de desenvolvimento: ${error instanceof Error ? error.message : "Erro desconhecido"}`
-      );
-    } finally {
       setDevLoading(false);
     }
   };
