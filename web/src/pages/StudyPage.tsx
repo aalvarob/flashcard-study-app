@@ -31,8 +31,17 @@ export default function StudyPage() {
     const saved = localStorage.getItem('studyConfig')
     if (saved) {
       const parsedConfig = JSON.parse(saved) as StudyConfig
-      setConfig(parsedConfig)
+      console.log('[StudyPage] Config carregado do localStorage:', parsedConfig)
+      
+      // Validar se config.areas não está vazio
+      if (!parsedConfig.areas || parsedConfig.areas.length === 0) {
+        console.warn('[StudyPage] Config.areas está vazio! Redirecionando para setup')
+        navigate('/setup')
+      } else {
+        setConfig(parsedConfig)
+      }
     } else {
+      console.log('[StudyPage] Nenhum config encontrado. Redirecionando para setup')
       navigate('/setup')
     }
   }, [navigate])
@@ -55,7 +64,19 @@ export default function StudyPage() {
     console.log('[StudyPage] Áreas no config:', config.areas)
     console.log('[StudyPage] Áreas no banco:', [...new Set(allFlashcards.map(c => c.area))])
     
-    let filtered = allFlashcards.filter(card => config.areas.includes(card.area as FlashcardArea))
+    // Validar se config.areas é um array válido
+    if (!Array.isArray(config.areas) || config.areas.length === 0) {
+      console.error('[StudyPage] Config.areas inválido:', config.areas)
+      return
+    }
+    
+    let filtered = allFlashcards.filter(card => {
+      const isIncluded = config.areas.includes(card.area as FlashcardArea)
+      if (!isIncluded) {
+        console.log(`[StudyPage] Card "${card.area}" não está em config.areas:`, config.areas)
+      }
+      return isIncluded
+    })
     console.log('[StudyPage] Cards filtrados:', filtered.length, 'de', allFlashcards.length)
 
     // Distribuir cards por área
@@ -112,10 +133,15 @@ export default function StudyPage() {
       isCorrect: null,
     }))
 
+    console.log('[StudyPage] Cards finais:', cardObjects.length)
     setCards(cardObjects)
     setCurrentIndex(0)
     setIsFlipped(false)
     setStartTime(new Date())
+    
+    if (cardObjects.length === 0) {
+      console.warn('[StudyPage] Nenhum card foi selecionado! Verifique as áreas.')
+    }
   }
 
   function handleCorrect() {
