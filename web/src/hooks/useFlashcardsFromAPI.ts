@@ -57,29 +57,41 @@ export function useFlashcardsFromAPI(): UseFlashcardsResult {
   const flashcardsQuery = trpc.flashcards.list.useQuery()
 
   useEffect(() => {
+    console.log('[useFlashcardsFromAPI] Query state:', {
+      isLoading: flashcardsQuery.isLoading,
+      error: flashcardsQuery.error,
+      dataLength: flashcardsQuery.data ? (flashcardsQuery.data as any[]).length : 0,
+    })
+
     if (flashcardsQuery.isLoading) {
+      console.log('[useFlashcardsFromAPI] Carregando...')
       setLoading(true)
       setError(null)
     } else if (flashcardsQuery.error) {
-      setError('Erro ao carregar flashcards da API')
+      console.error('[useFlashcardsFromAPI] Erro na query:', flashcardsQuery.error)
+      setError(`Erro ao carregar flashcards da API: ${flashcardsQuery.error.message}`)
       setLoading(false)
       // Fallback: tentar carregar do localStorage
       const savedCards = localStorage.getItem('flashcards_backup')
       if (savedCards) {
         try {
-          setFlashcards(JSON.parse(savedCards))
-        } catch {
+          const parsed = JSON.parse(savedCards)
+          console.log('[useFlashcardsFromAPI] Usando backup:', parsed.length, 'cards')
+          setFlashcards(parsed)
+        } catch (err) {
+          console.error('[useFlashcardsFromAPI] Erro ao parsear backup:', err)
           setFlashcards([])
         }
       }
     } else if (flashcardsQuery.data) {
       const cards = (flashcardsQuery.data as unknown as FlashcardData[])
+      console.log('[useFlashcardsFromAPI] Sucesso:', cards.length, 'cards')
       setFlashcards(cards)
       setLoading(false)
       setError(null)
-      // Salvar como backup
       localStorage.setItem('flashcards_backup', JSON.stringify(cards))
     } else {
+      console.log('[useFlashcardsFromAPI] Sem dados')
       setLoading(false)
     }
   }, [flashcardsQuery.data, flashcardsQuery.isLoading, flashcardsQuery.error])
