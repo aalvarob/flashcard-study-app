@@ -332,13 +332,26 @@ export function FlashcardProvider({ children }: { children: React.ReactNode }) {
       let selectedIds: Set<string>;
       
       if (config.area === "all") {
-        // Selecionar TODOS os cards quando "Todos" é selecionado, respeitando cardsPerArea
+        // Selecionar um total de cardsPerArea cards distribuido entre TODAS as areas
         const allAreas = Array.from(new Set(state.cards.map(c => c.area)));
+        const cardsPerAreaDistributed = Math.ceil(config.cardsPerArea / allAreas.length);
         selectedIds = new Set();
         allAreas.forEach(area => {
-          const areaCards = state.cards.filter((c) => c.area === area).slice(0, config.cardsPerArea);
+          const areaCards = state.cards.filter((c) => c.area === area).slice(0, cardsPerAreaDistributed);
           areaCards.forEach(c => selectedIds.add(c.id));
         });
+        // Se ultrapassou o total, remover cards extras
+        if (selectedIds.size > config.cardsPerArea) {
+          let count = 0;
+          const idsToRemove = [];
+          for (const id of selectedIds) {
+            count++;
+            if (count > config.cardsPerArea) {
+              idsToRemove.push(id);
+            }
+          }
+          idsToRemove.forEach(id => selectedIds.delete(id));
+        }
       } else if (Array.isArray(config.area)) {
         // Múltiplas áreas selecionadas - usar cardsPerArea
         selectedIds = new Set();
