@@ -16,6 +16,7 @@ interface AuthContextType {
   isAuthenticated: boolean
   isLoading: boolean
   logout: () => Promise<void>
+  syncData: () => Promise<void>
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined)
@@ -50,8 +51,29 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         withCredentials: true,
       })
       setUser(null)
+      // Limpar dados locais
+      localStorage.removeItem('studySessions')
+      localStorage.removeItem('studyConfig')
     } catch (error) {
       console.error('Logout failed:', error)
+    }
+  }
+
+  async function syncData() {
+    if (!user) return
+
+    try {
+      // Sincronizar sessões de estudo com o servidor
+      const sessions = JSON.parse(localStorage.getItem('studySessions') || '[]')
+      if (sessions.length > 0) {
+        await axios.post(
+          '/api/trpc/study.saveSessions',
+          { sessions },
+          { withCredentials: true }
+        )
+      }
+    } catch (error) {
+      console.error('Data sync failed:', error)
     }
   }
 
@@ -60,6 +82,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     isAuthenticated: !!user,
     isLoading,
     logout,
+    syncData,
   }
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>

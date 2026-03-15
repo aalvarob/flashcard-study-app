@@ -144,10 +144,18 @@ export default function StudyPage() {
       duration,
     }
 
-    // Salvar sessão
+    // Salvar sessao
     const sessions = JSON.parse(localStorage.getItem('studySessions') || '[]')
     sessions.push(session)
     localStorage.setItem('studySessions', JSON.stringify(sessions))
+
+    // Sincronizar com servidor (sem aguardar)
+    fetch('/api/trpc/study.saveSessions', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ sessions }),
+      credentials: 'include',
+    }).catch(err => console.error('Failed to sync study session:', err))
 
     // Ir para resultado
     navigate('/study-result', { state: { session } })

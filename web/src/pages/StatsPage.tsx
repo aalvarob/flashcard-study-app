@@ -19,17 +19,22 @@ interface AreaStats {
 }
 
 export default function StatsPage() {
-  const { user, logout } = useAuth()
+  const { user, logout, syncData } = useAuth()
   const [sessions, setSessions] = useState<StudySession[]>([])
   const [selectedPeriod, setSelectedPeriod] = useState<'week' | 'month' | 'all'>('month')
 
-  // Carregar sessões do localStorage
+  // Carregar sessoes do localStorage e sincronizar com servidor
   useEffect(() => {
-    const saved = localStorage.getItem('studySessions')
-    if (saved) {
-      setSessions(JSON.parse(saved))
+    const loadAndSync = async () => {
+      const saved = localStorage.getItem('studySessions')
+      if (saved) {
+        setSessions(JSON.parse(saved))
+      }
+      // Sincronizar dados com servidor
+      await syncData()
     }
-  }, [])
+    loadAndSync()
+  }, [syncData])
 
   // Filtrar sessões por período
   const filteredSessions = useMemo(() => {

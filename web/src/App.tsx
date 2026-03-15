@@ -3,6 +3,7 @@ import { QueryClientProvider } from '@tanstack/react-query'
 import { queryClient } from './lib/query-client'
 import { AuthProvider } from './contexts/AuthContext'
 import LoginPage from './pages/LoginPage'
+import OAuthCallbackPage from './pages/OAuthCallbackPage'
 import SetupPage from './pages/SetupPage'
 import StudyPage from './pages/StudyPage'
 import StudyResultPage from './pages/StudyResultPage'
@@ -17,6 +18,7 @@ function App() {
         <Router>
           <Routes>
             <Route path="/login" element={<LoginPage />} />
+            <Route path="/oauth-callback" element={<OAuthCallbackPage />} />
             <Route
               path="/setup"
               element={

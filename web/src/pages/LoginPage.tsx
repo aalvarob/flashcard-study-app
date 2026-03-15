@@ -15,8 +15,9 @@ export default function LoginPage() {
 
   function handleLogin() {
     const baseUrl = window.location.origin
-    const redirectUri = `${baseUrl}/oauth/callback`
-    const loginUrl = `https://auth.manus.im/oauth/authorize?client_id=YOUR_CLIENT_ID&redirect_uri=${encodeURIComponent(redirectUri)}&response_type=code&scope=openid+profile+email`
+    const redirectUri = `${baseUrl}/oauth-callback`
+    const clientId = (import.meta as any).env.VITE_OAUTH_CLIENT_ID || 'YOUR_CLIENT_ID'
+    const loginUrl = `https://auth.manus.im/oauth/authorize?client_id=${clientId}&redirect_uri=${encodeURIComponent(redirectUri)}&response_type=code&scope=openid+profile+email`
     window.location.href = loginUrl
   }
 
