@@ -30,8 +30,16 @@ export default function StudyPage() {
   useEffect(() => {
     const saved = localStorage.getItem('studyConfig')
     if (saved) {
-      const parsedConfig = JSON.parse(saved) as StudyConfig
+      let parsedConfig = JSON.parse(saved) as StudyConfig
       console.log('[StudyPage] Config carregado do localStorage:', parsedConfig)
+      
+      // Validar se áreas estão em snake_case e limpar
+      if (parsedConfig.areas && parsedConfig.areas.some((area: string) => typeof area === 'string' && area.includes('_'))) {
+        console.warn('[StudyPage] Áreas em snake_case detectadas! Limpando localStorage')
+        localStorage.removeItem('studyConfig')
+        navigate('/setup')
+        return
+      }
       
       // Validar se config.areas não está vazio
       if (!parsedConfig.areas || parsedConfig.areas.length === 0) {
