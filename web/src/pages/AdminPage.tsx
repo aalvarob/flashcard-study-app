@@ -56,6 +56,8 @@ export default function AdminPage() {
   const [itemsPerPage] = useState(5)
   const [showImporter, setShowImporter] = useState(false)
   const [showAreaManager, setShowAreaManager] = useState(false)
+  const [cardToChangeArea, setCardToChangeArea] = useState<Card | null>(null)
+  const [newArea, setNewArea] = useState<string>('')
 
   // Toast notifications
   const toast = useToast()
@@ -170,6 +172,35 @@ export default function AdminPage() {
   function handleCancel() {
     setFormData({ question: '', answer: '', area: AREAS[0] })
     setEditingId(null)
+  }
+
+  function handleChangeArea(card: Card) {
+    setCardToChangeArea(card)
+    setNewArea(card.area)
+  }
+
+  function handleConfirmChangeArea() {
+    if (!cardToChangeArea || !newArea) return
+
+    updateMutation.mutate(
+      { id: cardToChangeArea.id, question: cardToChangeArea.question, answer: cardToChangeArea.answer, area: newArea },
+      {
+        onSuccess: () => {
+          toast.showSuccess('Área alterada com sucesso!')
+          flashcardsQuery.refetch()
+          setCardToChangeArea(null)
+          setNewArea('')
+        },
+        onError: () => {
+          toast.showError('Erro ao alterar área')
+        },
+      }
+    )
+  }
+
+  function handleCancelChangeArea() {
+    setCardToChangeArea(null)
+    setNewArea('')
   }
 
   function handleImportCards(importedCards: Array<{ question: string; answer: string; area: string }>) {
@@ -439,6 +470,14 @@ export default function AdminPage() {
                       ✏️
                     </button>
                     <button
+                      onClick={() => handleChangeArea(card)}
+                      className="btn-action btn-change-area"
+                      disabled={updateMutation.isPending}
+                      title="Trocar área"
+                    >
+                      🏷️
+                    </button>
+                    <button
                       onClick={() => handleDeleteCard(card.id)}
                       className="btn-action btn-delete"
                       disabled={deleteMutation.isPending}
@@ -480,6 +519,56 @@ export default function AdminPage() {
       {error && (
         <div className="error-banner">
           <span>❌</span> {error}
+        </div>
+      )}
+
+      {cardToChangeArea && (
+        <div className="modal-overlay" onClick={handleCancelChangeArea}>
+          <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+            <div className="modal-header">
+              <h2>Trocar Area do Card</h2>
+              <button className="modal-close" onClick={handleCancelChangeArea}>x</button>
+            </div>
+            <div className="modal-body">
+              <p className="modal-info">
+                <strong>Pergunta:</strong> {cardToChangeArea.question}
+              </p>
+              <p className="modal-info">
+                <strong>Area Atual:</strong> {cardToChangeArea.area}
+              </p>
+              <div className="modal-select-wrapper">
+                <label htmlFor="area-select">Selecione a nova area:</label>
+                <select
+                  id="area-select"
+                  value={newArea}
+                  onChange={(e) => setNewArea(e.target.value)}
+                  className="modal-select"
+                >
+                  <option value="">-- Escolha uma area --</option>
+                  {areas.map((area) => (
+                    <option key={area} value={area}>
+                      {area}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            </div>
+            <div className="modal-footer">
+              <button
+                onClick={handleCancelChangeArea}
+                className="modal-btn modal-btn-cancel"
+              >
+                Cancelar
+              </button>
+              <button
+                onClick={handleConfirmChangeArea}
+                className="modal-btn modal-btn-confirm"
+                disabled={!newArea || newArea === cardToChangeArea.area || updateMutation.isPending}
+              >
+                {updateMutation.isPending ? 'Salvando...' : 'Confirmar'}
+              </button>
+            </div>
+          </div>
         </div>
       )}
     </div>
