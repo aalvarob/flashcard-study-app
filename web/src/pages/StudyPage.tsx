@@ -50,10 +50,13 @@ export default function StudyPage() {
   }, [config, flashcards, flashcardsLoading])
 
   function initializeCards(config: StudyConfig, allFlashcards: typeof flashcards) {
-    // Filtrar cards pelas áreas selecionadas
-    console.log('Filtrando cards por áreas:', config.areas)
+    console.log('[StudyPage] Iniciando cards com config:', config)
+    console.log('[StudyPage] Flashcards recebidos:', allFlashcards.length)
+    console.log('[StudyPage] Áreas no config:', config.areas)
+    console.log('[StudyPage] Áreas no banco:', [...new Set(allFlashcards.map(c => c.area))])
+    
     let filtered = allFlashcards.filter(card => config.areas.includes(card.area as FlashcardArea))
-    console.log('Cards filtrados:', filtered.length, 'de', allFlashcards.length)
+    console.log('[StudyPage] Cards filtrados:', filtered.length, 'de', allFlashcards.length)
 
     // Distribuir cards por área
     if (config.mode === 'all') {
