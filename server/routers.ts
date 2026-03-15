@@ -32,23 +32,20 @@ export const appRouter = router({
       return db.getAllFlashcards();
     }),
 
-    // Create new flashcard (admin only)
-    create: protectedProcedure
+    // Create new flashcard (public for now)
+    create: publicProcedure
       .input(flashcardSchema)
-      .mutation(async ({ ctx, input }) => {
-        if (ctx.user.role !== "admin") {
-          throw new Error("Only admins can create flashcards");
-        }
+      .mutation(async ({ input }) => {
         return db.createFlashcard({
           question: input.question,
           answer: input.answer,
           area: input.area,
-          createdBy: ctx.user.id,
+          createdBy: 0,
         });
       }),
 
-    // Update flashcard (admin only)
-    update: protectedProcedure
+    // Update flashcard (public for now)
+    update: publicProcedure
       .input(
         z.object({
           id: z.number(),
@@ -57,10 +54,7 @@ export const appRouter = router({
           area: z.string().min(1, "Area is required"),
         })
       )
-      .mutation(async ({ ctx, input }) => {
-        if (ctx.user.role !== "admin") {
-          throw new Error("Only admins can update flashcards");
-        }
+      .mutation(async ({ input }) => {
         await db.updateFlashcard(input.id, {
           question: input.question,
           answer: input.answer,
@@ -69,13 +63,10 @@ export const appRouter = router({
         return { success: true };
       }),
 
-    // Delete flashcard (admin only)
-    delete: protectedProcedure
+    // Delete flashcard (public for now)
+    delete: publicProcedure
       .input(z.object({ id: z.number() }))
-      .mutation(async ({ ctx, input }) => {
-        if (ctx.user.role !== "admin") {
-          throw new Error("Only admins can delete flashcards");
-        }
+      .mutation(async ({ input }) => {
         await db.deleteFlashcard(input.id);
         return { success: true };
       }),
