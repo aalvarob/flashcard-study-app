@@ -5,6 +5,7 @@ import { AuthProvider } from './contexts/AuthContext'
 import LoginPage from './pages/LoginPage'
 import SetupPage from './pages/SetupPage'
 import StudyPage from './pages/StudyPage'
+import StudyResultPage from './pages/StudyResultPage'
 import StatsPage from './pages/StatsPage'
 import ProtectedRoute from './components/ProtectedRoute'
 import './App.css'
@@ -29,6 +30,14 @@ function App() {
               element={
                 <ProtectedRoute>
                   <StudyPage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/study-result"
+              element={
+                <ProtectedRoute>
+                  <StudyResultPage />
                 </ProtectedRoute>
               }
             />
