@@ -2,13 +2,11 @@ import { useState, useEffect } from 'react'
 import WordImporter from '../components/WordImporter'
 import AreaManager from '../components/AreaManager'
 import { migrateCardsAreas } from '../utils/migrationUtils'
+import { trpc } from '../lib/trpc-client'
 import './AdminPage.css'
 
-// Nota: Esta página de admin funciona sem autenticação para facilitar gerenciamento local de cards
-// Em produção, adicionar verificação de permissão de admin
-
 interface Card {
-  id: string
+  id: number
   question: string
   answer: string
   area: string
@@ -46,46 +44,34 @@ const AREAS = [
 export default function AdminPage() {
   const [areas, setAreas] = useState<string[]>(AREAS)
   const [cards, setCards] = useState<Card[]>([])
-  const [editingId, setEditingId] = useState<string | null>(null)
+  const [editingId, setEditingId] = useState<number | null>(null)
   const [formData, setFormData] = useState({ question: '', answer: '', area: areas[0] || AREAS[0] })
   const [searchTerm, setSearchTerm] = useState('')
   const [selectedArea, setSelectedArea] = useState<string>('')
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
 
+  // tRPC queries and mutations
+  const flashcardsQuery = trpc.flashcards.list.useQuery()
+  const createMutation = trpc.flashcards.create.useMutation()
+  const updateMutation = trpc.flashcards.update.useMutation()
+  const deleteMutation = trpc.flashcards.delete.useMutation()
+
+  // Load flashcards from API
   useEffect(() => {
-    // Load cards from localStorage
-    let savedCards = JSON.parse(localStorage.getItem('flashcards') || '[]')
-    
-    // Verificar se eh necessario migrar areas
-    const needsMigration = savedCards.some((card: Card) => {
-      return card.area && !AREAS.includes(card.area) && card.area.includes('Direito')
-    })
-    
-    if (needsMigration) {
-      savedCards = migrateCardsAreas(savedCards)
-      localStorage.setItem('flashcards', JSON.stringify(savedCards))
+    if (flashcardsQuery.data) {
+      setCards(flashcardsQuery.data as Card[])
+      setLoading(false)
+    } else if (flashcardsQuery.isLoading) {
+      setLoading(true)
+    } else if (flashcardsQuery.error) {
+      setError('Erro ao carregar flashcards')
+      setLoading(false)
+      // Fallback to localStorage
+      const savedCards = JSON.parse(localStorage.getItem('flashcards') || '[]')
+      setCards(savedCards)
     }
-    
-    setCards(savedCards)
-    // Load areas from localStorage
-    const savedAreas = JSON.parse(localStorage.getItem('areas') || 'null')
-    if (savedAreas) {
-      setAreas(savedAreas)
-    }
-  }, [])
-
-  function saveCards(updatedCards: Card[]) {
-    setCards(updatedCards)
-    localStorage.setItem('flashcards', JSON.stringify(updatedCards))
-  }
-
-  function handleAreasChange(newAreas: string[]) {
-    setAreas(newAreas)
-    localStorage.setItem('areas', JSON.stringify(newAreas))
-    // Atualizar formData se a área atual foi deletada
-    if (!newAreas.includes(formData.area)) {
-      setFormData({ ...formData, area: newAreas[0] || AREAS[0] })
-    }
-  }
+  }, [flashcardsQuery.data, flashcardsQuery.isLoading, flashcardsQuery.error])
 
   function handleAddCard() {
     if (!formData.question.trim() || !formData.answer.trim()) {
@@ -95,21 +81,43 @@ export default function AdminPage() {
 
     if (editingId) {
       // Update existing card
-      const updatedCards = cards.map((card) =>
-        card.id === editingId ? { ...card, ...formData } : card
+      updateMutation.mutate(
+        {
+          id: editingId,
+          question: formData.question,
+          answer: formData.answer,
+          area: formData.area,
+        },
+        {
+          onSuccess: () => {
+            flashcardsQuery.refetch()
+            setEditingId(null)
+            setFormData({ question: '', answer: '', area: AREAS[0] })
+          },
+          onError: () => {
+            alert('Erro ao atualizar card')
+          },
+        }
       )
-      saveCards(updatedCards)
-      setEditingId(null)
     } else {
-      // Add new card
-      const newCard: Card = {
-        id: Date.now().toString(),
-        ...formData,
-      }
-      saveCards([...cards, newCard])
+      // Create new card
+      createMutation.mutate(
+        {
+          question: formData.question,
+          answer: formData.answer,
+          area: formData.area,
+        },
+        {
+          onSuccess: () => {
+            flashcardsQuery.refetch()
+            setFormData({ question: '', answer: '', area: AREAS[0] })
+          },
+          onError: () => {
+            alert('Erro ao criar card')
+          },
+        }
+      )
     }
-
-    setFormData({ question: '', answer: '', area: AREAS[0] })
   }
 
   function handleEditCard(card: Card) {
@@ -118,10 +126,19 @@ export default function AdminPage() {
     window.scrollTo({ top: 0, behavior: 'smooth' })
   }
 
-  function handleDeleteCard(id: string) {
+  function handleDeleteCard(id: number) {
     if (confirm('Tem certeza que deseja deletar este card?')) {
-      const updatedCards = cards.filter((card) => card.id !== id)
-      saveCards(updatedCards)
+      deleteMutation.mutate(
+        { id },
+        {
+          onSuccess: () => {
+            flashcardsQuery.refetch()
+          },
+          onError: () => {
+            alert('Erro ao deletar card')
+          },
+        }
+      )
     }
   }
 
@@ -131,14 +148,32 @@ export default function AdminPage() {
   }
 
   function handleImportCards(importedCards: Array<{ question: string; answer: string; area: string }>) {
-    const newCards = importedCards.map((card) => ({
-      id: Date.now().toString() + Math.random(),
-      question: card.question,
-      answer: card.answer,
-      area: card.area,
-    }))
-    saveCards([...cards, ...newCards])
-    alert(`${newCards.length} cards importados com sucesso!`)
+    let successCount = 0
+    importedCards.forEach((card) => {
+      createMutation.mutate(
+        {
+          question: card.question,
+          answer: card.answer,
+          area: card.area,
+        },
+        {
+          onSuccess: () => {
+            successCount++
+            if (successCount === importedCards.length) {
+              flashcardsQuery.refetch()
+              alert(`${successCount} cards importados com sucesso!`)
+            }
+          },
+        }
+      )
+    })
+  }
+
+  function handleAreasChange(newAreas: string[]) {
+    setAreas(newAreas)
+    if (!newAreas.includes(formData.area)) {
+      setFormData({ ...formData, area: newAreas[0] || AREAS[0] })
+    }
   }
 
   // Filter cards
@@ -150,22 +185,48 @@ export default function AdminPage() {
     return matchesSearch && matchesArea
   })
 
+  if (loading) {
+    return (
+      <div className="admin-page">
+        <div style={{ textAlign: 'center', padding: '2rem' }}>
+          <p>Carregando flashcards...</p>
+        </div>
+      </div>
+    )
+  }
+
   return (
-    <div className="admin-container">
-      <AreaManager areas={areas} onAreasChange={handleAreasChange} />
-      <WordImporter onImport={handleImportCards} />
-      <div className="admin-content">
+    <div className="admin-page">
+      <div className="admin-container">
         {/* Form Section */}
-        <section className="admin-form-section">
-          <h2>{editingId ? 'Editar Card' : 'Criar Novo Card'}</h2>
+        <div className="admin-form-section">
+          <h2>{editingId ? 'Editar Card' : 'Novo Card'}</h2>
 
           <div className="form-group">
-            <label htmlFor="area">Área</label>
+            <label>Pergunta</label>
+            <textarea
+              value={formData.question}
+              onChange={(e) => setFormData({ ...formData, question: e.target.value })}
+              placeholder="Digite a pergunta..."
+              rows={4}
+            />
+          </div>
+
+          <div className="form-group">
+            <label>Resposta</label>
+            <textarea
+              value={formData.answer}
+              onChange={(e) => setFormData({ ...formData, answer: e.target.value })}
+              placeholder="Digite a resposta..."
+              rows={4}
+            />
+          </div>
+
+          <div className="form-group">
+            <label>Área Teológica</label>
             <select
-              id="area"
               value={formData.area}
               onChange={(e) => setFormData({ ...formData, area: e.target.value })}
-              className="form-input"
             >
               {areas.map((area) => (
                 <option key={area} value={area}>
@@ -175,61 +236,50 @@ export default function AdminPage() {
             </select>
           </div>
 
-          <div className="form-group">
-            <label htmlFor="question">Pergunta</label>
-            <textarea
-              id="question"
-              value={formData.question}
-              onChange={(e) => setFormData({ ...formData, question: e.target.value })}
-              placeholder="Digite a pergunta..."
-              className="form-input textarea"
-              rows={3}
-            />
-          </div>
-
-          <div className="form-group">
-            <label htmlFor="answer">Resposta</label>
-            <textarea
-              id="answer"
-              value={formData.answer}
-              onChange={(e) => setFormData({ ...formData, answer: e.target.value })}
-              placeholder="Digite a resposta..."
-              className="form-input textarea"
-              rows={4}
-            />
-          </div>
-
-          <div className="form-buttons">
-            <button className="btn btn-primary" onClick={handleAddCard}>
-              {editingId ? 'Atualizar Card' : 'Criar Card'}
+          <div className="form-actions">
+            <button onClick={handleAddCard} className="btn-primary" disabled={createMutation.isPending || updateMutation.isPending}>
+              {editingId ? 'Atualizar' : 'Adicionar'}
             </button>
             {editingId && (
-              <button className="btn btn-secondary" onClick={handleCancel}>
+              <button onClick={handleCancel} className="btn-secondary">
                 Cancelar
               </button>
             )}
           </div>
-        </section>
+
+          {/* Word Importer */}
+          <div style={{ marginTop: '2rem', paddingTop: '2rem', borderTop: '1px solid #e0e0e0' }}>
+            <h3>Importar do Word</h3>
+            <WordImporter onImport={handleImportCards} />
+          </div>
+
+          {/* Area Manager */}
+          <div style={{ marginTop: '2rem', paddingTop: '2rem', borderTop: '1px solid #e0e0e0' }}>
+            <h3>Gerenciar Áreas</h3>
+            <AreaManager areas={areas} onAreasChange={handleAreasChange} />
+          </div>
+        </div>
 
         {/* Cards List Section */}
-        <section className="admin-list-section">
+        <div className="admin-cards-section">
           <h2>Cards ({filteredCards.length})</h2>
 
-          <div className="filter-section">
+          <div className="admin-filters">
             <input
               type="text"
               placeholder="Buscar por pergunta ou resposta..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="form-input"
+              className="search-input"
             />
+
             <select
               value={selectedArea}
               onChange={(e) => setSelectedArea(e.target.value)}
-              className="form-input"
+              className="filter-select"
             >
               <option value="">Todas as áreas</option>
-              {AREAS.map((area) => (
+              {areas.map((area) => (
                 <option key={area} value={area}>
                   {area}
                 </option>
@@ -239,43 +289,49 @@ export default function AdminPage() {
 
           <div className="cards-list">
             {filteredCards.length === 0 ? (
-              <div className="empty-state">
-                <p>Nenhum card encontrado</p>
-              </div>
+              <p className="no-cards">Nenhum card encontrado</p>
             ) : (
               filteredCards.map((card) => (
                 <div key={card.id} className="card-item">
                   <div className="card-header">
                     <span className="card-area">{card.area}</span>
-                    <div className="card-actions">
-                      <button
-                        className="btn-icon edit"
-                        onClick={() => handleEditCard(card)}
-                        title="Editar"
-                      >
-                        ✏️
-                      </button>
-                      <button
-                        className="btn-icon delete"
-                        onClick={() => handleDeleteCard(card.id)}
-                        title="Deletar"
-                      >
-                        🗑️
-                      </button>
-                    </div>
                   </div>
-                  <div className="card-question">
-                    <strong>P:</strong> {card.question}
+                  <div className="card-content">
+                    <p className="card-question">
+                      <strong>P:</strong> {card.question}
+                    </p>
+                    <p className="card-answer">
+                      <strong>R:</strong> {card.answer}
+                    </p>
                   </div>
-                  <div className="card-answer">
-                    <strong>R:</strong> {card.answer}
+                  <div className="card-actions">
+                    <button
+                      onClick={() => handleEditCard(card)}
+                      className="btn-edit"
+                      disabled={updateMutation.isPending}
+                    >
+                      Editar
+                    </button>
+                    <button
+                      onClick={() => handleDeleteCard(card.id)}
+                      className="btn-delete"
+                      disabled={deleteMutation.isPending}
+                    >
+                      Deletar
+                    </button>
                   </div>
                 </div>
               ))
             )}
           </div>
-        </section>
+        </div>
       </div>
+
+      {error && (
+        <div style={{ color: 'red', padding: '1rem', marginTop: '1rem' }}>
+          {error}
+        </div>
+      )}
     </div>
   )
 }
