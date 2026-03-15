@@ -253,6 +253,26 @@
   box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
 }
 
+.response-button.dont-know {
+  background-color: #f59e0b;
+}
+
+.response-button.dont-know:hover {
+  background-color: #d97706;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(245, 158, 11, 0.3);
+}
+
+.response-button.dont-remember {
+  background-color: #8b5cf6;
+}
+
+.response-button.dont-remember:hover {
+  background-color: #7c3aed;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(139, 92, 246, 0.3);
+}
+
 /* Finish Button */
 .finish-button {
   padding: 1rem 2rem;

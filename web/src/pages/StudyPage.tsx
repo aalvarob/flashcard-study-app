@@ -166,6 +166,20 @@ export default function StudyPage() {
     goToNext()
   }
 
+  function handleDontKnow() {
+    const newCards = [...cards]
+    newCards[currentIndex].isCorrect = false
+    setCards(newCards)
+    goToNext()
+  }
+
+  function handleDontRemember() {
+    const newCards = [...cards]
+    newCards[currentIndex].isCorrect = false
+    setCards(newCards)
+    goToNext()
+  }
+
   function goToNext() {
     if (currentIndex < cards.length - 1) {
       setCurrentIndex(currentIndex + 1)
@@ -286,6 +300,12 @@ export default function StudyPage() {
             ← Anterior
           </button>
           <div className="response-buttons">
+            <button className="response-button dont-know" onClick={handleDontKnow}>
+              Não Sei
+            </button>
+            <button className="response-button dont-remember" onClick={handleDontRemember}>
+              Não Lembro
+            </button>
             <button className="response-button incorrect" onClick={handleIncorrect}>
               Errei
             </button>
