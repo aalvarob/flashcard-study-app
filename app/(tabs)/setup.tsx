@@ -82,13 +82,17 @@ export default function SetupScreen() {
 
   function toggleAllAreas() {
     if (selectedAreas.size === 0) {
-      return; // Nenhuma área selecionada
+      // Nenhuma área selecionada - ativar/desativar todos os cards
+      const allEnabled = state.cards.every((c) => c.enabled);
+      toggleAllCards(!allEnabled);
+    } else {
+      // Áreas selecionadas - ativar/desativar apenas cards das áreas selecionadas
+      const selectedAreaIds = Array.from(selectedAreas);
+      const allSelectedEnabled = state.cards
+        .filter((c) => selectedAreaIds.includes(c.area))
+        .every((c) => c.enabled);
+      toggleAllCardsByArea(!allSelectedEnabled, selectedAreaIds);
     }
-    const selectedAreaIds = Array.from(selectedAreas);
-    const allSelectedEnabled = state.cards
-      .filter((c) => selectedAreaIds.includes(c.area))
-      .every((c) => c.enabled);
-    toggleAllCardsByArea(!allSelectedEnabled, selectedAreaIds);
   }
 
   function handleStartStudy() {
