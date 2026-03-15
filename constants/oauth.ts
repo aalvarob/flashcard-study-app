@@ -43,10 +43,14 @@ export function getApiBaseUrl(): string {
     if (apiHostname !== hostname) {
       return `${protocol}//${apiHostname}`;
     }
+    // If we're on localhost or can't derive, use localhost:3000
+    if (hostname === "localhost" || hostname.startsWith("127.")) {
+      return `${protocol}//localhost:3000`;
+    }
   }
 
-  // Fallback to empty (will use relative URL)
-  return "";
+  // Fallback to localhost:3000 for development
+  return "http://localhost:3000";
 }
 
 export const SESSION_TOKEN_KEY = "app_session_token";

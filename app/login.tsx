@@ -30,7 +30,12 @@ export default function LoginScreen() {
     try {
       setDevLoading(true);
       const apiBaseUrl = getApiBaseUrl();
-      const response = await fetch(`${apiBaseUrl}/api/dev/login`, {
+      console.log("[DevLogin] apiBaseUrl:", apiBaseUrl);
+
+      const url = `${apiBaseUrl}/api/dev/login`;
+      console.log("[DevLogin] URL:", url);
+
+      const response = await fetch(url, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -42,9 +47,16 @@ export default function LoginScreen() {
         }),
       });
 
+      console.log("[DevLogin] Response status:", response.status, response.statusText);
+
       if (!response.ok) {
-        throw new Error(`Dev login failed: ${response.statusText}`);
+        const errorText = await response.text();
+        console.log("[DevLogin] Error response:", errorText);
+        throw new Error(`Dev login failed: ${response.status} ${response.statusText}`);
       }
+
+      const data = await response.json();
+      console.log("[DevLogin] Success:", data);
 
       // Redirect to setup after successful login
       router.replace("/(tabs)/setup");
