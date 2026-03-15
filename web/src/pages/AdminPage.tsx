@@ -100,7 +100,7 @@ export default function AdminPage() {
     setEditingId(null)
   }
 
-  function handleImportCards(importedCards: Array<{ question: string; answer: string; area: string; enabled: boolean }>) {
+  function handleImportCards(importedCards: Array<{ question: string; answer: string; area: string }>) {
     const newCards = importedCards.map((card) => ({
       id: Date.now().toString() + Math.random(),
       question: card.question,

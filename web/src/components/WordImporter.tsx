@@ -1,11 +1,11 @@
 import { useState } from 'react'
+import ImportPreview from './ImportPreview'
 import '../styles/WordImporter.css'
 
 interface ImportedCard {
   question: string
   answer: string
   area: string
-  enabled: boolean
 }
 
 interface ImportProgress {
@@ -15,7 +15,7 @@ interface ImportProgress {
   cardsProcessed: number
 }
 
-export default function WordImporter({ onImport }: { onImport: (cards: ImportedCard[]) => void }) {
+export default function WordImporter({ onImport, existingCards = [] }: { onImport: (cards: ImportedCard[]) => void; existingCards?: Array<{ id?: string; question: string; answer: string; area: string }> }) {
   const [progress, setProgress] = useState<ImportProgress>({
     status: 'idle',
     message: '',
@@ -23,6 +23,8 @@ export default function WordImporter({ onImport }: { onImport: (cards: ImportedC
     cardsProcessed: 0,
   })
   const [isDragging, setIsDragging] = useState(false)
+  const [showPreview, setShowPreview] = useState(false)
+  const [previewCards, setPreviewCards] = useState<ImportedCard[]>([])
 
   const parseWordContent = (text: string): ImportedCard[] => {
     const cards: ImportedCard[] = []
@@ -51,7 +53,6 @@ export default function WordImporter({ onImport }: { onImport: (cards: ImportedC
             question: currentQuestion.trim(),
             answer: currentAnswer.trim(),
             area: currentArea,
-            enabled: true,
           })
         }
         currentQuestion = line.replace('Pergunta:', '').trim()
@@ -83,7 +84,6 @@ export default function WordImporter({ onImport }: { onImport: (cards: ImportedC
         question: currentQuestion.trim(),
         answer: currentAnswer.trim(),
         area: currentArea,
-        enabled: true,
       })
     }
 
@@ -127,22 +127,14 @@ export default function WordImporter({ onImport }: { onImport: (cards: ImportedC
 
       setProgress({
         status: 'success',
-        message: `${cards.length} cards encontrados e importados com sucesso!`,
+        message: `${cards.length} cards encontrados! Validando duplicatas...`,
         cardsFound: cards.length,
         cardsProcessed: cards.length,
       })
 
-      onImport(cards)
-
-      // Limpar mensagem após 3 segundos
-      setTimeout(() => {
-        setProgress({
-          status: 'idle',
-          message: '',
-          cardsFound: 0,
-          cardsProcessed: 0,
-        })
-      }, 3000)
+      // Mostrar preview de importação
+      setPreviewCards(cards)
+      setShowPreview(true)
     } catch (error) {
       console.error('Erro ao processar arquivo:', error)
       setProgress({
@@ -179,7 +171,41 @@ export default function WordImporter({ onImport }: { onImport: (cards: ImportedC
     }
   }
 
+  const handleConfirmImport = (cardsToImport: ImportedCard[]) => {
+    setShowPreview(false)
+    onImport(cardsToImport)
+    
+    setProgress({
+      status: 'success',
+      message: `${cardsToImport.length} cards importados com sucesso!`,
+      cardsFound: cardsToImport.length,
+      cardsProcessed: cardsToImport.length,
+    })
+
+    // Limpar mensagem após 3 segundos
+    setTimeout(() => {
+      setProgress({
+        status: 'idle',
+        message: '',
+        cardsFound: 0,
+        cardsProcessed: 0,
+      })
+    }, 3000)
+  }
+
+  const handleCancelImport = () => {
+    setShowPreview(false)
+    setPreviewCards([])
+    setProgress({
+      status: 'idle',
+      message: '',
+      cardsFound: 0,
+      cardsProcessed: 0,
+    })
+  }
+
   return (
+    <>
     <div className="word-importer">
       <h3>Importar Cards do Word</h3>
       
@@ -220,5 +246,15 @@ export default function WordImporter({ onImport }: { onImport: (cards: ImportedC
         </div>
       )}
     </div>
+
+    {showPreview && (
+      <ImportPreview
+        importedCards={previewCards}
+        existingCards={existingCards}
+        onConfirm={handleConfirmImport}
+        onCancel={handleCancelImport}
+      />
+    )}
+    </>
   )
 }
