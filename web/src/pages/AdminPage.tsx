@@ -72,10 +72,7 @@ export default function AdminPage() {
 
   // Load flashcards from API
   useEffect(() => {
-    if (flashcardsQuery.data) {
-      setCards(flashcardsQuery.data as Card[])
-      setLoading(false)
-    } else if (flashcardsQuery.isLoading) {
+    if (flashcardsQuery.isLoading) {
       setLoading(true)
     } else if (flashcardsQuery.error) {
       setError('Erro ao carregar flashcards')
@@ -83,6 +80,11 @@ export default function AdminPage() {
       // Fallback to localStorage
       const savedCards = JSON.parse(localStorage.getItem('flashcards') || '[]')
       setCards(savedCards)
+    } else if (flashcardsQuery.data) {
+      setCards(flashcardsQuery.data as Card[])
+      setLoading(false)
+    } else {
+      setLoading(false)
     }
   }, [flashcardsQuery.data, flashcardsQuery.isLoading, flashcardsQuery.error])
 
