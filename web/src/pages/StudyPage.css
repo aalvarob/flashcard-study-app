@@ -95,6 +95,16 @@
   color: white;
 }
 
+.stat.dont-know {
+  background-color: #f59e0b;
+  color: white;
+}
+
+.stat.dont-remember {
+  background-color: #8b5cf6;
+  color: white;
+}
+
 /* Content */
 .study-content {
   flex: 1;

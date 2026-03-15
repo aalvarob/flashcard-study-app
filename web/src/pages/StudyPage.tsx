@@ -25,6 +25,8 @@ export default function StudyPage() {
   const [currentIndex, setCurrentIndex] = useState(0)
   const [isFlipped, setIsFlipped] = useState(false)
   const [startTime, setStartTime] = useState(new Date())
+  const [dontKnowCount, setDontKnowCount] = useState(0)
+  const [dontRememberCount, setDontRememberCount] = useState(0)
 
   // Carregar configuração do localStorage
   useEffect(() => {
@@ -170,6 +172,7 @@ export default function StudyPage() {
     const newCards = [...cards]
     newCards[currentIndex].isCorrect = false
     setCards(newCards)
+    setDontKnowCount(dontKnowCount + 1)
     goToNext()
   }
 
@@ -177,6 +180,7 @@ export default function StudyPage() {
     const newCards = [...cards]
     newCards[currentIndex].isCorrect = false
     setCards(newCards)
+    setDontRememberCount(dontRememberCount + 1)
     goToNext()
   }
 
@@ -208,6 +212,8 @@ export default function StudyPage() {
       correctCards,
       areas: config?.areas || [],
       duration,
+      dontKnowCount,
+      dontRememberCount,
     }
 
     // Salvar sessao
@@ -269,6 +275,8 @@ export default function StudyPage() {
         <div className="study-stats">
           <span className="stat correct">✓ {correctCount}</span>
           <span className="stat incorrect">✗ {incorrectCount}</span>
+          <span className="stat dont-know">? {dontKnowCount}</span>
+          <span className="stat dont-remember">! {dontRememberCount}</span>
         </div>
       </div>
 
