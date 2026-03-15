@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import WordImporter from '../components/WordImporter'
 import './AdminPage.css'
 
 interface Card {
@@ -99,6 +100,17 @@ export default function AdminPage() {
     setEditingId(null)
   }
 
+  function handleImportCards(importedCards: Array<{ question: string; answer: string; area: string; enabled: boolean }>) {
+    const newCards = importedCards.map((card) => ({
+      id: Date.now().toString() + Math.random(),
+      question: card.question,
+      answer: card.answer,
+      area: card.area,
+    }))
+    saveCards([...cards, ...newCards])
+    alert(`${newCards.length} cards importados com sucesso!`)
+  }
+
   // Filter cards
   const filteredCards = cards.filter((card) => {
     const matchesSearch =
@@ -110,6 +122,7 @@ export default function AdminPage() {
 
   return (
     <div className="admin-container">
+      <WordImporter onImport={handleImportCards} />
       <div className="admin-content">
         {/* Form Section */}
         <section className="admin-form-section">
