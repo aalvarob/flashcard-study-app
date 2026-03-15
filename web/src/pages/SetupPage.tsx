@@ -74,11 +74,19 @@ export default function SetupPage() {
   }
 
   function handleStartStudy() {
+    // Mapear IDs para labels (nomes reais das áreas)
+    const areaIds = selectionMode === 'all' ? AREAS.map(a => a.id) : Array.from(selectedAreas)
+    const areaLabels = areaIds.map(id => {
+      const area = AREAS.find(a => a.id === id)
+      return area ? area.label : id
+    })
+    
     const config = {
       mode: selectionMode,
-      areas: selectionMode === 'all' ? AREAS.map(a => a.id) : Array.from(selectedAreas),
+      areas: areaLabels,
       cardsPerArea,
     }
+    console.log('Salvando config:', config)
     localStorage.setItem('studyConfig', JSON.stringify(config))
     navigate('/study')
   }

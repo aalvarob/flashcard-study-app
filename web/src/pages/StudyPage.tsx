@@ -40,13 +40,20 @@ export default function StudyPage() {
   // Inicializar cards quando flashcards e config estiverem prontos
   useEffect(() => {
     if (config && flashcards.length > 0 && !flashcardsLoading) {
+      console.log('Inicializando cards:', { configAreas: config.areas, flashcardsCount: flashcards.length })
       initializeCards(config, flashcards)
+    } else if (config && flashcardsLoading) {
+      console.log('Aguardando flashcards...')
+    } else if (config && flashcards.length === 0 && !flashcardsLoading) {
+      console.warn('Nenhum flashcard disponível')
     }
   }, [config, flashcards, flashcardsLoading])
 
   function initializeCards(config: StudyConfig, allFlashcards: typeof flashcards) {
     // Filtrar cards pelas áreas selecionadas
+    console.log('Filtrando cards por áreas:', config.areas)
     let filtered = allFlashcards.filter(card => config.areas.includes(card.area as FlashcardArea))
+    console.log('Cards filtrados:', filtered.length, 'de', allFlashcards.length)
 
     // Distribuir cards por área
     if (config.mode === 'all') {
