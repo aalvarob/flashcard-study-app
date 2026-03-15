@@ -73,6 +73,7 @@
     "recharts": "^3.8.0",
     "superjson": "^1.13.3",
     "tailwind-merge": "^2.6.0",
+    "ws": "^8.19.0",
     "zod": "^4.2.1"
   },
   "devDependencies": {
