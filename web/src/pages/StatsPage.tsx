@@ -1,6 +1,10 @@
 import { useState, useEffect, useMemo } from 'react'
 import { useAuth } from '../contexts/AuthContext'
+import ProgressLineChart from '../components/ProgressLineChart'
+import AreaPerformancePieChart from '../components/AreaPerformancePieChart'
+import AreaPerformanceBarChart from '../components/AreaPerformanceBarChart'
 import './StatsPage.css'
+import '../styles/Charts.css'
 
 interface StudySession {
   id: string
@@ -190,6 +194,30 @@ export default function StatsPage() {
           </div>
         </div>
 
+        {/* Progress Line Chart */}
+        <div className="chart-section">
+          <h2>Progresso ao Longo do Tempo</h2>
+          {filteredSessions.length > 0 ? (
+            <ProgressLineChart
+              data={filteredSessions
+                .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())
+                .map((session) => ({
+                  date: new Date(session.date).toLocaleDateString('pt-BR', {
+                    month: 'short',
+                    day: 'numeric',
+                  }),
+                  correctCards: session.correctCards,
+                  totalCards: session.totalCards,
+                  percentage: Math.round((session.correctCards / session.totalCards) * 100),
+                }))}
+            />
+          ) : (
+            <div className="empty-state">
+              <p>Nenhum dado disponível para exibir o gráfico</p>
+            </div>
+          )}
+        </div>
+
         {/* Weekly Progress Chart */}
         <div className="chart-section">
           <h2>Progresso Semanal</h2>
@@ -211,9 +239,26 @@ export default function StatsPage() {
           </div>
         </div>
 
+        {/* Area Performance Charts */}
+        {areaStats.length > 0 && (
+          <>
+            {/* Pie Chart */}
+            <div className="chart-section">
+              <h2>Distribuição de Acertos por Área</h2>
+              <AreaPerformancePieChart data={areaStats} />
+            </div>
+
+            {/* Bar Chart */}
+            <div className="chart-section">
+              <h2>Comparação de Desempenho por Área</h2>
+              <AreaPerformanceBarChart data={areaStats} />
+            </div>
+          </>
+        )}
+
         {/* Areas Performance */}
         <div className="areas-section">
-          <h2>Desempenho por Área</h2>
+          <h2>Desempenho por Área (Detalhado)</h2>
           {areaStats.length > 0 ? (
             <div className="areas-list">
               {areaStats.map((area, index) => (
