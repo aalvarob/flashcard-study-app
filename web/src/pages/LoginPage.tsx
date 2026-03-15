@@ -15,6 +15,40 @@ export default function LoginPage() {
     }
   }, [isAuthenticated, navigate])
 
+  useEffect(() => {
+    // Check if we're coming from dev login redirect
+    const params = new URLSearchParams(window.location.search)
+    if (params.get('dev-login') === 'true') {
+      handleDevLoginCallback()
+    }
+  }, [])
+
+  async function handleDevLoginCallback() {
+    setIsLoading(true)
+    try {
+      // Call the dev login endpoint on the backend
+      const apiUrl = (import.meta as any).env.VITE_API_BASE_URL || 'http://localhost:3000'
+      const response = await axios.post(
+        `${apiUrl}/api/trpc/auth.devLogin`,
+        { email: 'test@example.com' },
+        { withCredentials: true }
+      )
+      
+      if (response.data?.result?.data) {
+        // Reload to refresh auth state
+        setTimeout(() => {
+          window.location.href = window.location.pathname
+        }, 500)
+      }
+    } catch (error) {
+      console.error('Dev login callback failed:', error)
+      // Clear the URL parameter even if it fails
+      window.history.replaceState({}, document.title, window.location.pathname)
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
   function handleLogin() {
     const baseUrl = window.location.origin
     const redirectUri = `${baseUrl}/oauth-callback`
@@ -23,26 +57,10 @@ export default function LoginPage() {
     window.location.href = loginUrl
   }
 
-  async function handleDevLogin() {
-    setIsLoading(true)
-    try {
-      const response = await axios.post(
-        '/api/trpc/auth.devLogin',
-        { email: 'test@example.com' },
-        { withCredentials: true }
-      )
-      if (response.data?.result?.data) {
-        // Aguardar um pouco para a sessão ser estabelecida
-        setTimeout(() => {
-          window.location.reload()
-        }, 500)
-      }
-    } catch (error) {
-      console.error('Dev login failed:', error)
-      alert('Erro ao fazer login de desenvolvimento. Verifique o console.')
-    } finally {
-      setIsLoading(false)
-    }
+  function handleDevLogin() {
+    // Redirect to the dev login endpoint on the backend
+    const apiUrl = (import.meta as any).env.VITE_API_BASE_URL || 'http://localhost:3000'
+    window.location.href = `${apiUrl}/api/dev-login`
   }
 
   return (
@@ -50,15 +68,28 @@ export default function LoginPage() {
       <div className="login-card">
         <h1>Simulado Concílio</h1>
         <p>Faça login para começar a estudar</p>
-        <button className="login-button" onClick={handleLogin} disabled={isLoading}>
+        
+        {isLoading && <p style={{ textAlign: 'center', color: 'var(--color-muted)' }}>Autenticando...</p>}
+        
+        <button 
+          className="login-button" 
+          onClick={handleLogin}
+          disabled={isLoading}
+        >
           Fazer Login
         </button>
-        <div className="dev-section">
-          <p className="dev-label">Modo Desenvolvimento:</p>
-          <button className="dev-login-button" onClick={handleDevLogin} disabled={isLoading}>
-            {isLoading ? 'Autenticando...' : 'Login de Teste'}
-          </button>
-        </div>
+
+        <p style={{ marginTop: '2rem', marginBottom: '1rem', fontSize: '0.85rem', color: 'var(--color-muted)' }}>
+          Ou teste com:
+        </p>
+        
+        <button 
+          className="dev-login-button" 
+          onClick={handleDevLogin}
+          disabled={isLoading}
+        >
+          {isLoading ? 'Autenticando...' : 'Login de Teste'}
+        </button>
       </div>
     </div>
   )

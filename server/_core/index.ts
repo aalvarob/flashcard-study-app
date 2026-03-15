@@ -60,6 +60,18 @@ async function startServer() {
     res.json({ ok: true, timestamp: Date.now() });
   });
 
+  // Dev login redirect endpoint
+  app.get("/api/dev-login", async (req, res) => {
+    try {
+      // Get the frontend URL from the request or use a default
+      const frontendUrl = 'https://8081-i3bhuhmeb11739upgd28g-a3809ea0.us1.manus.computer';
+      // Redirect to the frontend with a dev-login flag
+      res.redirect(`${frontendUrl}?dev-login=true`);
+    } catch (error) {
+      res.status(500).json({ error: 'Dev login failed' });
+    }
+  });
+
   app.use(
     "/api/trpc",
     createExpressMiddleware({
