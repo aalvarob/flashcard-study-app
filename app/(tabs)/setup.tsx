@@ -319,7 +319,7 @@ export default function SetupScreen() {
                     selectionMode === "single" ? styles.modeButtonTextActive : styles.modeButtonTextInactive,
                   ]}
                 >
-                  Todas
+                  Área da Teologia
                 </Text>
               </Pressable>
               <Pressable
@@ -335,7 +335,7 @@ export default function SetupScreen() {
                     selectionMode === "multiple" ? styles.modeButtonTextActive : styles.modeButtonTextInactive,
                   ]}
                 >
-                  Múltiplas
+                  Escolher
                 </Text>
               </Pressable>
             </View>
