@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import WordImporter from '../components/WordImporter'
+import AreaManager from '../components/AreaManager'
 import './AdminPage.css'
 
 interface Card {
@@ -40,9 +41,10 @@ const AREAS = [
 ]
 
 export default function AdminPage() {
+  const [areas, setAreas] = useState<string[]>(AREAS)
   const [cards, setCards] = useState<Card[]>([])
   const [editingId, setEditingId] = useState<string | null>(null)
-  const [formData, setFormData] = useState({ question: '', answer: '', area: AREAS[0] })
+  const [formData, setFormData] = useState({ question: '', answer: '', area: areas[0] || AREAS[0] })
   const [searchTerm, setSearchTerm] = useState('')
   const [selectedArea, setSelectedArea] = useState<string>('')
 
@@ -50,11 +52,25 @@ export default function AdminPage() {
     // Load cards from localStorage
     const savedCards = JSON.parse(localStorage.getItem('flashcards') || '[]')
     setCards(savedCards)
+    // Load areas from localStorage
+    const savedAreas = JSON.parse(localStorage.getItem('areas') || 'null')
+    if (savedAreas) {
+      setAreas(savedAreas)
+    }
   }, [])
 
   function saveCards(updatedCards: Card[]) {
     setCards(updatedCards)
     localStorage.setItem('flashcards', JSON.stringify(updatedCards))
+  }
+
+  function handleAreasChange(newAreas: string[]) {
+    setAreas(newAreas)
+    localStorage.setItem('areas', JSON.stringify(newAreas))
+    // Atualizar formData se a área atual foi deletada
+    if (!newAreas.includes(formData.area)) {
+      setFormData({ ...formData, area: newAreas[0] || AREAS[0] })
+    }
   }
 
   function handleAddCard() {
@@ -122,6 +138,7 @@ export default function AdminPage() {
 
   return (
     <div className="admin-container">
+      <AreaManager areas={areas} onAreasChange={handleAreasChange} />
       <WordImporter onImport={handleImportCards} />
       <div className="admin-content">
         {/* Form Section */}
@@ -136,7 +153,7 @@ export default function AdminPage() {
               onChange={(e) => setFormData({ ...formData, area: e.target.value })}
               className="form-input"
             >
-              {AREAS.map((area) => (
+              {areas.map((area) => (
                 <option key={area} value={area}>
                   {area}
                 </option>
