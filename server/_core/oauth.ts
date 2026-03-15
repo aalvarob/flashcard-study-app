@@ -171,4 +171,50 @@ export function registerOAuthRoutes(app: Express) {
       res.status(401).json({ error: "Invalid token" });
     }
   });
+
+  // Development endpoint: Login without 2FA for testing
+  // Usage: POST /api/dev/login with { email: "test@example.com", name: "Test User" }
+  app.post("/api/dev/login", async (req: Request, res: Response) => {
+    if (process.env.NODE_ENV === "production") {
+      res.status(403).json({ error: "Dev endpoint not available in production" });
+      return;
+    }
+
+    try {
+      const { email, name } = req.body;
+      if (!email) {
+        res.status(400).json({ error: "email is required" });
+        return;
+      }
+
+      // Create a mock openId based on email
+      const openId = `dev-${email.replace(/[^a-z0-9]/gi, "-")}`;
+
+      // Sync user to database
+      const user = await syncUser({
+        openId,
+        name: name || email.split("@")[0],
+        email,
+        loginMethod: "dev",
+      });
+
+      // Create session token
+      const sessionToken = await sdk.createSessionToken(openId, {
+        name: user.name || "",
+        expiresInMs: ONE_YEAR_MS,
+      });
+
+      // Set cookie
+      const cookieOptions = getSessionCookieOptions(req);
+      res.cookie(COOKIE_NAME, sessionToken, { ...cookieOptions, maxAge: ONE_YEAR_MS });
+
+      res.json({
+        app_session_id: sessionToken,
+        user: buildUserResponse(user),
+      });
+    } catch (error) {
+      console.error("[Dev] Login failed:", error);
+      res.status(500).json({ error: "Dev login failed" });
+    }
+  });
 }

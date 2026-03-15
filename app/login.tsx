@@ -1,14 +1,15 @@
-import { View, Text, Pressable, ActivityIndicator } from "react-native";
+import { View, Text, Pressable, ActivityIndicator, Alert } from "react-native";
 import { ScreenContainer } from "@/components/screen-container";
 import { useColors } from "@/hooks/use-colors";
 import { useAuth } from "@/hooks/use-auth";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { router } from "expo-router";
-import { startOAuthLogin } from "@/constants/oauth";
+import { startOAuthLogin, getApiBaseUrl } from "@/constants/oauth";
 
 export default function LoginScreen() {
   const colors = useColors();
   const { isAuthenticated, loading } = useAuth({ autoFetch: true });
+  const [devLoading, setDevLoading] = useState(false);
 
   // Redirect to tabs if already authenticated
   useEffect(() => {
@@ -22,6 +23,39 @@ export default function LoginScreen() {
       await startOAuthLogin();
     } catch (error) {
       console.error("Login error:", error);
+    }
+  };
+
+  const handleDevLogin = async () => {
+    try {
+      setDevLoading(true);
+      const apiBaseUrl = getApiBaseUrl();
+      const response = await fetch(`${apiBaseUrl}/api/dev/login`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        credentials: "include",
+        body: JSON.stringify({
+          email: "test@example.com",
+          name: "Test User",
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error(`Dev login failed: ${response.statusText}`);
+      }
+
+      // Redirect to setup after successful login
+      router.replace("/(tabs)/setup");
+    } catch (error) {
+      console.error("Dev login error:", error);
+      Alert.alert(
+        "Erro",
+        `Falha ao fazer login de desenvolvimento: ${error instanceof Error ? error.message : "Erro desconhecido"}`
+      );
+    } finally {
+      setDevLoading(false);
     }
   };
 
@@ -49,7 +83,7 @@ export default function LoginScreen() {
         >
           Simulado Concílio
         </Text>
-        
+
         <Text
           style={{
             fontSize: 16,
@@ -81,6 +115,37 @@ export default function LoginScreen() {
           >
             Fazer Login
           </Text>
+        </Pressable>
+
+        {/* Development login button - only for testing */}
+        <Pressable
+          onPress={handleDevLogin}
+          disabled={devLoading}
+          style={({ pressed }) => ({
+            backgroundColor: colors.surface,
+            paddingVertical: 12,
+            paddingHorizontal: 24,
+            borderRadius: 8,
+            marginTop: 12,
+            borderWidth: 1,
+            borderColor: colors.border,
+            opacity: pressed ? 0.7 : devLoading ? 0.6 : 1,
+          })}
+        >
+          {devLoading ? (
+            <ActivityIndicator size="small" color={colors.primary} />
+          ) : (
+            <Text
+              style={{
+                color: colors.foreground,
+                fontSize: 14,
+                fontWeight: "500",
+                textAlign: "center",
+              }}
+            >
+              Login de Desenvolvimento
+            </Text>
+          )}
         </Pressable>
       </View>
     </ScreenContainer>
