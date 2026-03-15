@@ -332,22 +332,17 @@ export function FlashcardProvider({ children }: { children: React.ReactNode }) {
       let selectedIds: Set<string>;
       
       if (config.area === "all") {
-        // Selecionar todas as áreas
-        const allAreas = Array.from(new Set(state.cards.map(c => c.area)));
-        selectedIds = new Set();
-        allAreas.forEach(area => {
-          const areaCards = state.cards.filter((c) => c.area === area).slice(0, config.cardsPerArea);
-          areaCards.forEach(c => selectedIds.add(c.id));
-        });
+        // Selecionar TODOS os cards quando "Todos" é selecionado
+        selectedIds = new Set(state.cards.map(c => c.id));
       } else if (Array.isArray(config.area)) {
-        // Múltiplas áreas selecionadas
+        // Múltiplas áreas selecionadas - usar cardsPerArea
         selectedIds = new Set();
         config.area.forEach(area => {
           const areaCards = state.cards.filter((c) => c.area === area).slice(0, config.cardsPerArea);
           areaCards.forEach(c => selectedIds.add(c.id));
         });
       } else {
-        // Uma única área
+        // Uma única área - usar cardsPerArea
         const areaCards = state.cards.filter((c) => c.area === config.area).slice(0, config.cardsPerArea);
         selectedIds = new Set(areaCards.map(c => c.id));
       }
