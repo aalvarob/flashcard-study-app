@@ -11,7 +11,12 @@ import { useAuth } from "@/hooks/use-auth";
 export default function TabLayout() {
   const colors = useColors();
   const insets = useSafeAreaInsets();
-  const { isAuthenticated, loading } = useAuth({ autoFetch: false });
+  const { isAuthenticated, loading, refresh } = useAuth({ autoFetch: false });
+
+  // Check authentication once on mount
+  useEffect(() => {
+    refresh?.();
+  }, [refresh]);
 
   // Redirect to login if not authenticated
   useEffect(() => {

@@ -19,29 +19,18 @@ export function useAuth(options?: UseAuthOptions) {
       setLoading(true);
       setError(null);
 
-      // Web platform: use cookie-based auth, fetch user from API
+      // Web platform: use cache from localStorage (cookie-based auth is handled by server)
       if (Platform.OS === "web") {
-        console.log("[useAuth] Web platform: fetching user from API...");
-        const apiUser = await Api.getMe();
-        console.log("[useAuth] API user response:", apiUser);
+        console.log("[useAuth] Web platform: checking cache from localStorage...");
+        const cachedUser = await Auth.getUserInfo();
+        console.log("[useAuth] Cached user from localStorage:", cachedUser);
 
-        if (apiUser) {
-          const userInfo: Auth.User = {
-            id: apiUser.id,
-            openId: apiUser.openId,
-            name: apiUser.name,
-            email: apiUser.email,
-            loginMethod: apiUser.loginMethod,
-            lastSignedIn: new Date(apiUser.lastSignedIn),
-          };
-          setUser(userInfo);
-          // Cache user info in localStorage for faster subsequent loads
-          await Auth.setUserInfo(userInfo);
-          console.log("[useAuth] Web user set from API:", userInfo);
+        if (cachedUser) {
+          setUser(cachedUser);
+          console.log("[useAuth] Web user set from cache:", cachedUser);
         } else {
-          console.log("[useAuth] Web: No authenticated user from API");
+          console.log("[useAuth] Web: No cached user in localStorage");
           setUser(null);
-          await Auth.clearUserInfo();
         }
         return;
       }
