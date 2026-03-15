@@ -4,6 +4,7 @@ import AreaManager from '../components/AreaManager'
 import { migrateCardsAreas } from '../utils/migrationUtils'
 import { trpc } from '../lib/trpc-client'
 import { useWebSocket, type FlashcardEvent } from '../hooks/useWebSocket'
+import { useToast } from '../components/ToastContainer'
 import './AdminPage.css'
 
 interface Card {
@@ -52,6 +53,9 @@ export default function AdminPage() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
 
+  // Toast notifications
+  const toast = useToast()
+
   // WebSocket connection for real-time sync
   const { isConnected, send } = useWebSocket((event: FlashcardEvent) => {
     // Handle incoming WebSocket events from other clients
@@ -61,6 +65,7 @@ export default function AdminPage() {
         const exists = prev.some(c => c.id === cardId)
         if (!exists) {
           const { id: _, ...rest } = event.flashcard!
+          toast.showInfo(`Novo card criado: ${rest.question?.substring(0, 50)}...`)
           return [...prev, { id: cardId as number, ...rest }]
         }
         return prev
@@ -68,8 +73,10 @@ export default function AdminPage() {
     } else if (event.type === 'update' && event.flashcard) {
       const cardId = typeof event.flashcard!.id === 'string' ? parseInt(event.flashcard!.id) : event.flashcard!.id
       const { id: _, ...rest } = event.flashcard!
+      toast.showInfo(`Card atualizado: ${rest.question?.substring(0, 50)}...`)
       setCards(prev => prev.map(c => c.id === cardId ? { ...c, ...rest } : c))
     } else if (event.type === 'delete' && event.id) {
+      toast.showWarning(`Card deletado`)
       setCards(prev => prev.filter(c => c.id !== event.id))
     }
   })
@@ -119,12 +126,13 @@ export default function AdminPage() {
               flashcard: { id: editingId, ...formData },
               timestamp: Date.now(),
             })
+            toast.showSuccess('Card atualizado com sucesso!')
             flashcardsQuery.refetch()
             setEditingId(null)
             setFormData({ question: '', answer: '', area: AREAS[0] })
           },
           onError: () => {
-            alert('Erro ao atualizar card')
+            toast.showError('Erro ao atualizar card')
           },
         }
       )
@@ -144,11 +152,12 @@ export default function AdminPage() {
               flashcard: { id: Date.now(), ...formData },
               timestamp: Date.now(),
             })
+            toast.showSuccess('Card criado com sucesso!')
             flashcardsQuery.refetch()
             setFormData({ question: '', answer: '', area: AREAS[0] })
           },
           onError: () => {
-            alert('Erro ao criar card')
+            toast.showError('Erro ao criar card')
           },
         }
       )
@@ -173,10 +182,11 @@ export default function AdminPage() {
               id,
               timestamp: Date.now(),
             })
+            toast.showSuccess('Card deletado com sucesso!')
             flashcardsQuery.refetch()
           },
           onError: () => {
-            alert('Erro ao deletar card')
+            toast.showError('Erro ao deletar card')
           },
         }
       )
