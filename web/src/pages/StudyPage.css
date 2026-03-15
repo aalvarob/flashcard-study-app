@@ -125,11 +125,11 @@
 .flashcard {
   width: 100%;
   max-width: 95%;
-  height: 65vh;
+  height: 70vh;
   cursor: pointer;
   perspective: 1000px;
   flex-shrink: 0;
-  max-height: 500px;
+  max-height: 600px;
 }
 
 .flashcard-inner {
@@ -182,24 +182,28 @@
 }
 
 .card-question {
-  font-size: 1.8rem;
+  font-size: 2.4rem;
   font-weight: 600;
-  line-height: 1.4;
+  line-height: 1.5;
   margin-bottom: 1.5rem;
   flex: 1;
   display: flex;
   align-items: center;
   justify-content: center;
+  word-break: break-word;
+  overflow-wrap: break-word;
 }
 
 .card-answer {
-  font-size: 1.4rem;
+  font-size: 2rem;
   font-weight: 500;
-  line-height: 1.5;
+  line-height: 1.6;
   flex: 1;
   display: flex;
   align-items: center;
   justify-content: center;
+  word-break: break-word;
+  overflow-wrap: break-word;
 }
 
 .card-hint {
