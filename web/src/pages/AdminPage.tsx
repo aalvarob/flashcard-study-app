@@ -4,6 +4,9 @@ import AreaManager from '../components/AreaManager'
 import { migrateCardsAreas } from '../utils/migrationUtils'
 import './AdminPage.css'
 
+// Nota: Esta página de admin funciona sem autenticação para facilitar gerenciamento local de cards
+// Em produção, adicionar verificação de permissão de admin
+
 interface Card {
   id: string
   question: string
