@@ -1,0 +1,8 @@
+{
+  "query": "SELECT id, question, answer, area, COUNT(*) as count FROM flashcards GROUP BY question, answer HAVING count > 1 ORDER BY count DESC;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway04.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 2ogs2UohtmxebP6.root --database ijHg8DNNEmRjrxapNo7pAg --execute SELECT id, question, answer, area, COUNT(*) as count FROM flashcards GROUP BY question, answer HAVING count > 1 ORDER BY count DESC;",
+  "returncode": 1,
+  "logs": [
+    "ERROR 1055 (42000) at line 1: Expression #1 of SELECT list is not in GROUP BY clause and contains nonaggregated column 'ijHg8DNNEmRjrxapNo7pAg.flashcards.id' which is not functionally dependent on columns in GROUP BY clause; this is incompatible with sql_mode=only_full_group_by"
+  ]
+}

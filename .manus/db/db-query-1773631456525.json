@@ -1,0 +1,15 @@
+{
+  "query": "SELECT question, answer, COUNT(*) as count FROM flashcards GROUP BY question, answer HAVING count > 1 ORDER BY count DESC;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway04.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 2ogs2UohtmxebP6.root --database ijHg8DNNEmRjrxapNo7pAg --execute SELECT question, answer, COUNT(*) as count FROM flashcards GROUP BY question, answer HAVING count > 1 ORDER BY count DESC;",
+  "rows": [
+    {
+      "question": "Rm 6.4",
+      "answer": "De sorte que fomos sepultados com ele pelo batismo na morte; para que, como Cristo ressuscitou dos mortos pela glória do Pai, assim andemos nós também em novidade de vida.",
+      "count": "2"
+    }
+  ],
+  "messages": [],
+  "stdout": "question\tanswer\tcount\nRm 6.4\tDe sorte que fomos sepultados com ele pelo batismo na morte; para que, como Cristo ressuscitou dos mortos pela glória do Pai, assim andemos nós também em novidade de vida.\t2\n",
+  "stderr": "",
+  "execution_time_ms": 474
+}

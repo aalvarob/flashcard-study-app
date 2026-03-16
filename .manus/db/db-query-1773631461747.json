@@ -1,0 +1,22 @@
+{
+  "query": "SELECT id, question, answer, area FROM flashcards WHERE (question, answer) IN (SELECT question, answer FROM flashcards GROUP BY question, answer HAVING COUNT(*) > 1) ORDER BY question, answer, id;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway04.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 2ogs2UohtmxebP6.root --database ijHg8DNNEmRjrxapNo7pAg --execute SELECT id, question, answer, area FROM flashcards WHERE (question, answer) IN (SELECT question, answer FROM flashcards GROUP BY question, answer HAVING COUNT(*) > 1) ORDER BY question, answer, id;",
+  "rows": [
+    {
+      "id": "30089",
+      "question": "Rm 6.4",
+      "answer": "De sorte que fomos sepultados com ele pelo batismo na morte; para que, como Cristo ressuscitou dos mortos pela glória do Pai, assim andemos nós também em novidade de vida.",
+      "area": "Geral"
+    },
+    {
+      "id": "30093",
+      "question": "Rm 6.4",
+      "answer": "De sorte que fomos sepultados com ele pelo batismo na morte; para que, como Cristo ressuscitou dos mortos pela glória do Pai, assim andemos nós também em novidade de vida.",
+      "area": "Geral"
+    }
+  ],
+  "messages": [],
+  "stdout": "id\tquestion\tanswer\tarea\n30089\tRm 6.4\tDe sorte que fomos sepultados com ele pelo batismo na morte; para que, como Cristo ressuscitou dos mortos pela glória do Pai, assim andemos nós também em novidade de vida.\tGeral\n30093\tRm 6.4\tDe sorte que fomos sepultados com ele pelo batismo na morte; para que, como Cristo ressuscitou dos mortos pela glória do Pai, assim andemos nós também em novidade de vida.\tGeral\n",
+  "stderr": "",
+  "execution_time_ms": 359
+}

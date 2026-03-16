@@ -1,0 +1,9 @@
+{
+  "query": "DELETE FROM flashcards WHERE id IN (SELECT id FROM (SELECT id FROM flashcards WHERE (question, answer) IN (SELECT question, answer FROM flashcards GROUP BY question, answer HAVING COUNT(*) > 1) AND id NOT IN (SELECT MIN(id) FROM flashcards GROUP BY question, answer HAVING COUNT(*) > 1)) as temp);",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway04.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 2ogs2UohtmxebP6.root --database ijHg8DNNEmRjrxapNo7pAg --execute DELETE FROM flashcards WHERE id IN (SELECT id FROM (SELECT id FROM flashcards WHERE (question, answer) IN (SELECT question, answer FROM flashcards GROUP BY question, answer HAVING COUNT(*) > 1) AND id NOT IN (SELECT MIN(id) FROM flashcards GROUP BY question, answer HAVING COUNT(*) > 1)) as temp);",
+  "rows": [],
+  "messages": [],
+  "stdout": "",
+  "stderr": "",
+  "execution_time_ms": 362
+}

@@ -1,0 +1,9 @@
+{
+  "query": "SELECT question, answer, COUNT(*) as count FROM flashcards GROUP BY question, answer HAVING count > 1;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway04.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 2ogs2UohtmxebP6.root --database ijHg8DNNEmRjrxapNo7pAg --execute SELECT question, answer, COUNT(*) as count FROM flashcards GROUP BY question, answer HAVING count > 1;",
+  "rows": [],
+  "messages": [],
+  "stdout": "",
+  "stderr": "",
+  "execution_time_ms": 366
+}
