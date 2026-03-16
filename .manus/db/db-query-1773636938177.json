@@ -1,0 +1,50 @@
+{
+  "query": "SELECT id, question, area FROM flashcards WHERE area LIKE '%Reino de Deus%' ORDER BY area, id;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway04.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 2ogs2UohtmxebP6.root --database ijHg8DNNEmRjrxapNo7pAg --execute SELECT id, question, area FROM flashcards WHERE area LIKE '%Reino de Deus%' ORDER BY area, id;",
+  "rows": [
+    {
+      "id": "30145",
+      "question": "Rm 10.14–15",
+      "area": "RB-Reino de Deus"
+    },
+    {
+      "id": "30146",
+      "question": "Rm 14.17",
+      "area": "RB-Reino de Deus"
+    },
+    {
+      "id": "30147",
+      "question": "Ap 11.15",
+      "area": "RB-Reino de Deus"
+    },
+    {
+      "id": "30148",
+      "question": "Lc 17.21",
+      "area": "RB-Reino de Deus"
+    },
+    {
+      "id": "67",
+      "question": "O que é o Reino de Deus?",
+      "area": "Reino de Deus"
+    },
+    {
+      "id": "68",
+      "question": "O Reino de Deus é Presente ou futuro?",
+      "area": "Reino de Deus"
+    },
+    {
+      "id": "69",
+      "question": "Qual a Relação da igreja com o Reino?",
+      "area": "Reino de Deus"
+    },
+    {
+      "id": "70",
+      "question": "Qual a diferença entre igreja e Reino de Deus?",
+      "area": "Reino de Deus"
+    }
+  ],
+  "messages": [],
+  "stdout": "id\tquestion\tarea\n30145\tRm 10.14–15\tRB-Reino de Deus\n30146\tRm 14.17\tRB-Reino de Deus\n30147\tAp 11.15\tRB-Reino de Deus\n30148\tLc 17.21\tRB-Reino de Deus\n67\tO que é o Reino de Deus?\tReino de Deus\n68\tO Reino de Deus é Presente ou futuro?\tReino de Deus\n69\tQual a Relação da igreja com o Reino?\tReino de Deus\n70\tQual a diferença entre igreja e Reino de Deus?\tReino de Deus\n",
+  "stderr": "",
+  "execution_time_ms": 443
+}

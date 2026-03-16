@@ -101,7 +101,9 @@ export default function SetupPage() {
   }
 
   function toggleAllAreas() {
-    if (selectedAreas.size === areas.length) {
+    // Se todas as áreas estão selecionadas, desselecionar todas
+    // Caso contrário, selecionar todas
+    if (selectedAreas.size > 0 && selectedAreas.size === areas.length) {
       setSelectedAreas(new Set())
     } else {
       setSelectedAreas(new Set(areas.map(a => a.id)))

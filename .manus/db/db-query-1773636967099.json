@@ -1,0 +1,250 @@
+{
+  "query": "SELECT DISTINCT area, LENGTH(area) as len, TRIM(area) as trimmed FROM flashcards ORDER BY area;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway04.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 2ogs2UohtmxebP6.root --database ijHg8DNNEmRjrxapNo7pAg --execute SELECT DISTINCT area, LENGTH(area) as len, TRIM(area) as trimmed FROM flashcards ORDER BY area;",
+  "rows": [
+    {
+      "area": "Amor ao Próximo e Ética",
+      "len": "25",
+      "trimmed": "Amor ao Próximo e Ética"
+    },
+    {
+      "area": "Anjos",
+      "len": "5",
+      "trimmed": "Anjos"
+    },
+    {
+      "area": "Batismo e Ceia",
+      "len": "14",
+      "trimmed": "Batismo e Ceia"
+    },
+    {
+      "area": "Deus Espírito Santo",
+      "len": "20",
+      "trimmed": "Deus Espírito Santo"
+    },
+    {
+      "area": "Deus Filho",
+      "len": "10",
+      "trimmed": "Deus Filho"
+    },
+    {
+      "area": "Deus Pai",
+      "len": "8",
+      "trimmed": "Deus Pai"
+    },
+    {
+      "area": "Dia do Senhor",
+      "len": "13",
+      "trimmed": "Dia do Senhor"
+    },
+    {
+      "area": "Educação Religiosa",
+      "len": "20",
+      "trimmed": "Educação Religiosa"
+    },
+    {
+      "area": "Eleição",
+      "len": "9",
+      "trimmed": "Eleição"
+    },
+    {
+      "area": "Escrituras Sagradas",
+      "len": "19",
+      "trimmed": "Escrituras Sagradas"
+    },
+    {
+      "area": "Estrutura e Funcionamento CBB",
+      "len": "29",
+      "trimmed": "Estrutura e Funcionamento CBB"
+    },
+    {
+      "area": "Evangelismo e Missões",
+      "len": "22",
+      "trimmed": "Evangelismo e Missões"
+    },
+    {
+      "area": "Família",
+      "len": "8",
+      "trimmed": "Família"
+    },
+    {
+      "area": "História dos Batistas",
+      "len": "22",
+      "trimmed": "História dos Batistas"
+    },
+    {
+      "area": "Homem",
+      "len": "5",
+      "trimmed": "Homem"
+    },
+    {
+      "area": "Igreja",
+      "len": "6",
+      "trimmed": "Igreja"
+    },
+    {
+      "area": "Justos e Ímpios",
+      "len": "16",
+      "trimmed": "Justos e Ímpios"
+    },
+    {
+      "area": "Liberdade Religiosa",
+      "len": "19",
+      "trimmed": "Liberdade Religiosa"
+    },
+    {
+      "area": "Ministério da Palavra",
+      "len": "22",
+      "trimmed": "Ministério da Palavra"
+    },
+    {
+      "area": "Morte",
+      "len": "5",
+      "trimmed": "Morte"
+    },
+    {
+      "area": "Ordem Social",
+      "len": "12",
+      "trimmed": "Ordem Social"
+    },
+    {
+      "area": "Pecado",
+      "len": "6",
+      "trimmed": "Pecado"
+    },
+    {
+      "area": "Princípios Batistas",
+      "len": "20",
+      "trimmed": "Princípios Batistas"
+    },
+    {
+      "area": "RB-Amor ao Próximo e Ética",
+      "len": "28",
+      "trimmed": "RB-Amor ao Próximo e Ética"
+    },
+    {
+      "area": "RB-Anjos",
+      "len": "8",
+      "trimmed": "RB-Anjos"
+    },
+    {
+      "area": "RB-Batismo e Ceia do Senhor",
+      "len": "27",
+      "trimmed": "RB-Batismo e Ceia do Senhor"
+    },
+    {
+      "area": "RB-Deus Espírito Santo",
+      "len": "23",
+      "trimmed": "RB-Deus Espírito Santo"
+    },
+    {
+      "area": "RB-Deus Filho",
+      "len": "13",
+      "trimmed": "RB-Deus Filho"
+    },
+    {
+      "area": "RB-Deus Pai",
+      "len": "11",
+      "trimmed": "RB-Deus Pai"
+    },
+    {
+      "area": "RB-Dia do Senhor",
+      "len": "16",
+      "trimmed": "RB-Dia do Senhor"
+    },
+    {
+      "area": "RB-Educação Religiosa",
+      "len": "23",
+      "trimmed": "RB-Educação Religiosa"
+    },
+    {
+      "area": "RB-Eleição",
+      "len": "12",
+      "trimmed": "RB-Eleição"
+    },
+    {
+      "area": "RB-Evangelismo e Missões",
+      "len": "25",
+      "trimmed": "RB-Evangelismo e Missões"
+    },
+    {
+      "area": "RB-Família",
+      "len": "11",
+      "trimmed": "RB-Família"
+    },
+    {
+      "area": "RB-Homem",
+      "len": "8",
+      "trimmed": "RB-Homem"
+    },
+    {
+      "area": "RB-Igreja",
+      "len": "9",
+      "trimmed": "RB-Igreja"
+    },
+    {
+      "area": "RB-Justos e Ímpios",
+      "len": "19",
+      "trimmed": "RB-Justos e Ímpios"
+    },
+    {
+      "area": "RB-Liberdade Religiosa",
+      "len": "22",
+      "trimmed": "RB-Liberdade Religiosa"
+    },
+    {
+      "area": "RB-Ministério da Palavra",
+      "len": "25",
+      "trimmed": "RB-Ministério da Palavra"
+    },
+    {
+      "area": "RB-Mordomia",
+      "len": "11",
+      "trimmed": "RB-Mordomia"
+    },
+    {
+      "area": "RB-Morte",
+      "len": "8",
+      "trimmed": "RB-Morte"
+    },
+    {
+      "area": "RB-Ordem Social",
+      "len": "15",
+      "trimmed": "RB-Ordem Social"
+    },
+    {
+      "area": "RB-Pecado",
+      "len": "9",
+      "trimmed": "RB-Pecado"
+    },
+    {
+      "area": "RB-Reino de Deus",
+      "len": "16",
+      "trimmed": "RB-Reino de Deus"
+    },
+    {
+      "area": "RB-Sagradas Escrituras",
+      "len": "22",
+      "trimmed": "RB-Sagradas Escrituras"
+    },
+    {
+      "area": "RB-Salvação",
+      "len": "13",
+      "trimmed": "RB-Salvação"
+    },
+    {
+      "area": "Reino de Deus",
+      "len": "13",
+      "trimmed": "Reino de Deus"
+    },
+    {
+      "area": "Salvação",
+      "len": "10",
+      "trimmed": "Salvação"
+    }
+  ],
+  "messages": [],
+  "stdout": "area\tlen\ttrimmed\nAmor ao Próximo e Ética\t25\tAmor ao Próximo e Ética\nAnjos\t5\tAnjos\nBatismo e Ceia\t14\tBatismo e Ceia\nDeus Espírito Santo\t20\tDeus Espírito Santo\nDeus Filho\t10\tDeus Filho\nDeus Pai\t8\tDeus Pai\nDia do Senhor\t13\tDia do Senhor\nEducação Religiosa\t20\tEducação Religiosa\nEleição\t9\tEleição\nEscrituras Sagradas\t19\tEscrituras Sagradas\nEstrutura e Funcionamento CBB\t29\tEstrutura e Funcionamento CBB\nEvangelismo e Missões\t22\tEvangelismo e Missões\nFamília\t8\tFamília\nHistória dos Batistas\t22\tHistória dos Batistas\nHomem\t5\tHomem\nIgreja\t6\tIgreja\nJustos e Ímpios\t16\tJustos e Ímpios\nLiberdade Religiosa\t19\tLiberdade Religiosa\nMinistério da Palavra\t22\tMinistério da Palavra\nMorte\t5\tMorte\nOrdem Social\t12\tOrdem Social\nPecado\t6\tPecado\nPrincípios Batistas\t20\tPrincípios Batistas\nRB-Amor ao Próximo e Ética\t28\tRB-Amor ao Próximo e Ética\nRB-Anjos\t8\tRB-Anjos\nRB-Batismo e Ceia do Senhor\t27\tRB-Batismo e Ceia do Senhor\nRB-Deus Espírito Santo\t23\tRB-Deus Espírito Santo\nRB-Deus Filho\t13\tRB-Deus Filho\nRB-Deus Pai\t11\tRB-Deus Pai\nRB-Dia do Senhor\t16\tRB-Dia do Senhor\nRB-Educação Religiosa\t23\tRB-Educação Religiosa\nRB-Eleição\t12\tRB-Eleição\nRB-Evangelismo e Missões\t25\tRB-Evangelismo e Missões\nRB-Família\t11\tRB-Família\nRB-Homem\t8\tRB-Homem\nRB-Igreja\t9\tRB-Igreja\nRB-Justos e Ímpios\t19\tRB-Justos e Ímpios\nRB-Liberdade Religiosa\t22\tRB-Liberdade Religiosa\nRB-Ministério da Palavra\t25\tRB-Ministério da Palavra\nRB-Mordomia\t11\tRB-Mordomia\nRB-Morte\t8\tRB-Morte\nRB-Ordem Social\t15\tRB-Ordem Social\nRB-Pecado\t9\tRB-Pecado\nRB-Reino de Deus\t16\tRB-Reino de Deus\nRB-Sagradas Escrituras\t22\tRB-Sagradas Escrituras\nRB-Salvação\t13\tRB-Salvação\nReino de Deus\t13\tReino de Deus\nSalvação\t10\tSalvação\n",
+  "stderr": "",
+  "execution_time_ms": 379
+}
