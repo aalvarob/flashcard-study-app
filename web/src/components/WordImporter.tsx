@@ -39,6 +39,12 @@ export default function WordImporter({ onImport, existingCards = [] }: { onImpor
     for (let i = 0; i < lines.length; i++) {
       const line = lines[i]
 
+      // Detectar área teológica (formato "Área: ...")
+      if (line.startsWith('Área:')) {
+        currentArea = line.replace('Área:', '').trim()
+        continue
+      }
+
       // Detectar área teológica (linhas em maiúsculas ou com padrão A, B, C, etc)
       if (line.match(/^[A-Z][\s\-]|^[A-Z]{2,}[\s\-]/) && !line.startsWith('Pergunta') && !line.startsWith('Resposta')) {
         currentArea = line
