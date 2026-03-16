@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import {
   View,
   Text,
@@ -17,7 +17,7 @@ import { router } from "expo-router";
 
 import { FlashcardArea } from "@/data/flashcards";
 
-type AreaType = FlashcardArea;
+type AreaType = string;
 
 export default function SetupScreen() {
   const colors = useColors();
@@ -27,8 +27,39 @@ export default function SetupScreen() {
   const [selectedAreas, setSelectedAreas] = useState<Set<AreaType>>(new Set());
   const [cardsPerArea, setCardsPerArea] = useState("10");
   const [selectionMode, setSelectionMode] = useState<"single" | "multiple">("single");
+  const [areas, setAreas] = useState<{ id: string; label: string; description: string; color: string }[]>([]);
 
-  const areas: { id: AreaType; label: string; description: string; color: string }[] = [
+  // Load areas dynamically from cards
+  useEffect(() => {
+    const uniqueAreas = new Map<string, number>();
+    state.cards.forEach((card) => {
+      uniqueAreas.set(card.area, (uniqueAreas.get(card.area) || 0) + 1);
+    });
+
+    const colorsList = [
+      colors.primary,
+      "#3B82F6",
+      "#8B5CF6",
+      "#EC4899",
+      "#10B981",
+      "#F59E0B",
+      "#6366F1",
+      "#14B8A6",
+      "#EF4444",
+      "#F97316",
+    ];
+
+    const loadedAreas = Array.from(uniqueAreas.entries()).map(([areaName, count], index) => ({
+      id: areaName,
+      label: areaName,
+      description: `${count} card${count !== 1 ? "s" : ""}`,
+      color: colorsList[index % colorsList.length],
+    }));
+
+    setAreas(loadedAreas.sort((a, b) => a.label.localeCompare(b.label)));
+  }, [state.cards, colors.primary]);
+
+  const staticAreas: { id: AreaType; label: string; description: string; color: string }[] = [
     { id: "escrituras_sagradas", label: "Escrituras Sagradas", description: "25 cards", color: colors.primary },
     { id: "deus_pai", label: "Deus Pai", description: "15 cards", color: "#3B82F6" },
     { id: "deus_filho", label: "Deus Filho", description: "4 cards", color: "#3B82F6" },
@@ -56,11 +87,14 @@ export default function SetupScreen() {
     { id: "estrutura_e_funcionamento_cbb", label: "Estrutura e Funcionamento da CBB", description: "2 cards", color: "#14B8A6" },
   ];
 
+  // Use dynamic areas if available, otherwise use static areas
+  const displayAreas = areas.length > 0 ? areas : staticAreas;
+
   const cardCounts = ["5", "10", "15", "20", "25", "30", "40", "50"];
 
   const areaStats = useMemo(() => {
     const stats: Record<string, { enabled: number; total: number }> = {};
-    areas.forEach((area) => {
+    displayAreas.forEach((area) => {
       const areaCards = state.cards.filter((c) => c.area === area.id);
       const enabledCards = areaCards.filter((c) => c.enabled);
       stats[area.id] = { enabled: enabledCards.length, total: areaCards.length };
@@ -115,7 +149,7 @@ export default function SetupScreen() {
     
     initializeSession({
       candidateName: candidateName.trim(),
-      area: selectedAreasList,
+      area: selectedAreasList as any,
       cardsPerArea: parseInt(cardsPerArea),
     });
 
@@ -370,7 +404,7 @@ export default function SetupScreen() {
                 </Pressable>
               </View>
               <View style={styles.areaGrid}>
-                {areas.map((area) => (
+                {displayAreas.map((area) => (
                   <Pressable
                     key={area.id}
                     style={[
