@@ -83,7 +83,11 @@ export default function AdminPage() {
       const savedCards = JSON.parse(localStorage.getItem('flashcards') || '[]')
       setCards(savedCards)
     } else if (flashcardsQuery.data) {
-      setCards(flashcardsQuery.data as Card[])
+      const loadedCards = flashcardsQuery.data as Card[]
+      setCards(loadedCards)
+      // Carregar áreas dinamicamente a partir dos cards
+      const uniqueAreas = Array.from(new Set(loadedCards.map(c => c.area))).sort()
+      setAreas(uniqueAreas)
       setLoading(false)
     } else {
       setLoading(false)

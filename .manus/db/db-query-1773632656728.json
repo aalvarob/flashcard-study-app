@@ -1,0 +1,70 @@
+{
+  "query": "SELECT id, question, answer, area FROM flashcards ORDER BY id DESC LIMIT 10",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway04.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 2ogs2UohtmxebP6.root --database ijHg8DNNEmRjrxapNo7pAg --execute SELECT id, question, answer, area FROM flashcards ORDER BY id DESC LIMIT 10",
+  "rows": [
+    {
+      "id": "30202",
+      "question": "Ef 5.22–33",
+      "answer": "Vós, mulheres, sujeitai-vos a vosso marido, como ao Senhor;... ____________________________________________________________________________",
+      "area": "RB-Família"
+    },
+    {
+      "id": "30201",
+      "question": "Gn 2.24",
+      "answer": "Portanto, deixará o varão o seu pai e a sua mãe e apegar-se-á à sua mulher, e serão ambos uma carne.",
+      "area": "RB-Família"
+    },
+    {
+      "id": "30200",
+      "question": "Mt 5.13–16",
+      "answer": "Vós sois o sal da terra; e, se o sal for insípido, com que se há de salgar? Para nada mais presta, senão para se lançar fora e ser pisado pelos homens. ____________________________________________________________________________",
+      "area": "RB-Família"
+    },
+    {
+      "id": "30199",
+      "question": "Cl 3.16",
+      "answer": "A palavra de Cristo habite em vós abundantemente, em toda a sabedoria, ensinando-vos e admoestando-vos uns aos outros, com salmos, hinos e cânticos espirituais; cantando ao Senhor com graça em vosso coração. ____________________________________________________________________________",
+      "area": "RB-Ordem Social"
+    },
+    {
+      "id": "30198",
+      "question": "Mt 28.20",
+      "answer": "ensinando-as a guardar todas as coisas que eu vos tenho mandado; e eis que eu estou convosco todos os dias, até à consumação dos séculos. ____________________________________________________________________________",
+      "area": "RB-Educação Religiosa"
+    },
+    {
+      "id": "30197",
+      "question": "At 13.2–3",
+      "answer": "2E, servindo eles ao Senhor e jejuando, disse o Espírito Santo: Apartai-me a Barnabé e a Saulo para a obra a que os tenho chamado. 3Então, jejuando, e orando, e pondo sobre eles as mãos, os despediram.",
+      "area": "RB-Evangelismo e Missões"
+    },
+    {
+      "id": "30196",
+      "question": "Mt 28.19–20",
+      "answer": "19Portanto, ide, ensinai todas as nações, batizando-as em nome do Pai, e do Filho, e do Espírito Santo; 20ensinando-as a guardar todas as coisas que eu vos tenho mandado; e eis que eu estou convosco todos os dias, até à consumação dos séculos.",
+      "area": "RB-Evangelismo e Missões"
+    },
+    {
+      "id": "30195",
+      "question": "1Co 11.23ss",
+      "answer": "Porque eu recebi do Senhor o que também vos ensinei: que o Senhor Jesus, na noite em que foi traído, tomou o pão… ____________________________________________________________________________",
+      "area": "RB-Mordomia"
+    },
+    {
+      "id": "30194",
+      "question": "Rm 6.4",
+      "answer": "De sorte que fomos sepultados com ele pelo batismo na morte; para que, como Cristo ressuscitou dos mortos pela glória do Pai, assim andemos nós também em novidade de vida.",
+      "area": "RB-Batismo e Ceia do Senhor"
+    },
+    {
+      "id": "30193",
+      "question": "At 2.41",
+      "answer": "De sorte que foram batizados os que de bom grado receberam a sua palavra; e, naquele dia, agregaram-se quase três mil almas.",
+      "area": "RB-Batismo e Ceia do Senhor"
+    }
+  ],
+  "messages": [],
+  "stdout": "id\tquestion\tanswer\tarea\n30202\tEf 5.22–33\tVós, mulheres, sujeitai-vos a vosso marido, como ao Senhor;... ____________________________________________________________________________\tRB-Família\n30201\tGn 2.24\tPortanto, deixará o varão o seu pai e a sua mãe e apegar-se-á à sua mulher, e serão ambos uma carne.\tRB-Família\n30200\tMt 5.13–16\tVós sois o sal da terra; e, se o sal for insípido, com que se há de salgar? Para nada mais presta, senão para se lançar fora e ser pisado pelos homens. ____________________________________________________________________________\tRB-Família\n30199\tCl 3.16\tA palavra de Cristo habite em vós abundantemente, em toda a sabedoria, ensinando-vos e admoestando-vos uns aos outros, com salmos, hinos e cânticos espirituais; cantando ao Senhor com graça em vosso coração. ____________________________________________________________________________\tRB-Ordem Social\n30198\tMt 28.20\tensinando-as a guardar todas as coisas que eu vos tenho mandado; e eis que eu estou convosco todos os dias, até à consumação dos séculos. ____________________________________________________________________________\tRB-Educação Religiosa\n30197\tAt 13.2–3\t2E, servindo eles ao Senhor e jejuando, disse o Espírito Santo: Apartai-me a Barnabé e a Saulo para a obra a que os tenho chamado. 3Então, jejuando, e orando, e pondo sobre eles as mãos, os despediram.\tRB-Evangelismo e Missões\n30196\tMt 28.19–20\t19Portanto, ide, ensinai todas as nações, batizando-as em nome do Pai, e do Filho, e do Espírito Santo; 20ensinando-as a guardar todas as coisas que eu vos tenho mandado; e eis que eu estou convosco todos os dias, até à consumação dos séculos.\tRB-Evangelismo e Missões\n30195\t1Co 11.23ss\tPorque eu recebi do Senhor o que também vos ensinei: que o Senhor Jesus, na noite em que foi traído, tomou o pão… ____________________________________________________________________________\tRB-Mordomia\n30194\tRm 6.4\tDe sorte que fomos sepultados com ele pelo batismo na morte; para que, como Cristo ressuscitou dos mortos pela glória do Pai, assim andemos nós também em novidade de vida.\tRB-Batismo e Ceia do Senhor\n30193\tAt 2.41\tDe sorte que foram batizados os que de bom grado receberam a sua palavra; e, naquele dia, agregaram-se quase três mil almas.\tRB-Batismo e Ceia do Senhor\n",
+  "stderr": "",
+  "execution_time_ms": 367
+}

@@ -1,0 +1,50 @@
+{
+  "query": "SELECT area, COUNT(*) as count FROM flashcards GROUP BY area ORDER BY count DESC LIMIT 10",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway04.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 2ogs2UohtmxebP6.root --database ijHg8DNNEmRjrxapNo7pAg --execute SELECT area, COUNT(*) as count FROM flashcards GROUP BY area ORDER BY count DESC LIMIT 10",
+  "rows": [
+    {
+      "area": "Escrituras Sagradas",
+      "count": "23"
+    },
+    {
+      "area": "Deus Pai",
+      "count": "15"
+    },
+    {
+      "area": "RB-Deus Pai",
+      "count": "14"
+    },
+    {
+      "area": "Igreja",
+      "count": "14"
+    },
+    {
+      "area": "RB-Igreja",
+      "count": "14"
+    },
+    {
+      "area": "RB-Deus Espírito Santo",
+      "count": "9"
+    },
+    {
+      "area": "Batismo e Ceia",
+      "count": "9"
+    },
+    {
+      "area": "RB-Batismo e Ceia do Senhor",
+      "count": "8"
+    },
+    {
+      "area": "Deus Espírito Santo",
+      "count": "7"
+    },
+    {
+      "area": "Salvação",
+      "count": "6"
+    }
+  ],
+  "messages": [],
+  "stdout": "area\tcount\nEscrituras Sagradas\t23\nDeus Pai\t15\nRB-Deus Pai\t14\nIgreja\t14\nRB-Igreja\t14\nRB-Deus Espírito Santo\t9\nBatismo e Ceia\t9\nRB-Batismo e Ceia do Senhor\t8\nDeus Espírito Santo\t7\nSalvação\t6\n",
+  "stderr": "",
+  "execution_time_ms": 407
+}

@@ -1,0 +1,154 @@
+{
+  "query": "SELECT DISTINCT area FROM flashcards ORDER BY area",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway04.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 2ogs2UohtmxebP6.root --database ijHg8DNNEmRjrxapNo7pAg --execute SELECT DISTINCT area FROM flashcards ORDER BY area",
+  "rows": [
+    {
+      "area": "Amor ao Próximo e Ética"
+    },
+    {
+      "area": "Anjos"
+    },
+    {
+      "area": "Batismo e Ceia"
+    },
+    {
+      "area": "Deus Espírito Santo"
+    },
+    {
+      "area": "Deus Filho"
+    },
+    {
+      "area": "Deus Pai"
+    },
+    {
+      "area": "Dia do Senhor"
+    },
+    {
+      "area": "Educação Religiosa"
+    },
+    {
+      "area": "Eleição"
+    },
+    {
+      "area": "Escrituras Sagradas"
+    },
+    {
+      "area": "Estrutura e Funcionamento CBB"
+    },
+    {
+      "area": "Evangelismo e Missões"
+    },
+    {
+      "area": "Família"
+    },
+    {
+      "area": "História dos Batistas"
+    },
+    {
+      "area": "Homem"
+    },
+    {
+      "area": "Igreja"
+    },
+    {
+      "area": "Justos e Ímpios"
+    },
+    {
+      "area": "Liberdade Religiosa"
+    },
+    {
+      "area": "Ministério da Palavra"
+    },
+    {
+      "area": "Morte"
+    },
+    {
+      "area": "Ordem Social"
+    },
+    {
+      "area": "Pecado"
+    },
+    {
+      "area": "Princípios Batistas"
+    },
+    {
+      "area": "RB-Amor ao Próximo e Ética"
+    },
+    {
+      "area": "RB-Anjos"
+    },
+    {
+      "area": "RB-Batismo e Ceia do Senhor"
+    },
+    {
+      "area": "RB-Deus Espírito Santo"
+    },
+    {
+      "area": "RB-Deus Filho"
+    },
+    {
+      "area": "RB-Deus Pai"
+    },
+    {
+      "area": "RB-Dia do Senhor"
+    },
+    {
+      "area": "RB-Educação Religiosa"
+    },
+    {
+      "area": "RB-Eleição"
+    },
+    {
+      "area": "RB-Evangelismo e Missões"
+    },
+    {
+      "area": "RB-Família"
+    },
+    {
+      "area": "RB-Homem"
+    },
+    {
+      "area": "RB-Igreja"
+    },
+    {
+      "area": "RB-Justos e Ímpios"
+    },
+    {
+      "area": "RB-Liberdade Religiosa"
+    },
+    {
+      "area": "RB-Ministério da Palavra"
+    },
+    {
+      "area": "RB-Mordomia"
+    },
+    {
+      "area": "RB-Morte"
+    },
+    {
+      "area": "RB-Ordem Social"
+    },
+    {
+      "area": "RB-Pecado"
+    },
+    {
+      "area": "RB-Reino de Deus"
+    },
+    {
+      "area": "RB-Sagradas Escrituras"
+    },
+    {
+      "area": "RB-Salvação"
+    },
+    {
+      "area": "Reino de Deus"
+    },
+    {
+      "area": "Salvação"
+    }
+  ],
+  "messages": [],
+  "stdout": "area\nAmor ao Próximo e Ética\nAnjos\nBatismo e Ceia\nDeus Espírito Santo\nDeus Filho\nDeus Pai\nDia do Senhor\nEducação Religiosa\nEleição\nEscrituras Sagradas\nEstrutura e Funcionamento CBB\nEvangelismo e Missões\nFamília\nHistória dos Batistas\nHomem\nIgreja\nJustos e Ímpios\nLiberdade Religiosa\nMinistério da Palavra\nMorte\nOrdem Social\nPecado\nPrincípios Batistas\nRB-Amor ao Próximo e Ética\nRB-Anjos\nRB-Batismo e Ceia do Senhor\nRB-Deus Espírito Santo\nRB-Deus Filho\nRB-Deus Pai\nRB-Dia do Senhor\nRB-Educação Religiosa\nRB-Eleição\nRB-Evangelismo e Missões\nRB-Família\nRB-Homem\nRB-Igreja\nRB-Justos e Ímpios\nRB-Liberdade Religiosa\nRB-Ministério da Palavra\nRB-Mordomia\nRB-Morte\nRB-Ordem Social\nRB-Pecado\nRB-Reino de Deus\nRB-Sagradas Escrituras\nRB-Salvação\nReino de Deus\nSalvação\n",
+  "stderr": "",
+  "execution_time_ms": 372
+}

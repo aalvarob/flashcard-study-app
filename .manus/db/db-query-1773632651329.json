@@ -1,0 +1,15 @@
+{
+  "query": "SELECT COUNT(*) as total, MIN(id) as min_id, MAX(id) as max_id FROM flashcards",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway04.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 2ogs2UohtmxebP6.root --database ijHg8DNNEmRjrxapNo7pAg --execute SELECT COUNT(*) as total, MIN(id) as min_id, MAX(id) as max_id FROM flashcards",
+  "rows": [
+    {
+      "total": "230",
+      "min_id": "6",
+      "max_id": "30202"
+    }
+  ],
+  "messages": [],
+  "stdout": "total\tmin_id\tmax_id\n230\t6\t30202\n",
+  "stderr": "",
+  "execution_time_ms": 421
+}
