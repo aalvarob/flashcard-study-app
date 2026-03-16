@@ -3,10 +3,11 @@ import '../styles/AreaManager.css'
 
 interface AreaManagerProps {
   areas: string[]
+  cards?: Array<{ area: string }>
   onAreasChange: (areas: string[]) => void
 }
 
-export default function AreaManager({ areas, onAreasChange }: AreaManagerProps) {
+export default function AreaManager({ areas, cards, onAreasChange }: AreaManagerProps) {
   const [isOpen, setIsOpen] = useState(false)
   const [newArea, setNewArea] = useState('')
   const [editingIndex, setEditingIndex] = useState<number | null>(null)
@@ -91,6 +92,9 @@ export default function AreaManager({ areas, onAreasChange }: AreaManagerProps) 
     }
   }
 
+  // Calcular o número de áreas únicas a partir dos cards
+  const uniqueAreasCount = cards ? new Set(cards.map(c => c.area)).size : areas.length
+
   return (
     <div className="area-manager">
       <button
@@ -98,7 +102,7 @@ export default function AreaManager({ areas, onAreasChange }: AreaManagerProps) 
         onClick={() => setIsOpen(!isOpen)}
       >
         <span className="toggle-icon">⚙️</span>
-        Gerenciar Áreas ({areas.length})
+        Gerenciar Áreas ({uniqueAreasCount})
       </button>
 
       {isOpen && (
@@ -143,7 +147,7 @@ export default function AreaManager({ areas, onAreasChange }: AreaManagerProps) 
 
             {/* Areas List Section */}
             <div className="areas-list-section">
-              <h4>Áreas Existentes ({areas.length})</h4>
+              <h4>Áreas Existentes ({uniqueAreasCount})</h4>
               <div className="areas-list">
                 {areas.length === 0 ? (
                   <p className="empty-message">Nenhuma área criada ainda</p>

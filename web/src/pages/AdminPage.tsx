@@ -283,7 +283,7 @@ export default function AdminPage() {
             <span className="stat-label">Total de Cards</span>
           </div>
           <div className="stat-card">
-            <span className="stat-number">{areas.length}</span>
+            <span className="stat-number">{new Set(cards.map(c => c.area)).size}</span>
             <span className="stat-label">Áreas</span>
           </div>
           <div className="stat-card">
@@ -400,7 +400,7 @@ export default function AdminPage() {
           {showAreaManager && (
             <div className="expandable-section">
               <h3>Gerenciar Áreas Teológicas</h3>
-              <AreaManager areas={areas} onAreasChange={handleAreasChange} />
+              <AreaManager areas={areas} cards={cards} onAreasChange={handleAreasChange} />
             </div>
           )}
         </div>
