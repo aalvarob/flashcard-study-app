@@ -1,9 +1,10 @@
 import { useState, useEffect, useMemo } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { FLASHCARDS_DATA, type FlashcardArea } from '../../../data/flashcards'
+import { trpc } from '../lib/trpc-client'
 import './SetupPage.css'
 
-const AREAS: { id: FlashcardArea; label: string }[] = [
+const DEFAULT_AREAS: { id: FlashcardArea; label: string }[] = [
   { id: 'escrituras_sagradas', label: 'Escrituras Sagradas' },
   { id: 'deus_pai', label: 'Deus Pai' },
   { id: 'deus_filho', label: 'Deus Filho' },
@@ -37,8 +38,23 @@ type SelectionMode = 'all' | 'multiple'
 export default function SetupPage() {
   const navigate = useNavigate()
   const [selectionMode, setSelectionMode] = useState<SelectionMode>('all')
-  const [selectedAreas, setSelectedAreas] = useState<Set<FlashcardArea>>(new Set())
+  const [selectedAreas, setSelectedAreas] = useState<Set<string>>(new Set())
   const [cardsPerArea, setCardsPerArea] = useState(10)
+  const [areas, setAreas] = useState<{ id: string; label: string }[]>(DEFAULT_AREAS)
+  
+  // Carregar áreas dinamicamente da API
+  const flashcardsQuery = trpc.flashcards.list.useQuery()
+  
+  useEffect(() => {
+    if (flashcardsQuery.data) {
+      const uniqueAreas = Array.from(new Set(flashcardsQuery.data.map(c => c.area))).sort()
+      const dynamicAreas = uniqueAreas.map(area => ({
+        id: area,
+        label: area
+      }))
+      setAreas(dynamicAreas)
+    }
+  }, [flashcardsQuery.data])
   
   // Limpar localStorage antigo ao carregar a página
   useEffect(() => {
@@ -59,21 +75,22 @@ export default function SetupPage() {
   }, [])
 
   const cardsByArea = useMemo(() => {
-    const counts: Record<FlashcardArea, number> = {} as Record<FlashcardArea, number>
-    AREAS.forEach(area => {
-      counts[area.id] = FLASHCARDS_DATA.filter(card => card.area === area.id).length
+    const counts: Record<string, number> = {}
+    areas.forEach(area => {
+      const count = (flashcardsQuery.data || []).filter(card => card.area === area.id).length
+      counts[area.id] = count
     })
     return counts
-  }, [])
+  }, [areas, flashcardsQuery.data])
 
   const totalAvailableCards = useMemo(() => {
     if (selectionMode === 'all') {
-      return FLASHCARDS_DATA.length
+      return (flashcardsQuery.data || []).length
     }
-    return Array.from(selectedAreas).reduce((sum, area) => sum + cardsByArea[area], 0)
-  }, [selectionMode, selectedAreas, cardsByArea])
+    return Array.from(selectedAreas).reduce((sum, area) => sum + (cardsByArea[area] || 0), 0)
+  }, [selectionMode, selectedAreas, cardsByArea, flashcardsQuery.data])
 
-  function toggleArea(areaId: FlashcardArea) {
+  function toggleArea(areaId: string) {
     const newSelected = new Set(selectedAreas)
     if (newSelected.has(areaId)) {
       newSelected.delete(areaId)
@@ -84,21 +101,21 @@ export default function SetupPage() {
   }
 
   function toggleAllAreas() {
-    if (selectedAreas.size === AREAS.length) {
+    if (selectedAreas.size === areas.length) {
       setSelectedAreas(new Set())
     } else {
-      setSelectedAreas(new Set(AREAS.map(a => a.id)))
+      setSelectedAreas(new Set(areas.map(a => a.id)))
     }
   }
 
   function handleStartStudy() {
     // Mapear IDs para labels (nomes reais das áreas)
-    const areaIds = selectionMode === 'all' ? AREAS.map(a => a.id) : Array.from(selectedAreas)
+    const areaIds = selectionMode === 'all' ? areas.map(a => a.id) : Array.from(selectedAreas)
     console.log('[SetupPage] areaIds:', areaIds)
-    console.log('[SetupPage] AREAS:', AREAS)
+    console.log('[SetupPage] areas:', areas)
     
     const areaLabels = areaIds.map(id => {
-      const area = AREAS.find(a => a.id === id)
+      const area = areas.find(a => a.id === id)
       console.log(`[SetupPage] Mapeando ID "${id}" para label "${area ? area.label : 'NOT FOUND'}"` )
       return area ? area.label : id
     })
@@ -156,11 +173,11 @@ export default function SetupPage() {
                 className="select-all-button"
                 onClick={toggleAllAreas}
               >
-                {selectedAreas.size === AREAS.length ? 'Desselecionar Tudo' : 'Selecionar Tudo'}
+                {selectedAreas.size === areas.length ? 'Desselecionar Tudo' : 'Selecionar Tudo'}
               </button>
             </div>
             <div className="areas-grid">
-              {AREAS.map(area => (
+              {areas.map((area: { id: string; label: string }) => (
                 <label key={area.id} className="area-checkbox">
                   <input
                     type="checkbox"
@@ -219,7 +236,7 @@ export default function SetupPage() {
             <span className="summary-label">Cartões a Estudar:</span>
             <span className="summary-value">
               {selectionMode === 'all'
-                ? Math.min(cardsPerArea * AREAS.length, totalAvailableCards)
+                ? Math.min(cardsPerArea * areas.length, totalAvailableCards)
                 : Math.min(cardsPerArea * selectedAreas.size, totalAvailableCards)}
             </span>
           </div>
