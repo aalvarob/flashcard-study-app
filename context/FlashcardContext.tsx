@@ -269,11 +269,18 @@ export function FlashcardProvider({ children }: { children: React.ReactNode }) {
           // Fallback to local data if API fails
           const stored = await AsyncStorage.getItem(STORAGE_KEY);
           if (stored) {
-            const parsed: Flashcard[] = JSON.parse(stored);
+            const parsed = JSON.parse(stored);
+            // Handle both old array format and new object format
+            const isArray = Array.isArray(parsed);
             const merged = FLASHCARDS_DATA.map((fd) => {
-              const existing = parsed.find((p) => p.id === fd.id);
+              let existing;
+              if (isArray) {
+                existing = (parsed as any[]).find((p: any) => p.id === fd.id);
+              } else {
+                existing = (parsed as Record<string, any>)[fd.id];
+              }
               return existing
-                ? { ...fd, enabled: existing.enabled, correctCount: existing.correctCount, wrongCount: existing.wrongCount, notSureCount: existing.notSureCount ?? 0, notRememberCount: existing.notRememberCount ?? 0 }
+                ? { ...fd, enabled: existing.enabled ?? true, correctCount: existing.correctCount ?? 0, wrongCount: existing.wrongCount ?? 0, notSureCount: existing.notSureCount ?? 0, notRememberCount: existing.notRememberCount ?? 0 }
                 : { ...fd, enabled: true, correctCount: 0, wrongCount: 0, notSureCount: 0, notRememberCount: 0 };
             });
             dispatch({ type: "INIT", payload: merged });
