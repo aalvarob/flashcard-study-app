@@ -1,0 +1,13 @@
+{
+  "query": "SELECT COUNT(*) as total FROM flashcards;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway04.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 2ogs2UohtmxebP6.root --database ijHg8DNNEmRjrxapNo7pAg --execute SELECT COUNT(*) as total FROM flashcards;",
+  "rows": [
+    {
+      "total": "129"
+    }
+  ],
+  "messages": [],
+  "stdout": "total\n129\n",
+  "stderr": "",
+  "execution_time_ms": 510
+}

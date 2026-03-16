@@ -1,0 +1,9 @@
+{
+  "query": "DELETE FROM flashcards WHERE area = 'GERAL' OR area = 'Geral';",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway04.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 2ogs2UohtmxebP6.root --database ijHg8DNNEmRjrxapNo7pAg --execute DELETE FROM flashcards WHERE area = 'GERAL' OR area = 'Geral';",
+  "rows": [],
+  "messages": [],
+  "stdout": "",
+  "stderr": "",
+  "execution_time_ms": 380
+}
