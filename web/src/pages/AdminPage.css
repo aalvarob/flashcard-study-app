@@ -925,3 +925,25 @@
   transform: scale(1.1);
   box-shadow: 0 4px 12px rgba(245, 87, 108, 0.4);
 }
+
+/* Search Highlight */
+.search-highlight {
+  background: #ffd700;
+  color: #000;
+  font-weight: 600;
+  padding: 0.1rem 0.3rem;
+  border-radius: 3px;
+  animation: highlightPulse 0.5s ease-in-out;
+}
+
+@keyframes highlightPulse {
+  0% {
+    background: #ffff00;
+  }
+  50% {
+    background: #ffd700;
+  }
+  100% {
+    background: #ffd700;
+  }
+}

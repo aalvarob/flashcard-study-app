@@ -242,6 +242,26 @@ export default function AdminPage() {
     }
   }
 
+  // Highlight search term in text
+  function highlightSearchTerm(text: string, term: string) {
+    if (!term) return text
+    const regex = new RegExp(`(${term})`, 'gi')
+    const parts = text.split(regex)
+    return (
+      <>
+        {parts.map((part, i) =>
+          regex.test(part) ? (
+            <mark key={i} className="search-highlight">
+              {part}
+            </mark>
+          ) : (
+            <span key={i}>{part}</span>
+          )
+        )}
+      </>
+    )
+  }
+
   // Filter cards
   const filteredCards = cards.filter((card) => {
     const matchesSearch =
@@ -460,11 +480,11 @@ export default function AdminPage() {
                   <div className="card-content">
                     <div className="card-question">
                       <strong>❓ Pergunta:</strong>
-                      <p>{card.question}</p>
+                      <p>{highlightSearchTerm(card.question, searchTerm)}</p>
                     </div>
                     <div className="card-answer">
                       <strong>✓ Resposta:</strong>
-                      <p>{card.answer}</p>
+                      <p>{highlightSearchTerm(card.answer, searchTerm)}</p>
                     </div>
                   </div>
                   <div className="card-actions">
