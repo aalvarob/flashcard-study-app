@@ -219,6 +219,9 @@ export default function AdminPage() {
             // WebSocket broadcast disabled
             if (successCount === importedCards.length) {
               flashcardsQuery.refetch()
+              // Atualizar a lista de áreas com as novas áreas importadas
+              const newAreas = Array.from(new Set([...areas, ...importedCards.map(c => c.area)]))
+              setAreas(newAreas)
               toast.showSuccess(`${successCount} cards importados com sucesso!`)
               setShowImporter(false)
             }
