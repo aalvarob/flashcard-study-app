@@ -1,0 +1,184 @@
+.preparation-page {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+  padding: 40px 20px;
+}
+
+.preparation-header {
+  max-width: 1000px;
+  margin: 0 auto 40px;
+  text-align: center;
+}
+
+.preparation-header h1 {
+  font-size: 2.5rem;
+  color: #1a3a52;
+  margin: 0 0 10px 0;
+  font-weight: 700;
+}
+
+.preparation-header p {
+  font-size: 1.1rem;
+  color: #666;
+  margin: 0;
+}
+
+.preparation-sections {
+  max-width: 1000px;
+  margin: 0 auto;
+  display: grid;
+  gap: 20px;
+}
+
+.preparation-card {
+  background: white;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  border-left: 4px solid #0a7ea4;
+  transition: all 0.3s ease;
+}
+
+.preparation-card:hover {
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+}
+
+.preparation-card.expanded {
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+}
+
+.preparation-card-header {
+  width: 100%;
+  padding: 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  background: none;
+  border: none;
+  cursor: pointer;
+  text-align: left;
+  transition: background-color 0.2s ease;
+}
+
+.preparation-card-header:hover {
+  background-color: #f9f9f9;
+}
+
+.preparation-card-title-section {
+  flex: 1;
+  margin-right: 12px;
+}
+
+.preparation-card-title {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #1a3a52;
+  margin: 0 0 4px 0;
+}
+
+.preparation-card-description {
+  font-size: 0.9rem;
+  color: #999;
+  margin: 0;
+  line-height: 1.4;
+}
+
+.preparation-expand-icon {
+  font-size: 1.2rem;
+  color: #0a7ea4;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.preparation-card-content {
+  padding: 0 20px 20px 20px;
+  background-color: #fafafa;
+  border-top: 1px solid #e5e5e5;
+  max-height: 600px;
+  overflow-y: auto;
+}
+
+.preparation-content-item {
+  margin-bottom: 16px;
+  padding-left: 16px;
+  border-left: 2px solid #0a7ea4;
+}
+
+.preparation-content-item p {
+  font-size: 0.95rem;
+  color: #333;
+  margin: 0;
+  line-height: 1.6;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .preparation-page {
+    padding: 20px 10px;
+  }
+
+  .preparation-header h1 {
+    font-size: 1.8rem;
+  }
+
+  .preparation-header p {
+    font-size: 1rem;
+  }
+
+  .preparation-card-header {
+    padding: 16px;
+  }
+
+  .preparation-card-title {
+    font-size: 1rem;
+  }
+
+  .preparation-card-description {
+    font-size: 0.85rem;
+  }
+
+  .preparation-card-content {
+    padding: 0 16px 16px 16px;
+  }
+
+  .preparation-content-item {
+    margin-bottom: 12px;
+    padding-left: 12px;
+  }
+
+  .preparation-content-item p {
+    font-size: 0.9rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .preparation-page {
+    padding: 15px 5px;
+  }
+
+  .preparation-header h1 {
+    font-size: 1.5rem;
+  }
+
+  .preparation-header p {
+    font-size: 0.9rem;
+  }
+
+  .preparation-sections {
+    gap: 15px;
+  }
+
+  .preparation-card-header {
+    padding: 12px;
+    flex-direction: column;
+  }
+
+  .preparation-card-title-section {
+    margin-right: 0;
+    margin-bottom: 8px;
+  }
+
+  .preparation-expand-icon {
+    align-self: flex-end;
+  }
+}

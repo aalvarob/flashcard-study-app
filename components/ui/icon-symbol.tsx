@@ -23,6 +23,7 @@ const MAPPING = {
   "chart.bar.fill": "bar-chart",
   "gear": "settings",
   "lightbulb.fill": "lightbulb",
+  "pencil.circle.fill": "edit",
 } as IconMapping;
 
 /**
