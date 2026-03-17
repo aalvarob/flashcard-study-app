@@ -166,7 +166,7 @@ export default function SetupScreen() {
     }
   }
 
-  const maxCardsAvailable = getMaxCardsAvailable();
+  const maxCardsAvailable = Math.max(1, getMaxCardsAvailable());
   const currentCardsPerArea = Math.min(parseInt(cardsPerArea), maxCardsAvailable);
 
   function handleStartStudy() {
