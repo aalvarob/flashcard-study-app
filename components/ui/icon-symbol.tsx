@@ -22,6 +22,7 @@ const MAPPING = {
   "rectangle.stack.fill": "layers",
   "chart.bar.fill": "bar-chart",
   "gear": "settings",
+  "lightbulb.fill": "lightbulb",
 } as IconMapping;
 
 /**

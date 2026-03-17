@@ -8,6 +8,7 @@ import StudyPage from './pages/StudyPage'
 import StudyResultPage from './pages/StudyResultPage'
 import StatsPage from './pages/StatsPage'
 import AdminPage from './pages/AdminPage'
+import TipsPage from './pages/TipsPage'
 import './App.css'
 
 function AppContent() {
@@ -16,6 +17,7 @@ function AppContent() {
   const navItems = [
     { label: 'Home', path: '/', icon: '🏠' },
     { label: 'Estudar', path: '/study', icon: '📚' },
+    { label: 'Dicas', path: '/tips', icon: '💡' },
     { label: 'Estatísticas', path: '/stats', icon: '📊' },
     { label: 'Administração', path: '/admin', icon: '⚙️' },
   ];
@@ -45,6 +47,7 @@ function AppContent() {
               <Route path="/setup" element={<SetupPage />} />
               <Route path="/study" element={<StudyPage />} />
               <Route path="/study-result" element={<StudyResultPage />} />
+              <Route path="/tips" element={<TipsPage />} />
               <Route path="/stats" element={<StatsPage />} />
               <Route path="/admin" element={<AdminPage />} />
             </Routes>
