@@ -51,7 +51,8 @@ export default function ResultScreen() {
     }
     // Apenas reseta os contadores da sessão, mantendo os cards habilitados
     resetStudySession();
-    router.push("/(tabs)");
+    // Navegar diretamente para a tela de estudo (index)
+    router.replace("/(tabs)");
   }
 
   return (
