@@ -373,7 +373,8 @@ const styles = StyleSheet.create({
   },
   topResultButtonsArea: {
     paddingHorizontal: 16,
-    paddingVertical: 12,
+    paddingVertical: 2,
+    paddingBottom: 2,
   },
   quickActionsArea: {
     paddingHorizontal: 16,
