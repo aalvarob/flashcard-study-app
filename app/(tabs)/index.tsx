@@ -6,6 +6,7 @@ import {
   StyleSheet,
   Platform,
   Image,
+  ScrollView,
 } from "react-native";
 import { ScreenContainer } from "@/components/screen-container";
 import { FlashCard } from "@/components/FlashCard";
@@ -113,6 +114,7 @@ export default function StudyScreen() {
 
   return (
     <ScreenContainer containerClassName="bg-background">
+      <ScrollView contentContainerStyle={{ flexGrow: 1 }} scrollEnabled={true}>
       {/* Header com Score */}
       <View style={[styles.header, { backgroundColor: colors.primary, borderBottomColor: colors.primary }]}>
         <View style={styles.headerContent}>
@@ -298,6 +300,7 @@ export default function StudyScreen() {
           </View>
         </View>
       )}
+      </ScrollView>
     </ScreenContainer>
   );
 }
