@@ -405,7 +405,39 @@ export function FlashcardProvider({ children }: { children: React.ReactNode }) {
   const initializeSession = useCallback((config: { candidateName: string; area: "all" | FlashcardArea | FlashcardArea[]; cardsPerArea: number }) => {
     // Implementation for session initialization
     console.log("Session initialized:", config);
-  }, []);
+    
+    // Determine which areas to enable
+    const areasToEnable = config.area === "all" 
+      ? Array.from(new Set(state.cards.map(c => c.area)))
+      : Array.isArray(config.area) 
+        ? config.area 
+        : [config.area];
+    
+    // Group cards by area
+    const cardsByArea: Record<string, Flashcard[]> = {};
+    areasToEnable.forEach(area => {
+      cardsByArea[area] = state.cards.filter(c => c.area === area);
+    });
+    
+    // Enable only cardsPerArea cards from each selected area
+    const updated = state.cards.map(card => {
+      const cardArea = card.area as string;
+      
+      if (!areasToEnable.includes(cardArea as FlashcardArea)) {
+        // Disable cards from unselected areas
+        return { ...card, enabled: false };
+      }
+      
+      // For selected areas, enable only the first cardsPerArea cards
+      const areaCards = cardsByArea[cardArea];
+      const cardIndex = areaCards.findIndex(c => c.id === card.id);
+      const shouldEnable = cardIndex < config.cardsPerArea;
+      
+      return { ...card, enabled: shouldEnable };
+    });
+    
+    dispatch({ type: "INIT", payload: updated });
+  }, [state.cards])
 
   const value: FlashcardContextValue = {
     state,
