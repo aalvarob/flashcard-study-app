@@ -11,7 +11,7 @@ export default function Header() {
     <header className="header">
       <div className="header-container">
         <div className="header-logo" onClick={() => navigate('/')} style={{ cursor: 'pointer' }}>
-          <h1>Simulado para Concílio Pastoral Batista</h1>
+          <h1>Preparátorio para o Exame ao Ministério Pastoral Batista</h1>
         </div>
         
         <nav className="header-nav">

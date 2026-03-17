@@ -24,7 +24,7 @@ function AppContent() {
     <div className="app">
       <div className="app-container">
         <aside className="app-sidebar">
-          <div className="app-sidebar-title">Simulado para Concílio Pastoral Batista</div>
+          <div className="app-sidebar-title">Preparátorio para o Exame ao Ministério Pastoral Batista</div>
           <nav className="app-sidebar-nav">
             {navItems.map((item) => (
               <Link

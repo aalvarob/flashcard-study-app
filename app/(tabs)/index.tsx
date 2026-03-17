@@ -124,7 +124,7 @@ export default function StudyScreen() {
             source={require("@/assets/images/cba-logo.webp")}
             style={styles.cbaLogo}
           />
-          <Text style={styles.headerTitle}>Simulado para Concílio Pastoral Batista</Text>
+          <Text style={styles.headerTitle}>Preparátorio para o Exame ao Ministério Pastoral Batista</Text>
           <Image
             source={require("@/assets/images/opbb-logo.webp")}
             style={styles.opbbLogo}

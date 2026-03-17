@@ -92,7 +92,7 @@ export default function HomePage() {
       <div className="home-content">
         {/* Welcome Section */}
         <section className="welcome-section">
-          <h1>Bem-vindo ao Simulado para Concílio Pastoral Batista</h1>
+          <h1>Bem-vindo ao Preparátorio para o Exame ao Ministério Pastoral Batista</h1>
           <p>Acompanhe seu progresso e continue estudando</p>
         </section>
 

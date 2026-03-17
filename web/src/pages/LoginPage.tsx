@@ -66,7 +66,7 @@ export default function LoginPage() {
   return (
     <div className="login-container">
       <div className="login-card">
-        <h1>Simulado para Concílio Pastoral Batista</h1>
+        <h1>Preparátorio para o Exame ao Ministério Pastoral Batista</h1>
         <p>Faça login para começar a estudar</p>
         
         {isLoading && <p style={{ textAlign: 'center', color: 'var(--color-muted)' }}>Autenticando...</p>}
