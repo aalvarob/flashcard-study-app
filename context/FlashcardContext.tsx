@@ -1,4 +1,4 @@
-import {
+import React, {
   createContext,
   useCallback,
   useContext,
@@ -161,37 +161,60 @@ function reducer(state: FlashcardState, action: FlashcardAction): FlashcardState
       return { ...state, currentIndex: prev, isFlipped: false };
     }
 
-    case "SET_INDEX":
-      return { ...state, currentIndex: action.index, isFlipped: false };
+    case "SET_INDEX": {
+      const enabled = getEnabledCards(state.cards);
+      if (enabled.length === 0) return state;
+      const index = Math.min(action.index, enabled.length - 1);
+      return { ...state, currentIndex: index, isFlipped: false };
+    }
 
-    case "FLIP_CARD":
-      return { ...state, isFlipped: !state.isFlipped };
+    case "FLIP_CARD": {
+      return { ...state, isFlipped: true };
+    }
 
-    case "RESET_FLIP":
+    case "RESET_FLIP": {
       return { ...state, isFlipped: false };
+    }
 
-    case "RESET_SESSION":
-      return { ...state, sessionCorrect: 0, sessionWrong: 0, sessionNotSure: 0, sessionNotRemember: 0, currentIndex: 0, isFlipped: false };
-
-    case "RESET_ALL_STATS": {
-      const reset = state.cards.map((c) => ({ ...c, correctCount: 0, wrongCount: 0, notSureCount: 0, notRememberCount: 0 }));
+    case "RESET_SESSION": {
       return {
         ...state,
-        cards: reset,
+        currentIndex: 0,
         sessionCorrect: 0,
         sessionWrong: 0,
         sessionNotSure: 0,
         sessionNotRemember: 0,
-        currentIndex: 0,
         isFlipped: false,
       };
     }
 
-    case "SET_LOADING":
-      return { ...state, loading: action.loading };
+    case "RESET_ALL_STATS": {
+      const updated = state.cards.map((c) => ({
+        ...c,
+        correctCount: 0,
+        wrongCount: 0,
+        notSureCount: 0,
+        notRememberCount: 0,
+      }));
+      return {
+        ...state,
+        cards: updated,
+        currentIndex: 0,
+        sessionCorrect: 0,
+        sessionWrong: 0,
+        sessionNotSure: 0,
+        sessionNotRemember: 0,
+        isFlipped: false,
+      };
+    }
 
-    case "SET_ERROR":
+    case "SET_LOADING": {
+      return { ...state, loading: action.loading };
+    }
+
+    case "SET_ERROR": {
       return { ...state, error: action.error };
+    }
 
     default:
       return state;
@@ -218,187 +241,135 @@ interface FlashcardContextValue {
   toggleCard: (id: string) => void;
   toggleAllCards: (enable: boolean) => void;
   toggleAllCardsByArea: (enable: boolean, areas: string[]) => void;
-  markCorrect: () => void;
-  markWrong: () => void;
-  markNotSure: () => void;
-  markNotRemember: () => void;
+  markCorrect: (id: string) => void;
+  markWrong: (id: string) => void;
+  markNotSure: (id: string) => void;
+  markNotRemember: (id: string) => void;
   nextCard: () => void;
   prevCard: () => void;
+  setIndex: (index: number) => void;
   flipCard: () => void;
+  resetFlip: () => void;
   resetSession: () => void;
   resetAllStats: () => void;
-  getCardsByArea: (area: FlashcardArea) => Flashcard[];
-  totalCorrect: number;
-  totalWrong: number;
-  totalNotSure: number;
-  totalNotRemember: number;
   initializeSession: (config: { candidateName: string; area: "all" | FlashcardArea | FlashcardArea[]; cardsPerArea: number }) => void;
 }
 
-const FlashcardContext = createContext<FlashcardContextValue | null>(null);
+const FlashcardContext = createContext<FlashcardContextValue | undefined>(
+  undefined
+);
 
 export function FlashcardProvider({ children }: { children: React.ReactNode }) {
   const [state, dispatch] = useReducer(reducer, initialState);
-  const flashcardsQuery = trpc.flashcards.list.useQuery();
 
   useEffect(() => {
-    async function load() {
+    const loadData = async () => {
       try {
         dispatch({ type: "SET_LOADING", loading: true });
-
-        // Load from API first
-        if (flashcardsQuery.data && flashcardsQuery.data.length > 0) {
-          const apiCards = flashcardsQuery.data as any[];
-          const stored = await AsyncStorage.getItem(STORAGE_KEY);
-          const parsed = stored ? JSON.parse(stored) : {};
-
-          // Merge API data with local stats
-          const merged = apiCards.map((apiCard) => {
-            const existing = parsed[apiCard.id];
-            return {
-              id: apiCard.id.toString(),
-              question: apiCard.question,
-              answer: apiCard.answer,
-              area: apiCard.area,
-              enabled: existing?.enabled ?? true,
-              correctCount: existing?.correctCount ?? 0,
-              wrongCount: existing?.wrongCount ?? 0,
-              notSureCount: existing?.notSureCount ?? 0,
-              notRememberCount: existing?.notRememberCount ?? 0,
-            };
-          });
-
-          dispatch({ type: "INIT", payload: merged });
+        const stored = await AsyncStorage.getItem(STORAGE_KEY);
+        if (stored) {
+          const parsed = JSON.parse(stored);
+          dispatch({ type: "INIT", payload: parsed.cards });
         } else {
-          // Fallback to local data if API fails
-          const stored = await AsyncStorage.getItem(STORAGE_KEY);
-          if (stored) {
-            const parsed = JSON.parse(stored);
-            // Handle both old array format and new object format
-            const isArray = Array.isArray(parsed);
-            const merged = FLASHCARDS_DATA.map((fd) => {
-              let existing;
-              if (isArray) {
-                existing = (parsed as any[]).find((p: any) => p.id === fd.id);
-              } else {
-                existing = (parsed as Record<string, any>)[fd.id];
-              }
-              return existing
-                ? { ...fd, enabled: existing.enabled ?? true, correctCount: existing.correctCount ?? 0, wrongCount: existing.wrongCount ?? 0, notSureCount: existing.notSureCount ?? 0, notRememberCount: existing.notRememberCount ?? 0 }
-                : { ...fd, enabled: true, correctCount: 0, wrongCount: 0, notSureCount: 0, notRememberCount: 0 };
-            });
-            dispatch({ type: "INIT", payload: merged });
-          } else {
-            const initial = FLASHCARDS_DATA.map((fd) => ({
-              ...fd,
-              enabled: true,
-              correctCount: 0,
-              wrongCount: 0,
-              notSureCount: 0,
-              notRememberCount: 0,
-            }));
-            dispatch({ type: "INIT", payload: initial });
-          }
+          const initialCards: Flashcard[] = FLASHCARDS_DATA.map((card) => ({
+            ...card,
+            enabled: true,
+            correctCount: 0,
+            wrongCount: 0,
+            notSureCount: 0,
+            notRememberCount: 0,
+          }));
+          dispatch({ type: "INIT", payload: initialCards });
         }
-
-        dispatch({ type: "SET_LOADING", loading: false });
       } catch (error) {
-        console.error("Error loading flashcards:", error);
-        dispatch({ type: "SET_ERROR", error: "Erro ao carregar flashcards" });
-        dispatch({ type: "SET_LOADING", loading: false });
-      }
-    }
-
-    load();
-  }, [flashcardsQuery.data]);
-
-  // Save state to AsyncStorage whenever cards change
-  useEffect(() => {
-    async function save() {
-      try {
-        const toSave: Record<string, any> = {};
-        state.cards.forEach((card) => {
-          toSave[card.id] = {
-            enabled: card.enabled,
-            correctCount: card.correctCount,
-            wrongCount: card.wrongCount,
-            notSureCount: card.notSureCount,
-            notRememberCount: card.notRememberCount,
-          };
+        console.error("Failed to load flashcards:", error);
+        dispatch({
+          type: "SET_ERROR",
+          error: "Failed to load flashcards",
         });
-        await AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(toSave));
-      } catch (error) {
-        console.error("Error saving flashcards:", error);
+        const initialCards: Flashcard[] = FLASHCARDS_DATA.map((card) => ({
+          ...card,
+          enabled: true,
+          correctCount: 0,
+          wrongCount: 0,
+          notSureCount: 0,
+          notRememberCount: 0,
+        }));
+        dispatch({ type: "INIT", payload: initialCards });
       }
+    };
+
+    loadData();
+  }, []);
+
+  useEffect(() => {
+    const saveData = async () => {
+      try {
+        await AsyncStorage.setItem(STORAGE_KEY, JSON.stringify({ cards: state.cards }));
+      } catch (error) {
+        console.error("Failed to save flashcards:", error);
+      }
+    };
+
+    if (!state.loading) {
+      saveData();
     }
-
-    save();
-  }, [state.cards]);
-
-  const toggleCard = useCallback((id: string) => {
-    dispatch({ type: "TOGGLE_CARD", id });
-  }, []);
-
-  const toggleAllCards = useCallback((enable: boolean) => {
-    dispatch({ type: "TOGGLE_ALL_CARDS", enable });
-  }, []);
-
-  const toggleAllCardsByArea = useCallback((enable: boolean, areas: string[]) => {
-    dispatch({ type: "TOGGLE_ALL_CARDS_BY_AREA", enable, areas });
-  }, []);
+  }, [state.cards, state.loading]);
 
   const enabledCards = getEnabledCards(state.cards);
   const currentCard = enabledCards[state.currentIndex] || null;
 
-  const markCorrect = useCallback(() => {
-    if (currentCard) {
-      dispatch({ type: "MARK_CORRECT", id: currentCard.id });
-    }
-  }, [currentCard]);
+  const toggleCard = useCallback(
+    (id: string) => dispatch({ type: "TOGGLE_CARD", id }),
+    []
+  );
 
-  const markWrong = useCallback(() => {
-    if (currentCard) {
-      dispatch({ type: "MARK_WRONG", id: currentCard.id });
-    }
-  }, [currentCard]);
+  const toggleAllCards = useCallback(
+    (enable: boolean) => dispatch({ type: "TOGGLE_ALL_CARDS", enable }),
+    []
+  );
 
-  const markNotSure = useCallback(() => {
-    if (currentCard) {
-      dispatch({ type: "MARK_NOT_SURE", id: currentCard.id });
-    }
-  }, [currentCard]);
+  const toggleAllCardsByArea = useCallback(
+    (enable: boolean, areas: string[]) =>
+      dispatch({ type: "TOGGLE_ALL_CARDS_BY_AREA", enable, areas }),
+    []
+  );
 
-  const markNotRemember = useCallback(() => {
-    if (currentCard) {
-      dispatch({ type: "MARK_NOT_REMEMBER", id: currentCard.id });
-    }
-  }, [currentCard]);
+  const markCorrect = useCallback(
+    (id: string) => dispatch({ type: "MARK_CORRECT", id }),
+    []
+  );
 
-  const nextCard = useCallback(() => {
-    dispatch({ type: "NEXT_CARD" });
-  }, []);
+  const markWrong = useCallback(
+    (id: string) => dispatch({ type: "MARK_WRONG", id }),
+    []
+  );
 
-  const prevCard = useCallback(() => {
-    dispatch({ type: "PREV_CARD" });
-  }, []);
+  const markNotSure = useCallback(
+    (id: string) => dispatch({ type: "MARK_NOT_SURE", id }),
+    []
+  );
 
-  const flipCard = useCallback(() => {
-    dispatch({ type: "FLIP_CARD" });
-  }, []);
+  const markNotRemember = useCallback(
+    (id: string) => dispatch({ type: "MARK_NOT_REMEMBER", id }),
+    []
+  );
 
-  const resetSession = useCallback(() => {
-    dispatch({ type: "RESET_SESSION" });
-  }, []);
-
-  const resetAllStats = useCallback(() => {
-    dispatch({ type: "RESET_ALL_STATS" });
-  }, []);
-
-  const getCardsByArea = useCallback(
-    (area: FlashcardArea) => {
-      return state.cards.filter((c) => c.area === area);
-    },
-    [state.cards],
+  const nextCard = useCallback(() => dispatch({ type: "NEXT_CARD" }), []);
+  const prevCard = useCallback(() => dispatch({ type: "PREV_CARD" }), []);
+  const setIndex = useCallback(
+    (index: number) => dispatch({ type: "SET_INDEX", index }),
+    []
+  );
+  const flipCard = useCallback(() => dispatch({ type: "FLIP_CARD" }), []);
+  const resetFlip = useCallback(() => dispatch({ type: "RESET_FLIP" }), []);
+  const resetSession = useCallback(
+    () => dispatch({ type: "RESET_SESSION" }),
+    []
+  );
+  const resetAllStats = useCallback(
+    () => dispatch({ type: "RESET_ALL_STATS" }),
+    []
   );
 
   const totalCorrect = state.cards.reduce((sum, c) => sum + c.correctCount, 0);
@@ -407,7 +378,6 @@ export function FlashcardProvider({ children }: { children: React.ReactNode }) {
   const totalNotRemember = state.cards.reduce((sum, c) => sum + c.notRememberCount, 0);
 
   const initializeSession = useCallback((config: { candidateName: string; area: "all" | FlashcardArea | FlashcardArea[]; cardsPerArea: number }) => {
-    // Implementation for session initialization
     console.log("Session initialized:", config);
     
     // Determine which areas to enable
@@ -417,29 +387,20 @@ export function FlashcardProvider({ children }: { children: React.ReactNode }) {
         ? config.area 
         : [config.area];
     
-    // Group cards by area
-    const cardsByArea: Record<string, Flashcard[]> = {};
-    areasToEnable.forEach(area => {
-      cardsByArea[area] = state.cards.filter(c => c.area === area);
-    });
+    // Get all cards from selected areas
+    const cardsFromSelectedAreas = state.cards.filter(c => areasToEnable.includes(c.area as FlashcardArea));
     
-    // Enable only cardsPerArea cards from each selected area
+    // Shuffle and select cardsPerArea cards randomly
+    const shuffled = [...cardsFromSelectedAreas].sort(() => Math.random() - 0.5);
+    const selectedCardIds = new Set(shuffled.slice(0, config.cardsPerArea).map(c => c.id));
+    
+    // Enable only the selected cards
     const updated = state.cards.map(card => {
-      const cardArea = card.area as string;
-      
-      if (!areasToEnable.includes(cardArea as FlashcardArea)) {
-        // Disable cards from unselected areas
-        return { ...card, enabled: false };
-      }
-      
-      // For selected areas, enable only the first cardsPerArea cards
-      const areaCards = cardsByArea[cardArea];
-      const cardIndex = areaCards.findIndex(c => c.id === card.id);
-      const shouldEnable = cardIndex < config.cardsPerArea;
-      
-      return { ...card, enabled: shouldEnable };
+      return { ...card, enabled: selectedCardIds.has(card.id) };
     });
     
+    const enabledCount = updated.filter(c => c.enabled).length;
+    console.log("initializeSession - Cards enabled:", enabledCount, "Config:", config);
     dispatch({ type: "INIT", payload: updated });
   }, [state.cards])
 
@@ -456,24 +417,25 @@ export function FlashcardProvider({ children }: { children: React.ReactNode }) {
     markNotRemember,
     nextCard,
     prevCard,
+    setIndex,
     flipCard,
+    resetFlip,
     resetSession,
     resetAllStats,
-    getCardsByArea,
-    totalCorrect,
-    totalWrong,
-    totalNotSure,
-    totalNotRemember,
     initializeSession,
   };
 
-  return <FlashcardContext.Provider value={value}>{children}</FlashcardContext.Provider>;
+  return (
+    <FlashcardContext.Provider value={value}>
+      {children}
+    </FlashcardContext.Provider>
+  );
 }
 
 export function useFlashcards() {
   const context = useContext(FlashcardContext);
-  if (!context) {
-    throw new Error("useFlashcards must be used within FlashcardProvider");
+  if (context === undefined) {
+    throw new Error("useFlashcards must be used within a FlashcardProvider");
   }
   return context;
 }
