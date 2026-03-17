@@ -104,3 +104,7 @@
 - [x] Criar gráfico de evolução de acertos
 - [x] Adicionar filtros por período (7 dias, 30 dias, tudo)
 - [ ] Integrar com página de estatísticas (futuro)
+- [x] Implementar hook useQuizHistory para salvar resultados de quiz
+- [x] Integrar histórico de quiz ao componente QuizScreen
+- [x] Salvar resultado automaticamente ao voltar ou refazer quiz
+- [x] Adicionar testes para useQuizHistory

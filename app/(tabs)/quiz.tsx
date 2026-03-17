@@ -9,6 +9,7 @@ import {
 } from "react-native";
 import { ScreenContainer } from "@/components/screen-container";
 import { useColors } from "@/hooks/use-colors";
+import { useQuizHistory } from "@/hooks/useQuizHistory";
 import quizData from "@/data/quiz_data.json";
 
 interface QuizState {
@@ -24,6 +25,7 @@ interface QuizState {
 
 export default function QuizScreen() {
   const colors = useColors();
+  const { addResult } = useQuizHistory();
   const [quizState, setQuizState] = useState<QuizState>({
     currentQuizId: null,
     currentQuestionIndex: 0,
@@ -128,13 +130,55 @@ export default function QuizScreen() {
     }));
   };
 
-  const handleRestartQuiz = () => {
+  const handleRestartQuiz = async () => {
+    if (currentQuiz && quizState.showResults) {
+      const score = calculateScore();
+      const correctCount = Object.values(quizState.selectedAnswers).filter((optionId, idx) => {
+        const question = quizState.selectedQuestions[idx];
+        const option = question.options.find((o: any) => o.id === optionId);
+        return option?.isCorrect;
+      }).length;
+
+      try {
+        await addResult(
+          currentQuiz.id,
+          currentQuiz.title,
+          Math.round(score),
+          correctCount,
+          quizState.selectedQuestions.length
+        );
+      } catch (error) {
+        console.error("Erro ao salvar resultado:", error);
+      }
+    }
+
     if (currentQuiz) {
       handleStartQuiz(currentQuiz.id);
     }
   };
 
-  const handleBackToList = () => {
+  const handleBackToList = async () => {
+    if (quizState.showResults && currentQuiz) {
+      const score = calculateScore();
+      const correctCount = Object.values(quizState.selectedAnswers).filter((optionId, idx) => {
+        const question = quizState.selectedQuestions[idx];
+        const option = question.options.find((o: any) => o.id === optionId);
+        return option?.isCorrect;
+      }).length;
+
+      try {
+        await addResult(
+          currentQuiz.id,
+          currentQuiz.title,
+          Math.round(score),
+          correctCount,
+          quizState.selectedQuestions.length
+        );
+      } catch (error) {
+        console.error("Erro ao salvar resultado:", error);
+      }
+    }
+
     setQuizState({
       currentQuizId: null,
       currentQuestionIndex: 0,
