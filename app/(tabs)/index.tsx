@@ -251,26 +251,13 @@ export default function StudyScreen() {
 
       {/* Botões de Ação */}
       {currentCard && (
-        <View style={styles.actionsArea}>
-
-
-          {/* Botão Encerrar */}
-          <Pressable
-            onPress={handleEndStudy}
-            style={({ pressed }) => [
-              styles.endBtn,
-              { opacity: pressed ? 0.8 : 1, transform: [{ scale: pressed ? 0.97 : 1 }] },
-            ]}
-          >
-            <Text style={styles.endBtnText}>Encerrar Simulado</Text>
-          </Pressable>
-
-          {/* Navegação */}
-          <View style={styles.navRow}>
+        <>
+          {/* Navegação - Posicionada em cima do card */}
+          <View style={styles.navRowOverlay}>
             <Pressable
               onPress={handlePrev}
               style={({ pressed }) => [
-                styles.navBtn,
+                styles.navBtnOverlay,
                 { opacity: pressed ? 0.7 : 1, transform: [{ scale: pressed ? 0.97 : 1 }] },
               ]}
             >
@@ -280,14 +267,27 @@ export default function StudyScreen() {
             <Pressable
               onPress={handleNext}
               style={({ pressed }) => [
-                styles.navBtn,
+                styles.navBtnOverlay,
                 { opacity: pressed ? 0.7 : 1, transform: [{ scale: pressed ? 0.97 : 1 }] },
               ]}
             >
               <Text style={[styles.navBtnText, { color: colors.foreground }]}>Próximo →</Text>
             </Pressable>
           </View>
-        </View>
+
+          {/* Botão Encerrar */}
+          <View style={styles.actionsArea}>
+            <Pressable
+              onPress={handleEndStudy}
+              style={({ pressed }) => [
+                styles.endBtn,
+                { opacity: pressed ? 0.8 : 1, transform: [{ scale: pressed ? 0.97 : 1 }] },
+              ]}
+            >
+              <Text style={styles.endBtnText}>Encerrar Simulado</Text>
+            </Pressable>
+          </View>
+        </>
       )}
       </ScrollView>
     </ScreenContainer>
@@ -484,6 +484,25 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     alignItems: "center",
     backgroundColor: "#f0f0f0",
+    borderWidth: 2,
+    borderColor: "#333",
+  },
+  navRowOverlay: {
+    position: "absolute",
+    top: 220,
+    left: 16,
+    right: 16,
+    flexDirection: "row",
+    gap: 12,
+    zIndex: 10,
+  },
+  navBtnOverlay: {
+    flex: 1,
+    paddingVertical: 10,
+    paddingHorizontal: 12,
+    borderRadius: 8,
+    alignItems: "center",
+    backgroundColor: "rgba(240, 240, 240, 0.9)",
     borderWidth: 2,
     borderColor: "#333",
   },
