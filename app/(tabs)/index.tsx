@@ -14,10 +14,11 @@ import { useFlashcards } from "@/context/FlashcardContext";
 import { useColors } from "@/hooks/use-colors";
 import * as Haptics from "expo-haptics";
 import { router } from "expo-router";
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 
 export default function StudyScreen() {
   const colors = useColors();
+  const hasNavigatedToResult = useRef(false);
   const {
     state,
     enabledCards,
@@ -37,11 +38,19 @@ export default function StudyScreen() {
 
   // Verificar se todos os cards foram respondidos
   useEffect(() => {
-    if (total > 0 && totalAnswered === total && totalAnswered > 0) {
+    if (total > 0 && totalAnswered === total && totalAnswered > 0 && !hasNavigatedToResult.current) {
       // Todos os cards foram respondidos, ir para a tela de resultado
+      hasNavigatedToResult.current = true;
       router.push("/result");
     }
   }, [totalAnswered, total, router]);
+
+  // Reset flag quando resetStudySession eh chamado
+  useEffect(() => {
+    if (totalAnswered === 0) {
+      hasNavigatedToResult.current = false;
+    }
+  }, [totalAnswered]);
 
   function handleFlip() {
     if (Platform.OS !== "web") {
