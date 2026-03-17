@@ -68,14 +68,14 @@ function reducer(state: FlashcardState, action: FlashcardAction): FlashcardState
       );
       const enabledCards = getEnabledCards(updated);
       const newIndex = Math.min(state.currentIndex, Math.max(0, enabledCards.length - 1));
-      return { ...state, cards: updated, currentIndex: newIndex, isFlipped: false };
+      return { ...state, cards: updated, currentIndex: newIndex, isFlipped: false, sessionTotal: enabledCards.length };
     }
 
     case "TOGGLE_ALL_CARDS": {
       const updated = state.cards.map((c) => ({ ...c, enabled: action.enable }));
       const enabledCards = getEnabledCards(updated);
       const newIndex = Math.min(state.currentIndex, Math.max(0, enabledCards.length - 1));
-      return { ...state, cards: updated, currentIndex: newIndex, isFlipped: false };
+      return { ...state, cards: updated, currentIndex: newIndex, isFlipped: false, sessionTotal: enabledCards.length };
     }
 
     case "TOGGLE_ALL_CARDS_BY_AREA": {
@@ -84,7 +84,7 @@ function reducer(state: FlashcardState, action: FlashcardAction): FlashcardState
       );
       const enabledCards = getEnabledCards(updated);
       const newIndex = Math.min(state.currentIndex, Math.max(0, enabledCards.length - 1));
-      return { ...state, cards: updated, currentIndex: newIndex, isFlipped: false };
+      return { ...state, cards: updated, currentIndex: newIndex, isFlipped: false, sessionTotal: enabledCards.length };
     }
 
     case "MARK_CORRECT": {
