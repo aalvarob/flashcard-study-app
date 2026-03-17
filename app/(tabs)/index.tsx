@@ -252,31 +252,31 @@ export default function StudyScreen() {
       {/* Botões de Ação */}
       {currentCard && (
         <>
-          {/* Navegação - Posicionada em cima do card */}
-          <View style={styles.navRowOverlay}>
-            <Pressable
-              onPress={handlePrev}
-              style={({ pressed }) => [
-                styles.navBtnOverlay,
-                { opacity: pressed ? 0.7 : 1, transform: [{ scale: pressed ? 0.97 : 1 }] },
-              ]}
-            >
-              <Text style={[styles.navBtnText, { color: colors.foreground }]}>← Anterior</Text>
-            </Pressable>
-
-            <Pressable
-              onPress={handleNext}
-              style={({ pressed }) => [
-                styles.navBtnOverlay,
-                { opacity: pressed ? 0.7 : 1, transform: [{ scale: pressed ? 0.97 : 1 }] },
-              ]}
-            >
-              <Text style={[styles.navBtnText, { color: colors.foreground }]}>Próximo →</Text>
-            </Pressable>
-          </View>
-
-          {/* Botão Encerrar */}
+          {/* Botão Encerrar com Navegação acima */}
           <View style={styles.actionsArea}>
+            {/* Navegação - Acima do botão encerrar */}
+            <View style={styles.navRow}>
+              <Pressable
+                onPress={handlePrev}
+                style={({ pressed }) => [
+                  styles.navBtn,
+                  { opacity: pressed ? 0.7 : 1, transform: [{ scale: pressed ? 0.97 : 1 }] },
+                ]}
+              >
+                <Text style={[styles.navBtnText, { color: colors.foreground }]}>← Anterior</Text>
+              </Pressable>
+
+              <Pressable
+                onPress={handleNext}
+                style={({ pressed }) => [
+                  styles.navBtn,
+                  { opacity: pressed ? 0.7 : 1, transform: [{ scale: pressed ? 0.97 : 1 }] },
+                ]}
+              >
+                <Text style={[styles.navBtnText, { color: colors.foreground }]}>Próximo →</Text>
+              </Pressable>
+            </View>
+
             <Pressable
               onPress={handleEndStudy}
               style={({ pressed }) => [
@@ -487,25 +487,7 @@ const styles = StyleSheet.create({
     borderWidth: 2,
     borderColor: "#333",
   },
-  navRowOverlay: {
-    position: "absolute",
-    top: 430,
-    left: 16,
-    right: 16,
-    flexDirection: "row",
-    gap: 12,
-    zIndex: 10,
-  },
-  navBtnOverlay: {
-    flex: 1,
-    paddingVertical: 10,
-    paddingHorizontal: 12,
-    borderRadius: 8,
-    alignItems: "center",
-    backgroundColor: "rgba(240, 240, 240, 0.9)",
-    borderWidth: 2,
-    borderColor: "#333",
-  },
+
   navBtnText: {
     fontSize: 14,
     fontWeight: "700",
