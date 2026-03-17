@@ -176,7 +176,7 @@ export function FlashCard({ card, isFlipped, onFlip }: FlashCardProps) {
           <Text style={[styles.cardLabel, { color: "rgba(255,255,255,0.7)" }]}>RESPOSTA</Text>
           <Text 
             style={[styles.answerText, { color: "#FFFFFF" }]}
-            numberOfLines={6}
+            numberOfLines={10}
             ellipsizeMode="tail"
           >
             {card.answer}
