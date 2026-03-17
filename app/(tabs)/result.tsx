@@ -55,8 +55,7 @@ export default function ResultScreen() {
 
   return (
     <ScreenContainer containerClassName="bg-background">
-      <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
-        <View style={styles.container}>
+      <View style={styles.container}>
           {/* Header */}
           <View style={[styles.header, { backgroundColor: colors.primary }]}>
             <Text style={styles.headerTitle}>Sessão Concluída!</Text>
@@ -174,8 +173,7 @@ export default function ResultScreen() {
               </Text>
             </Pressable>
           </View>
-        </View>
-      </ScrollView>
+      </View>
     </ScreenContainer>
   );
 }
@@ -183,63 +181,64 @@ export default function ResultScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    justifyContent: "space-between",
   },
   header: {
-    paddingHorizontal: 20,
-    paddingTop: 24,
-    paddingBottom: 20,
+    paddingHorizontal: 16,
+    paddingTop: 12,
+    paddingBottom: 12,
     alignItems: "center",
   },
   headerTitle: {
-    fontSize: 24,
+    fontSize: 18,
     fontWeight: "700",
     color: "#FFFFFF",
-    letterSpacing: 0.5,
+    letterSpacing: 0.3,
   },
   accuracyContainer: {
-    paddingVertical: 32,
+    paddingVertical: 16,
     alignItems: "center",
   },
   accuracyCircle: {
-    width: 200,
-    height: 200,
-    borderRadius: 100,
-    borderWidth: 8,
+    width: 140,
+    height: 140,
+    borderRadius: 70,
+    borderWidth: 6,
     justifyContent: "center",
     alignItems: "center",
-    gap: 8,
+    gap: 4,
   },
   accuracyValue: {
-    fontSize: 56,
+    fontSize: 40,
     fontWeight: "700",
   },
   accuracyLabel: {
-    fontSize: 14,
+    fontSize: 11,
     fontWeight: "600",
   },
   messageContainer: {
-    paddingHorizontal: 20,
-    paddingBottom: 24,
+    paddingHorizontal: 16,
+    paddingBottom: 12,
     alignItems: "center",
   },
   messageText: {
-    fontSize: 18,
+    fontSize: 14,
     fontWeight: "600",
     textAlign: "center",
-    lineHeight: 26,
+    lineHeight: 20,
   },
   statsCard: {
-    marginHorizontal: 16,
-    marginBottom: 24,
-    borderRadius: 12,
+    marginHorizontal: 12,
+    marginBottom: 12,
+    borderRadius: 10,
     borderWidth: 1,
-    padding: 16,
-    gap: 16,
+    padding: 12,
+    gap: 8,
   },
   statsTitle: {
-    fontSize: 16,
+    fontSize: 13,
     fontWeight: "700",
-    marginBottom: 8,
+    marginBottom: 4,
   },
   statsGrid: {
     flexDirection: "row",
@@ -253,17 +252,17 @@ const styles = StyleSheet.create({
     paddingVertical: 12,
   },
   statIcon: {
-    fontSize: 24,
+    fontSize: 18,
     fontWeight: "700",
-    marginBottom: 4,
+    marginBottom: 2,
   },
   statValue: {
-    fontSize: 28,
+    fontSize: 20,
     fontWeight: "700",
     marginBottom: 2,
   },
   statLabel: {
-    fontSize: 12,
+    fontSize: 10,
     fontWeight: "600",
   },
   totalRow: {
@@ -274,40 +273,40 @@ const styles = StyleSheet.create({
     borderTopWidth: StyleSheet.hairlineWidth,
   },
   totalLabel: {
-    fontSize: 14,
+    fontSize: 12,
     fontWeight: "600",
   },
   totalValue: {
-    fontSize: 18,
+    fontSize: 14,
     fontWeight: "700",
   },
   buttonContainer: {
-    paddingHorizontal: 16,
-    paddingBottom: 32,
-    gap: 12,
+    paddingHorizontal: 12,
+    paddingBottom: 12,
+    gap: 8,
   },
   primaryButton: {
-    paddingVertical: 14,
-    paddingHorizontal: 20,
-    borderRadius: 10,
+    paddingVertical: 10,
+    paddingHorizontal: 16,
+    borderRadius: 8,
     alignItems: "center",
   },
   primaryButtonText: {
-    fontSize: 16,
+    fontSize: 13,
     fontWeight: "700",
     color: "#FFFFFF",
-    letterSpacing: 0.5,
+    letterSpacing: 0.3,
   },
   secondaryButton: {
-    paddingVertical: 14,
-    paddingHorizontal: 20,
-    borderRadius: 10,
+    paddingVertical: 10,
+    paddingHorizontal: 16,
+    borderRadius: 8,
     alignItems: "center",
     borderWidth: 1,
   },
   secondaryButtonText: {
-    fontSize: 16,
+    fontSize: 13,
     fontWeight: "700",
-    letterSpacing: 0.5,
+    letterSpacing: 0.3,
   },
 });
