@@ -11,6 +11,7 @@ import AdminPage from './pages/AdminPage'
 import TipsPage from './pages/TipsPage'
 import DocumentsPage from './pages/DocumentsPage'
 import { PreparationPage } from './pages/PreparationPage'
+import { QuizPage } from './pages/QuizPage'
 import './App.css'
 
 function AppContent() {
@@ -22,6 +23,7 @@ function AppContent() {
     { label: 'Dicas', path: '/tips', icon: '💡' },
     { label: 'Documentos', path: '/documents', icon: '📖' },
     { label: 'Preparação', path: '/preparation', icon: '✏️' },
+    { label: 'Quiz', path: '/quiz', icon: '📝' },
     { label: 'Estatísticas', path: '/stats', icon: '📊' },
     { label: 'Administração', path: '/admin', icon: '⚙️' },
   ];
@@ -54,6 +56,7 @@ function AppContent() {
               <Route path="/tips" element={<TipsPage />} />
               <Route path="/documents" element={<DocumentsPage />} />
               <Route path="/preparation" element={<PreparationPage />} />
+              <Route path="/quiz" element={<QuizPage />} />
               <Route path="/stats" element={<StatsPage />} />
               <Route path="/admin" element={<AdminPage />} />
             </Routes>

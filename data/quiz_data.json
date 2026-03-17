@@ -1,0 +1,258 @@
+{
+  "quizzes": [
+    {
+      "id": "personal_questions_quiz",
+      "title": "❓ Perguntas Pessoais - Quiz",
+      "description": "Teste seus conhecimentos sobre perguntas pessoais do concílio",
+      "questions": [
+        {
+          "id": 1,
+          "question": "Como está sua vida devocional hoje?",
+          "options": [
+            {
+              "id": "a",
+              "text": "Mantenho tempo diário de oração e leitura bíblica consistente",
+              "isCorrect": true,
+              "explanation": "Uma vida devocional consistente é fundamental para o ministério pastoral. Demonstra compromisso espiritual."
+            },
+            {
+              "id": "b",
+              "text": "Estudo a Bíblia apenas quando preciso pregar",
+              "isCorrect": false,
+              "explanation": "O pastor deve ter uma vida devocional pessoal robusta, não apenas para preparar sermões."
+            },
+            {
+              "id": "c",
+              "text": "Deixo minha vida espiritual para depois que terminar os compromissos",
+              "isCorrect": false,
+              "explanation": "A vida espiritual deve ser prioridade, não algo secundário."
+            }
+          ]
+        },
+        {
+          "id": 2,
+          "question": "Como o senhor teve certeza do chamado pastoral?",
+          "options": [
+            {
+              "id": "a",
+              "text": "Através de uma experiência clara com Deus e confirmação da comunidade",
+              "isCorrect": true,
+              "explanation": "O chamado pastoral deve ser confirmado tanto pessoalmente quanto pela comunidade de fé."
+            },
+            {
+              "id": "b",
+              "text": "Apenas porque gosto de falar em público",
+              "isCorrect": false,
+              "explanation": "Gostar de falar não é o mesmo que ter chamado pastoral autêntico."
+            },
+            {
+              "id": "c",
+              "text": "Porque minha família queria que eu fosse pastor",
+              "isCorrect": false,
+              "explanation": "O chamado deve ser pessoal e divino, não apenas familiar."
+            }
+          ]
+        },
+        {
+          "id": 3,
+          "question": "Qual a maior motivação do seu ministério?",
+          "options": [
+            {
+              "id": "a",
+              "text": "Servir a Deus e discipular pessoas para Cristo",
+              "isCorrect": true,
+              "explanation": "A motivação correta é o serviço a Deus e a transformação de vidas."
+            },
+            {
+              "id": "b",
+              "text": "Ganhar um bom salário e status social",
+              "isCorrect": false,
+              "explanation": "Motivações materiais não devem ser a prioridade no ministério pastoral."
+            },
+            {
+              "id": "c",
+              "text": "Ter poder e influência na comunidade",
+              "isCorrect": false,
+              "explanation": "O poder e a influência são consequências, não motivações."
+            }
+          ]
+        },
+        {
+          "id": 4,
+          "question": "Como o senhor lida com críticas?",
+          "options": [
+            {
+              "id": "a",
+              "text": "Ouço com humildade e avalio se há verdade na crítica",
+              "isCorrect": true,
+              "explanation": "A humildade e abertura ao feedback são essenciais para o crescimento pastoral."
+            },
+            {
+              "id": "b",
+              "text": "Ignoro todas as críticas e sigo meu próprio caminho",
+              "isCorrect": false,
+              "explanation": "Ignorar críticas pode levar a erros e falta de crescimento."
+            },
+            {
+              "id": "c",
+              "text": "Fico ofendido e respondo agressivamente",
+              "isCorrect": false,
+              "explanation": "Respostas agressivas prejudicam o ministério e o testemunho."
+            }
+          ]
+        },
+        {
+          "id": 5,
+          "question": "Como está seu casamento?",
+          "options": [
+            {
+              "id": "a",
+              "text": "Sólido, com comunicação aberta e apoio mútuo no ministério",
+              "isCorrect": true,
+              "explanation": "Um casamento saudável é fundamental para um ministério pastoral estável."
+            },
+            {
+              "id": "b",
+              "text": "Temos problemas, mas esperamos que melhorem com o tempo",
+              "isCorrect": false,
+              "explanation": "Problemas conjugais devem ser resolvidos antes de assumir responsabilidades pastorais."
+            },
+            {
+              "id": "c",
+              "text": "Meu casamento não afeta meu ministério",
+              "isCorrect": false,
+              "explanation": "A vida pessoal e familiar impactam diretamente o ministério pastoral."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "difficult_questions_quiz",
+      "title": "🤔 Perguntas Difíceis - Quiz",
+      "description": "Teste seus conhecimentos sobre perguntas desafiadoras do concílio",
+      "questions": [
+        {
+          "id": 1,
+          "question": "O que faria se o concílio não aprovasse sua ordenação?",
+          "options": [
+            {
+              "id": "a",
+              "text": "Continuaria servindo ao Senhor e aguardaria o tempo de Deus",
+              "isCorrect": true,
+              "explanation": "Esta resposta demonstra humildade e confiança em Deus, qualidades essenciais."
+            },
+            {
+              "id": "b",
+              "text": "Desistiria do ministério imediatamente",
+              "isCorrect": false,
+              "explanation": "O chamado de Deus não depende da aprovação de um concílio."
+            },
+            {
+              "id": "c",
+              "text": "Procuraria outra denominação que me aprovasse",
+              "isCorrect": false,
+              "explanation": "Buscar aprovação em outro lugar pode indicar falta de convicção."
+            }
+          ]
+        },
+        {
+          "id": 2,
+          "question": "Como você se considera: pastor, pregador ou líder?",
+          "options": [
+            {
+              "id": "a",
+              "text": "Principalmente pastor - cuidador do rebanho",
+              "isCorrect": true,
+              "explanation": "O papel primário é pastoral - cuidar das ovelhas de Cristo."
+            },
+            {
+              "id": "b",
+              "text": "Principalmente pregador - comunicador da Palavra",
+              "isCorrect": false,
+              "explanation": "Pregar é importante, mas não é o papel principal do pastor."
+            },
+            {
+              "id": "c",
+              "text": "Principalmente líder - gestor da organização",
+              "isCorrect": false,
+              "explanation": "Liderança é necessária, mas não deve ser a prioridade."
+            }
+          ]
+        },
+        {
+          "id": 3,
+          "question": "Qual é a missão principal da igreja?",
+          "options": [
+            {
+              "id": "a",
+              "text": "Fazer discípulos de todas as nações e pregar o evangelho",
+              "isCorrect": true,
+              "explanation": "A Grande Comissão é o mandato principal da igreja."
+            },
+            {
+              "id": "b",
+              "text": "Construir templos e expandir a instituição",
+              "isCorrect": false,
+              "explanation": "Estruturas físicas são meios, não fins."
+            },
+            {
+              "id": "c",
+              "text": "Manter a tradição e os costumes da denominação",
+              "isCorrect": false,
+              "explanation": "Tradição é importante, mas não é a missão principal."
+            }
+          ]
+        },
+        {
+          "id": 4,
+          "question": "Como você prepara seus sermões?",
+          "options": [
+            {
+              "id": "a",
+              "text": "Com oração, estudo profundo da Bíblia e aplicação prática",
+              "isCorrect": true,
+              "explanation": "A preparação adequada garante sermões bíblicos e relevantes."
+            },
+            {
+              "id": "b",
+              "text": "Improviso na hora do culto",
+              "isCorrect": false,
+              "explanation": "Improvisação pode resultar em mensagens desorganizadas e ineficazes."
+            },
+            {
+              "id": "c",
+              "text": "Copio sermões de outros pastores",
+              "isCorrect": false,
+              "explanation": "Copiar é desonesto e priva a congregação de sua liderança autêntica."
+            }
+          ]
+        },
+        {
+          "id": 5,
+          "question": "Por que devemos reconhecê-lo como pastor?",
+          "options": [
+            {
+              "id": "a",
+              "text": "Porque foi chamado por Deus, confirmado pela igreja e deseja servir fielmente",
+              "isCorrect": true,
+              "explanation": "Esta é a resposta ideal que demonstra chamado, confirmação e compromisso."
+            },
+            {
+              "id": "b",
+              "text": "Porque tenho um diploma de seminário",
+              "isCorrect": false,
+              "explanation": "Educação é importante, mas não é suficiente."
+            },
+            {
+              "id": "c",
+              "text": "Porque preciso de um emprego",
+              "isCorrect": false,
+              "explanation": "O ministério não deve ser apenas uma profissão."
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

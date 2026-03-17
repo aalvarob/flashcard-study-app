@@ -113,6 +113,15 @@ export default function TabLayout() {
         }}
       />
       <Tabs.Screen
+        name="quiz"
+        options={{
+          title: "Quiz",
+          tabBarIcon: ({ color }) => (
+            <IconSymbol size={26} name="rectangle.stack.fill" color={color} />
+          ),
+        }}
+      />
+      <Tabs.Screen
         name="result"
         options={{
           title: "Resultado",
