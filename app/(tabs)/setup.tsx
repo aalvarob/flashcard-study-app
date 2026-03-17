@@ -492,7 +492,8 @@ export default function SetupScreen() {
                 value={cardsPerArea}
                 onChangeText={(text) => {
                   const num = parseInt(text) || 0;
-                  setCardsPerArea(Math.max(1, num).toString());
+                  const limited = Math.min(Math.max(1, num), maxCardsAvailable);
+                  setCardsPerArea(limited.toString());
                 }}
                 keyboardType="number-pad"
                 maxLength={3}
@@ -500,7 +501,7 @@ export default function SetupScreen() {
               <Pressable
                 onPress={() => {
                   const current = parseInt(cardsPerArea);
-                  setCardsPerArea((current + 1).toString());
+                  if (current < maxCardsAvailable) setCardsPerArea((current + 1).toString());
                 }}
                 style={styles.cardCountButton}
               >
