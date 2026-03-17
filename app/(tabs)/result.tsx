@@ -50,7 +50,7 @@ export default function ResultScreen() {
       Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
     }
     resetStudySession();
-    router.push("/");
+    router.back();
   }
 
   return (
