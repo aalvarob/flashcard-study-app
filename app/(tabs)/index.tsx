@@ -252,18 +252,7 @@ export default function StudyScreen() {
       {/* Botões de Ação */}
       {currentCard && (
         <View style={styles.actionsArea}>
-          {!isFlipped && (
-            /* Botão Virar */
-            <Pressable
-              onPress={handleFlip}
-              style={({ pressed }) => [
-                styles.flipBtn,
-                { backgroundColor: colors.accent, opacity: pressed ? 0.85 : 1, transform: [{ scale: pressed ? 0.97 : 1 }] },
-              ]}
-            >
-              <Text style={styles.flipBtnText}>Ver Resposta</Text>
-            </Pressable>
-          )}
+
 
           {/* Botão Encerrar */}
           <Pressable
