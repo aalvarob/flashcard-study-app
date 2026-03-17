@@ -415,13 +415,12 @@ const styles = StyleSheet.create({
     backgroundColor: "#A855F7",
   },
   cardArea: {
-    flex: 1,
     justifyContent: "center",
     alignItems: "center",
     paddingHorizontal: 16,
-    paddingVertical: 8,
-    marginTop: 12,
-    marginBottom: 12,
+    paddingVertical: 12,
+    marginVertical: 8,
+    minHeight: 380,
   },
   emptyCard: {
     borderWidth: 2,
