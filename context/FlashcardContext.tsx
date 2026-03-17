@@ -104,7 +104,7 @@ function reducer(state: FlashcardState, action: FlashcardAction): FlashcardState
 
     case "MARK_WRONG": {
       const updated = state.cards.map((c) =>
-        c.id === action.id ? { ...c, wrongCount: c.wrongCount + 1 } : c
+        c.id === action.id ? { ...c, wrongCount: c.wrongCount + 1, enabled: false } : c
       );
       const enabledCards = getEnabledCards(updated);
       const newIndex = Math.min(state.currentIndex, Math.max(0, enabledCards.length - 1));
@@ -119,7 +119,7 @@ function reducer(state: FlashcardState, action: FlashcardAction): FlashcardState
 
     case "MARK_NOT_SURE": {
       const updated = state.cards.map((c) =>
-        c.id === action.id ? { ...c, notSureCount: c.notSureCount + 1 } : c
+        c.id === action.id ? { ...c, notSureCount: c.notSureCount + 1, enabled: false } : c
       );
       const enabledCards = getEnabledCards(updated);
       const newIndex = Math.min(state.currentIndex, Math.max(0, enabledCards.length - 1));
@@ -134,7 +134,7 @@ function reducer(state: FlashcardState, action: FlashcardAction): FlashcardState
 
     case "MARK_NOT_REMEMBER": {
       const updated = state.cards.map((c) =>
-        c.id === action.id ? { ...c, notRememberCount: c.notRememberCount + 1 } : c
+        c.id === action.id ? { ...c, notRememberCount: c.notRememberCount + 1, enabled: false } : c
       );
       const enabledCards = getEnabledCards(updated);
       const newIndex = Math.min(state.currentIndex, Math.max(0, enabledCards.length - 1));
