@@ -212,16 +212,9 @@ function reducer(state: FlashcardState, action: FlashcardAction): FlashcardState
     }
 
     case "RESET_STUDY_SESSION": {
-      const updated = state.cards.map((c) => {
-        if (!c.enabled && (c.correctCount > 0 || c.wrongCount > 0 || c.notSureCount > 0 || c.notRememberCount > 0)) {
-          return { ...c, enabled: true };
-        }
-        return c;
-      });
-      const enabledCards = getEnabledCards(updated);
+      const enabledCards = getEnabledCards(state.cards);
       return {
         ...state,
-        cards: updated,
         currentIndex: 0,
         sessionCorrect: 0,
         sessionWrong: 0,
