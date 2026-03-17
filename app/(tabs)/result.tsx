@@ -15,7 +15,7 @@ import { router } from "expo-router";
 
 export default function ResultScreen() {
   const colors = useColors();
-  const { state, resetSession } = useFlashcards();
+  const { state, resetSession, resetStudySession } = useFlashcards();
 
   const { sessionCorrect, sessionWrong, sessionNotSure, sessionNotRemember } = state;
   const total = sessionCorrect + sessionWrong + sessionNotSure + sessionNotRemember;
@@ -49,8 +49,8 @@ export default function ResultScreen() {
     if (Platform.OS !== "web") {
       Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
     }
-    resetSession();
-    router.push("/setup");
+    resetStudySession();
+    router.push("/");
   }
 
   return (

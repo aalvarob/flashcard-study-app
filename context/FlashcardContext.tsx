@@ -48,6 +48,7 @@ type FlashcardAction =
   | { type: "RESET_FLIP" }
   | { type: "RESET_SESSION" }
   | { type: "RESET_ALL_STATS" }
+  | { type: "RESET_STUDY_SESSION" }
   | { type: "SET_LOADING"; loading: boolean }
   | { type: "SET_ERROR"; error: string | null };
 
@@ -208,6 +209,27 @@ function reducer(state: FlashcardState, action: FlashcardAction): FlashcardState
       };
     }
 
+    case "RESET_STUDY_SESSION": {
+      const updated = state.cards.map((c) => {
+        if (!c.enabled && (c.correctCount > 0 || c.wrongCount > 0 || c.notSureCount > 0 || c.notRememberCount > 0)) {
+          return { ...c, enabled: true };
+        }
+        return c;
+      });
+      const enabledCards = getEnabledCards(updated);
+      return {
+        ...state,
+        cards: updated,
+        currentIndex: 0,
+        sessionCorrect: 0,
+        sessionWrong: 0,
+        sessionNotSure: 0,
+        sessionNotRemember: 0,
+        isFlipped: false,
+        sessionTotal: enabledCards.length,
+      };
+    }
+
     case "SET_LOADING": {
       return { ...state, loading: action.loading };
     }
@@ -252,6 +274,7 @@ interface FlashcardContextValue {
   resetFlip: () => void;
   resetSession: () => void;
   resetAllStats: () => void;
+  resetStudySession: () => void;
   initializeSession: (config: { candidateName: string; area: "all" | FlashcardArea | FlashcardArea[]; cardsPerArea: number }) => void;
 }
 
@@ -373,6 +396,10 @@ export function FlashcardProvider({ children }: { children: React.ReactNode }) {
     () => dispatch({ type: "RESET_ALL_STATS" }),
     []
   );
+  const resetStudySession = useCallback(
+    () => dispatch({ type: "RESET_STUDY_SESSION" }),
+    []
+  );
 
   const totalCorrect = state.cards.reduce((sum, c) => sum + c.correctCount, 0);
   const totalWrong = state.cards.reduce((sum, c) => sum + c.wrongCount, 0);
@@ -424,6 +451,7 @@ export function FlashcardProvider({ children }: { children: React.ReactNode }) {
     resetFlip,
     resetSession,
     resetAllStats,
+    resetStudySession,
     initializeSession,
   };
 
