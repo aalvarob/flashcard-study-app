@@ -76,13 +76,19 @@ export default function SetupScreen() {
     }
   };
 
-  // Habilitar todos os cards quando selectionMode eh single
+  // Habilitar todos os cards quando state.cards está pronto
+  useEffect(() => {
+    if (state.cards.length > 0 && selectionMode === "single") {
+      toggleAllCards(true);
+    }
+  }, [state.cards.length, selectionMode, toggleAllCards]);
+
+  // Resetar cardsPerArea quando selectionMode muda
   useEffect(() => {
     if (selectionMode === "single") {
-      toggleAllCards(true);
       setCardsPerArea("1");
     }
-  }, [selectionMode, toggleAllCards]);
+  }, [selectionMode]);
 
   // Recalcular maxCardsAvailable quando selectionMode muda
   useEffect(() => {
