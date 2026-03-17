@@ -135,6 +135,125 @@ export async function getFlashcardById(id: number) {
   return result.length > 0 ? result[0] : undefined;
 }
 
+// Flashcard Progress operations
+import { flashcardProgress, InsertFlashcardProgress, FlashcardProgress } from "../drizzle/schema";
+import { studySessions, InsertStudySession, StudySession } from "../drizzle/schema";
+import { and } from "drizzle-orm";
+
+export async function upsertFlashcardProgress(data: InsertFlashcardProgress) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+
+  const existing = await db
+    .select()
+    .from(flashcardProgress)
+    .where(
+      and(
+        eq(flashcardProgress.userId, data.userId!),
+        eq(flashcardProgress.flashcardId, data.flashcardId!)
+      )
+    )
+    .limit(1);
+
+  if (existing.length > 0) {
+    // Update existing record
+    await db
+      .update(flashcardProgress)
+      .set({
+        ...data,
+        updatedAt: new Date(),
+      })
+      .where(
+        and(
+          eq(flashcardProgress.userId, data.userId!),
+          eq(flashcardProgress.flashcardId, data.flashcardId!)
+        )
+      );
+  } else {
+    // Insert new record
+    await db.insert(flashcardProgress).values(data);
+  }
+}
+
+export async function getUserFlashcardProgress(userId: number) {
+  const db = await getDb();
+  if (!db) {
+    console.warn("[Database] Cannot get progress: database not available");
+    return [];
+  }
+
+  return db.select().from(flashcardProgress).where(eq(flashcardProgress.userId, userId));
+}
+
+export async function getFlashcardProgressByArea(userId: number, area: string) {
+  const db = await getDb();
+  if (!db) {
+    console.warn("[Database] Cannot get progress: database not available");
+    return [];
+  }
+
+  return db
+    .select()
+    .from(flashcardProgress)
+    .where(and(eq(flashcardProgress.userId, userId), eq(flashcardProgress.area, area)));
+}
+
+// Study Sessions operations
+export async function createStudySession(data: InsertStudySession) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+
+  const result = await db.insert(studySessions).values(data);
+  return (result as any).insertId || 0;
+}
+
+export async function updateStudySession(id: number, data: Partial<InsertStudySession>) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+
+  await db.update(studySessions).set(data).where(eq(studySessions.id, id));
+}
+
+export async function getUserStudySessions(userId: number) {
+  const db = await getDb();
+  if (!db) {
+    console.warn("[Database] Cannot get sessions: database not available");
+    return [];
+  }
+
+  return db.select().from(studySessions).where(eq(studySessions.userId, userId));
+}
+
+export async function getStudySessionById(id: number) {
+  const db = await getDb();
+  if (!db) {
+    console.warn("[Database] Cannot get session: database not available");
+    return undefined;
+  }
+
+  const result = await db.select().from(studySessions).where(eq(studySessions.id, id)).limit(1);
+  return result.length > 0 ? result[0] : undefined;
+}
+
+export async function getUserStatsByArea(userId: number) {
+  const db = await getDb();
+  if (!db) {
+    console.warn("[Database] Cannot get stats: database not available");
+    return [];
+  }
+
+  return db
+    .select({
+      area: flashcardProgress.area,
+      correctCount: flashcardProgress.correctCount,
+      wrongCount: flashcardProgress.wrongCount,
+      notSureCount: flashcardProgress.notSureCount,
+      notRememberCount: flashcardProgress.notRememberCount,
+    })
+    .from(flashcardProgress)
+    .where(eq(flashcardProgress.userId, userId));
+}
+
 // TODO: add feature queries here as your schema grows.
 
 

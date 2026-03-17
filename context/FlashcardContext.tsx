@@ -332,10 +332,28 @@ export function FlashcardProvider({ children }: { children: React.ReactNode }) {
     loadData();
   }, []);
 
+  const syncProgressMutation = trpc.progress.syncProgress.useMutation();
+
   useEffect(() => {
     const saveData = async () => {
       try {
         await AsyncStorage.setItem(STORAGE_KEY, JSON.stringify({ cards: state.cards }));
+
+        for (const card of state.cards) {
+          try {
+            await syncProgressMutation.mutateAsync({
+              flashcardId: card.id,
+              area: card.area,
+              enabled: card.enabled,
+              correctCount: card.correctCount,
+              wrongCount: card.wrongCount,
+              notSureCount: card.notSureCount,
+              notRememberCount: card.notRememberCount,
+            });
+          } catch (error) {
+            console.debug("Failed to sync card progress:", error);
+          }
+        }
       } catch (error) {
         console.error("Failed to save flashcards:", error);
       }
@@ -344,7 +362,7 @@ export function FlashcardProvider({ children }: { children: React.ReactNode }) {
     if (!state.loading) {
       saveData();
     }
-  }, [state.cards, state.loading]);
+  }, [state.cards, state.loading, syncProgressMutation]);
 
   const enabledCards = getEnabledCards(state.cards);
   const currentCard = enabledCards[state.currentIndex] || null;

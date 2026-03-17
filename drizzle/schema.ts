@@ -39,4 +39,42 @@ export const flashcards = mysqlTable("flashcards", {
 export type Flashcard = typeof flashcards.$inferSelect;
 export type InsertFlashcard = typeof flashcards.$inferInsert;
 
-// TODO: Add your tables here
+// Flashcard progress table for tracking user answers and statistics
+export const flashcardProgress = mysqlTable("flashcardProgress", {
+  id: int("id").autoincrement().primaryKey(),
+  userId: int("userId").notNull(),
+  flashcardId: varchar("flashcardId", { length: 255 }).notNull(), // ID from FLASHCARDS_DATA
+  area: varchar("area", { length: 255 }).notNull(),
+  enabled: int("enabled").default(0).notNull(), // 0 or 1 for boolean
+  correctCount: int("correctCount").default(0).notNull(),
+  wrongCount: int("wrongCount").default(0).notNull(),
+  notSureCount: int("notSureCount").default(0).notNull(),
+  notRememberCount: int("notRememberCount").default(0).notNull(),
+  lastAnsweredAt: timestamp("lastAnsweredAt"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type FlashcardProgress = typeof flashcardProgress.$inferSelect;
+export type InsertFlashcardProgress = typeof flashcardProgress.$inferInsert;
+
+// Study sessions table for tracking study history
+export const studySessions = mysqlTable("studySessions", {
+  id: int("id").autoincrement().primaryKey(),
+  userId: int("userId").notNull(),
+  candidateName: varchar("candidateName", { length: 255 }).notNull(),
+  area: varchar("area", { length: 255 }).notNull(), // "all" or specific area
+  cardsPerArea: int("cardsPerArea").notNull(),
+  totalCards: int("totalCards").notNull(),
+  correctCount: int("correctCount").default(0).notNull(),
+  wrongCount: int("wrongCount").default(0).notNull(),
+  notSureCount: int("notSureCount").default(0).notNull(),
+  notRememberCount: int("notRememberCount").default(0).notNull(),
+  startedAt: timestamp("startedAt").defaultNow().notNull(),
+  completedAt: timestamp("completedAt"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type StudySession = typeof studySessions.$inferSelect;
+export type InsertStudySession = typeof studySessions.$inferInsert;

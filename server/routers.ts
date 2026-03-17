@@ -83,6 +83,122 @@ export const appRouter = router({
       return db.fixAreaMapping();
     }),
   }),
+
+  // Flashcard progress and study tracking
+  progress: router({
+    // Sync flashcard progress (protected)
+    syncProgress: protectedProcedure
+      .input(
+        z.object({
+          flashcardId: z.string(),
+          area: z.string(),
+          enabled: z.boolean(),
+          correctCount: z.number().int().min(0),
+          wrongCount: z.number().int().min(0),
+          notSureCount: z.number().int().min(0),
+          notRememberCount: z.number().int().min(0),
+        })
+      )
+      .mutation(async ({ ctx, input }) => {
+        await db.upsertFlashcardProgress({
+          userId: ctx.user.id,
+          flashcardId: input.flashcardId,
+          area: input.area,
+          enabled: input.enabled ? 1 : 0,
+          correctCount: input.correctCount,
+          wrongCount: input.wrongCount,
+          notSureCount: input.notSureCount,
+          notRememberCount: input.notRememberCount,
+          lastAnsweredAt: new Date(),
+        });
+        return { success: true };
+      }),
+
+    // Get user progress (protected)
+    getProgress: protectedProcedure.query(async ({ ctx }) => {
+      return db.getUserFlashcardProgress(ctx.user.id);
+    }),
+
+    // Get progress by area (protected)
+    getProgressByArea: protectedProcedure
+      .input(z.object({ area: z.string() }))
+      .query(async ({ ctx, input }) => {
+        return db.getFlashcardProgressByArea(ctx.user.id, input.area);
+      }),
+
+    // Get user stats by area (protected)
+    getStatsByArea: protectedProcedure.query(async ({ ctx }) => {
+      return db.getUserStatsByArea(ctx.user.id);
+    }),
+  }),
+
+  // Study sessions
+  sessions: router({
+    // Create study session (protected)
+    create: protectedProcedure
+      .input(
+        z.object({
+          candidateName: z.string(),
+          area: z.string(),
+          cardsPerArea: z.number().int().min(1),
+          totalCards: z.number().int().min(1),
+        })
+      )
+      .mutation(async ({ ctx, input }) => {
+        const sessionId = await db.createStudySession({
+          userId: ctx.user.id,
+          candidateName: input.candidateName,
+          area: input.area,
+          cardsPerArea: input.cardsPerArea,
+          totalCards: input.totalCards,
+        });
+        return { sessionId, success: true };
+      }),
+
+    // Update study session (protected)
+    update: protectedProcedure
+      .input(
+        z.object({
+          sessionId: z.number().int(),
+          correctCount: z.number().int().min(0).optional(),
+          wrongCount: z.number().int().min(0).optional(),
+          notSureCount: z.number().int().min(0).optional(),
+          notRememberCount: z.number().int().min(0).optional(),
+          completedAt: z.date().optional(),
+        })
+      )
+      .mutation(async ({ ctx, input }) => {
+        const session = await db.getStudySessionById(input.sessionId);
+        if (!session || session.userId !== ctx.user.id) {
+          throw new Error("Session not found or unauthorized");
+        }
+
+        await db.updateStudySession(input.sessionId, {
+          correctCount: input.correctCount,
+          wrongCount: input.wrongCount,
+          notSureCount: input.notSureCount,
+          notRememberCount: input.notRememberCount,
+          completedAt: input.completedAt,
+        });
+        return { success: true };
+      }),
+
+    // Get user sessions (protected)
+    getSessions: protectedProcedure.query(async ({ ctx }) => {
+      return db.getUserStudySessions(ctx.user.id);
+    }),
+
+    // Get session by ID (protected)
+    getSession: protectedProcedure
+      .input(z.object({ sessionId: z.number().int() }))
+      .query(async ({ ctx, input }) => {
+        const session = await db.getStudySessionById(input.sessionId);
+        if (!session || session.userId !== ctx.user.id) {
+          throw new Error("Session not found or unauthorized");
+        }
+        return session;
+      }),
+  }),
 });
 
 export type AppRouter = typeof appRouter;
