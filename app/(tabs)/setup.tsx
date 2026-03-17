@@ -59,6 +59,13 @@ export default function SetupScreen() {
     setAreas(loadedAreas.sort((a, b) => a.label.localeCompare(b.label)));
   }, [state.cards, colors.primary]);
 
+  // Habilitar todos os cards quando selectionMode eh single
+  useEffect(() => {
+    if (selectionMode === "single") {
+      toggleAllCards(true);
+    }
+  }, [selectionMode, toggleAllCards]);
+
   const staticAreas: { id: AreaType; label: string; description: string; color: string }[] = [
     { id: "escrituras_sagradas", label: "Escrituras Sagradas", description: "25 cards", color: colors.primary },
     { id: "deus_pai", label: "Deus Pai", description: "15 cards", color: "#3B82F6" },

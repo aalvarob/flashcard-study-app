@@ -269,11 +269,13 @@ export function FlashcardProvider({ children }: { children: React.ReactNode }) {
         const stored = await AsyncStorage.getItem(STORAGE_KEY);
         if (stored) {
           const parsed = JSON.parse(stored);
-          dispatch({ type: "INIT", payload: parsed.cards });
+          // Ensure all cards are disabled on initial load
+          const disabledCards = parsed.cards.map((card: Flashcard) => ({ ...card, enabled: false }));
+          dispatch({ type: "INIT", payload: disabledCards });
         } else {
           const initialCards: Flashcard[] = FLASHCARDS_DATA.map((card) => ({
             ...card,
-            enabled: true,
+            enabled: false,
             correctCount: 0,
             wrongCount: 0,
             notSureCount: 0,
