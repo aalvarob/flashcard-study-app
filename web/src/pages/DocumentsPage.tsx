@@ -36,6 +36,7 @@ export default function DocumentsPage() {
       title: '📖 Declaração Doutrinária da CBB',
       icon: '📖',
       description: 'Fundamentos doutrinários da Convenção Batista Brasileira',
+      pdfUrl: 'https://d2xsxph8kpxj0f.cloudfront.net/310519663434646570/ijHg8DNNEmRjrxapNo7pAg/📘DeclaraçãoDoutrináriadaCBB_fabb81f1.docx',
       content: [
         'Documento que apresenta os princípios doutrinários fundamentais da Convenção Batista Brasileira, incluindo crenças sobre Deus, Jesus Cristo, Salvação e a Igreja.',
       ],
@@ -45,6 +46,7 @@ export default function DocumentsPage() {
       title: '📚 História dos Batistas',
       icon: '📚',
       description: 'Origem e desenvolvimento do movimento batista no mundo e no Brasil',
+      pdfUrl: 'https://d2xsxph8kpxj0f.cloudfront.net/310519663434646570/ijHg8DNNEmRjrxapNo7pAg/📘HistóriadosBatistas_79692caf.docx',
       content: [
         'Documento que narra a história do movimento batista, desde suas origens na Europa até sua expansão no Brasil e em Alagoas.',
       ],
@@ -54,6 +56,7 @@ export default function DocumentsPage() {
       title: '⚖️ Princípios Batistas',
       icon: '⚖️',
       description: 'Princípios fundamentais que caracterizam a fé e prática batista',
+      pdfUrl: 'https://d2xsxph8kpxj0f.cloudfront.net/310519663434646570/ijHg8DNNEmRjrxapNo7pAg/📘PrincípiosBatistas_7ecefd3d.docx',
       content: [
         'Documento que detalha os princípios batistas como autonomia da igreja local, liberdade de consciência, separação entre Igreja e Estado, e competência da alma.',
       ],
