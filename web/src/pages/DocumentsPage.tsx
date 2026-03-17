@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import PDFViewer from '../components/PDFViewer'
 import './DocumentsPage.css'
 
 interface Document {
@@ -6,11 +7,13 @@ interface Document {
   title: string
   icon: string
   description: string
+  pdfUrl?: string
   content: string[]
 }
 
 export default function DocumentsPage() {
   const [expandedSection, setExpandedSection] = useState<string | null>(null)
+  const [selectedPDF, setSelectedPDF] = useState<{ url: string; title: string } | null>(null)
 
   const documents: Document[] = [
     {
@@ -18,6 +21,7 @@ export default function DocumentsPage() {
       title: '📜 Pacto das Igrejas Batistas',
       icon: '📜',
       description: 'Compromissos e princípios fundamentais das igrejas batistas',
+      pdfUrl: 'https://files.manuscdn.com/user_upload_by_module/session_file/310519663434646570/qYHqepsPcHkndvbS.docx',
       content: [
         'Tendo sido levados pelo Espírito Santo a aceitar a Jesus Cristo como único e suficiente Salvador, e batizados, sob profissão de fé, em nome do Pai, do Filho e do Espírito Santo, decidimo-nos, unânimes, como um corpo em Cristo, firmar, solene e alegremente, na presença de Deus e desta congregação, o seguinte Pacto:',
         'Comprometemo-nos a, auxiliados pelo Espírito Santo, andar sempre unidos no amor cristão; trabalhar para que esta igreja cresça no conhecimento da Palavra, na santidade, no conforto mútuo e na espiritualidade; manter os seus cultos, suas doutrinas, suas ordenanças e sua disciplina; contribuir liberalmente para o sustento do ministério, para as despesas da igreja, para o auxílio dos pobres e para a propaganda do evangelho em todas as nações.',
@@ -59,6 +63,7 @@ export default function DocumentsPage() {
       title: '⚖️ Código de Ética',
       icon: '⚖️',
       description: 'Normas éticas e morais para ministros batistas',
+      pdfUrl: 'https://files.manuscdn.com/user_upload_by_module/session_file/310519663434646570/DJRqaGKzdhZvFyfe.pdf',
       content: [
         'Documento que estabelece as normas éticas e morais esperadas de ministros batistas, incluindo conduta pessoal, familiar e ministerial.',
       ],
@@ -70,45 +75,71 @@ export default function DocumentsPage() {
   }
 
   return (
-    <div className="documents-container">
-      <div className="documents-content">
-        {/* Header */}
-        <section className="documents-header">
-          <h1>📚 Documentos Importantes</h1>
-          <p>Referências doutrinária e histórica para estudo</p>
-        </section>
+    <>
+      {selectedPDF && (
+        <PDFViewer
+          pdfUrl={selectedPDF.url}
+          title={selectedPDF.title}
+          onClose={() => setSelectedPDF(null)}
+        />
+      )}
+      <div className="documents-container">
+        <div className="documents-content">
+          {/* Header */}
+          <section className="documents-header">
+            <h1>📚 Documentos Importantes</h1>
+            <p>Referências doutrinária e histórica para estudo</p>
+          </section>
 
-        {/* Documents Grid */}
-        <div className="documents-grid">
-          {documents.map((doc) => (
-            <div
-              key={doc.id}
-              className={`document-card ${expandedSection === doc.id ? 'expanded' : ''}`}
-              onClick={() => toggleSection(doc.id)}
-            >
-              <div className="document-header">
-                <div className="document-title-section">
-                  <h2 className="document-title">{doc.title}</h2>
-                  <p className="document-description">{doc.description}</p>
+          {/* Documents Grid */}
+          <div className="documents-grid">
+            {documents.map((doc) => (
+              <div
+                key={doc.id}
+                className={`document-card ${expandedSection === doc.id ? 'expanded' : ''}`}
+              >
+                <div
+                  className="document-header"
+                  onClick={() => toggleSection(doc.id)}
+                  style={{ cursor: 'pointer' }}
+                >
+                  <div className="document-title-section">
+                    <h2 className="document-title">{doc.title}</h2>
+                    <p className="document-description">{doc.description}</p>
+                  </div>
+                  <div className="document-header-actions">
+                    {doc.pdfUrl && (
+                      <button
+                        className="document-pdf-btn"
+                        onClick={(e) => {
+                          e.stopPropagation()
+                          setSelectedPDF({ url: doc.pdfUrl!, title: doc.title })
+                        }}
+                        title="Visualizar PDF"
+                      >
+                        📄
+                      </button>
+                    )}
+                    <span className="document-icon">
+                      {expandedSection === doc.id ? '▼' : '▶'}
+                    </span>
+                  </div>
                 </div>
-                <span className="document-icon">
-                  {expandedSection === doc.id ? '▼' : '▶'}
-                </span>
+
+                {expandedSection === doc.id && (
+                  <div className="document-content">
+                    {doc.content.map((item, index) => (
+                      <div key={index} className="document-item">
+                        <p>{item}</p>
+                      </div>
+                    ))}
+                  </div>
+                )}
               </div>
-
-              {expandedSection === doc.id && (
-                <div className="document-content">
-                  {doc.content.map((item, index) => (
-                    <div key={index} className="document-item">
-                      <p>{item}</p>
-                    </div>
-                  ))}
-                </div>
-              )}
-            </div>
-          ))}
+            ))}
+          </div>
         </div>
       </div>
-    </div>
+    </>
   )
 }
