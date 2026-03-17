@@ -104,14 +104,14 @@ export default function StudyPage() {
       })
 
       // Selecionar cards de cada área
-      let totalSelected = 0
-      Object.values(areaMap).forEach(areaCards => {
-        const toSelect = Math.min(cardsPerArea, areaCards.length)
-        selectedCards.push(...areaCards.slice(0, toSelect))
-        totalSelected += toSelect
+      config.areas.forEach(area => {
+        if (areaMap[area]) {
+          const toSelect = Math.min(cardsPerArea, areaMap[area].length)
+          selectedCards.push(...areaMap[area].slice(0, toSelect))
+        }
       })
 
-      filtered = selectedCards.slice(0, cardsPerArea * config.areas.length)
+      filtered = selectedCards
     } else {
       // Modo múltiplo: cardsPerArea por área selecionada
       const selectedCards: typeof allFlashcards = []
