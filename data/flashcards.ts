@@ -73,7 +73,7 @@ export const FLASHCARDS_DATA: FlashcardData[] = [
   { id: "34", question: "Cite 5 Atributos Comunicáveis e suas referências.", answer: "Amor (1Jo 4.8), Justiça (Dt 32.4), Misericórdia (Lc 6.36), Bondade (Sl 100.5) e Santidade (1Pe 1.16).", area: "deus_pai" },
   { id: "35", question: "Quais são os outros nomes dados para Deus?", answer: "Elohim, Yahweh, Adonai, El Shaddai, El Elyon, Jeová Jiré, Jeová Shalom e Abba (Pai).", area: "deus_pai" },
   { id: "36", question: "Quando Deus passou a existir?", answer: "Nunca; Ele é eterno (Sl 90.2).", area: "deus_pai" },
-  { id: "37", question: "O que é a Trindade?", answer: "Há um só Deus que subsiste eternamente em três pessoas: o Pai (Criador), o Filho (Jesus Cristo-Redentor) e o Espírito Santo (Santificador) (1Jo 5.7).", area: "deus_filho" },
+  { id: "37", question: "O que é a Trindade?", answer: "Há um só Deus que subsiste eternamente em três pessoas: o Pai (Criador), o Filho (Jesus Cristo-Redentor) e o Espírito Santo (Santificador) (1Jo 5.7).", area: "deus_pai" },
   { id: "38", question: "Quem é Jesus Cristo?", answer: "Filho de Deus e Salvador (Jo 1.1,14).", area: "deus_filho" },
   { id: "39", question: "Quais as Suas duas naturezas?", answer: "Divina e humana (Cl 2.9; 1Tm 2.5).", area: "deus_filho" },
   { id: "40", question: "Jesus poderia ter pecado?", answer: "Não; Ele é santo (Hb 4.15).", area: "deus_filho" },
