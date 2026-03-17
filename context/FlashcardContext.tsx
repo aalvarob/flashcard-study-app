@@ -32,6 +32,7 @@ interface FlashcardState {
   loading: boolean;
   error: string | null;
   sessionTotal: number;
+  sessionCardIds: string[];
 }
 
 type FlashcardAction =
@@ -61,8 +62,10 @@ function getEnabledCards(cards: Flashcard[]): Flashcard[] {
 function reducer(state: FlashcardState, action: FlashcardAction): FlashcardState {
   switch (action.type) {
     case "INIT": {
-      const enabledCount = action.payload.filter(c => c.enabled).length;
-      return { ...state, cards: action.payload, loading: false, sessionTotal: enabledCount };
+      const enabledCards = action.payload.filter(c => c.enabled);
+      const enabledCount = enabledCards.length;
+      const sessionCardIds = enabledCards.map(c => c.id);
+      return { ...state, cards: action.payload, loading: false, sessionTotal: enabledCount, sessionCardIds };
     }
 
     case "TOGGLE_CARD": {
@@ -212,13 +215,11 @@ function reducer(state: FlashcardState, action: FlashcardAction): FlashcardState
     }
 
     case "RESET_STUDY_SESSION": {
-      // Reabilitar todos os cards que foram respondidos nesta sessao
-      const updated = state.cards.map((c) => {
-        if (c.correctCount > 0 || c.wrongCount > 0 || c.notSureCount > 0 || c.notRememberCount > 0) {
-          return { ...c, enabled: true };
-        }
-        return c;
-      });
+      // Restaurar apenas os cards que foram selecionados originalmente
+      const updated = state.cards.map((c) => ({
+        ...c,
+        enabled: state.sessionCardIds.includes(c.id),
+      }));
       const enabledCards = getEnabledCards(updated);
       return {
         ...state,
@@ -257,6 +258,7 @@ const initialState: FlashcardState = {
   loading: true,
   error: null,
   sessionTotal: 0,
+  sessionCardIds: [],
 };
 
 interface FlashcardContextValue {
