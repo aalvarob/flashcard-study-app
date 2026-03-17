@@ -129,6 +129,21 @@ export default function SetupScreen() {
     }
   }
 
+  // Calcular o máximo de cards disponíveis nas áreas selecionadas
+  const getMaxCardsAvailable = () => {
+    if (selectionMode === "single") {
+      // Modo "todas as áreas": retorna o total de cards habilitados
+      return state.cards.filter(c => c.enabled).length;
+    } else {
+      // Modo múltiplo: retorna o total de cards habilitados nas áreas selecionadas
+      const selectedAreaIds = Array.from(selectedAreas);
+      return state.cards.filter(c => c.enabled && selectedAreaIds.includes(c.area)).length;
+    }
+  };
+
+  const maxCardsAvailable = getMaxCardsAvailable();
+  const currentCardsPerArea = Math.min(parseInt(cardsPerArea), maxCardsAvailable);
+
   function handleStartStudy() {
     if (!candidateName.trim()) {
       Alert.alert("Atenção", "Por favor, informe seu nome para continuar.");
@@ -137,6 +152,11 @@ export default function SetupScreen() {
 
     if (selectionMode === "multiple" && selectedAreas.size === 0) {
       Alert.alert("Atenção", "Por favor, selecione pelo menos uma área para continuar.");
+      return;
+    }
+
+    if (currentCardsPerArea === 0) {
+      Alert.alert("Atenção", "Nenhum card disponível nas áreas selecionadas.");
       return;
     }
 
@@ -150,7 +170,7 @@ export default function SetupScreen() {
     initializeSession({
       candidateName: candidateName.trim(),
       area: selectedAreasList as any,
-      cardsPerArea: parseInt(cardsPerArea),
+      cardsPerArea: currentCardsPerArea,
     });
 
     // Navegar para a tela de estudo
@@ -267,14 +287,39 @@ export default function SetupScreen() {
       flexDirection: "row",
       flexWrap: "wrap",
     },
-    cardCountButton: {
-      width: "23%",
-      paddingVertical: 8,
-      borderRadius: 6,
-      borderWidth: 1,
+    cardCountInputContainer: {
+      flexDirection: "row",
       alignItems: "center",
-      marginRight: "2%",
-      marginBottom: 8,
+      justifyContent: "center",
+      gap: 12,
+    },
+    cardCountButton: {
+      width: 50,
+      height: 50,
+      borderRadius: 8,
+      borderWidth: 1,
+      borderColor: colors.primary,
+      backgroundColor: colors.surface,
+      alignItems: "center",
+      justifyContent: "center",
+    },
+    cardCountButtonText: {
+      fontSize: 24,
+      fontWeight: "600",
+      color: colors.primary,
+    },
+    cardCountInput: {
+      width: 80,
+      height: 50,
+      borderRadius: 8,
+      borderWidth: 1,
+      borderColor: colors.primary,
+      backgroundColor: colors.surface,
+      fontSize: 18,
+      fontWeight: "600",
+      color: colors.foreground,
+      textAlign: "center",
+      paddingHorizontal: 8,
     },
     cardCountButtonActive: {
       backgroundColor: colors.primary,
@@ -429,29 +474,38 @@ export default function SetupScreen() {
             </View>
           )}
 
-          {/* Quantidade de Cards por Área */}
+          {/* Quantidade de Cards */}
           <View style={styles.section}>
-            <Text style={styles.sectionTitle}>Cards por Área</Text>
-            <View style={styles.cardCountGrid}>
-              {cardCounts.map((count) => (
-                <Pressable
-                  key={count}
-                  style={[
-                    styles.cardCountButton,
-                    cardsPerArea === count ? styles.cardCountButtonActive : styles.cardCountButtonInactive,
-                  ]}
-                  onPress={() => setCardsPerArea(count)}
-                >
-                  <Text
-                    style={[
-                      styles.cardCountText,
-                      cardsPerArea === count ? styles.cardCountTextActive : styles.cardCountTextInactive,
-                    ]}
-                  >
-                    {count}
-                  </Text>
-                </Pressable>
-              ))}
+            <Text style={styles.sectionTitle}>Quantidade de Cards</Text>
+            <View style={styles.cardCountInputContainer}>
+              <Pressable
+                onPress={() => {
+                  const current = parseInt(cardsPerArea);
+                  if (current > 1) setCardsPerArea((current - 1).toString());
+                }}
+                style={styles.cardCountButton}
+              >
+                <Text style={styles.cardCountButtonText}>−</Text>
+              </Pressable>
+              <TextInput
+                style={styles.cardCountInput}
+                value={cardsPerArea}
+                onChangeText={(text) => {
+                  const num = parseInt(text) || 0;
+                  setCardsPerArea(Math.max(1, num).toString());
+                }}
+                keyboardType="number-pad"
+                maxLength={3}
+              />
+              <Pressable
+                onPress={() => {
+                  const current = parseInt(cardsPerArea);
+                  setCardsPerArea((current + 1).toString());
+                }}
+                style={styles.cardCountButton}
+              >
+                <Text style={styles.cardCountButtonText}>+</Text>
+              </Pressable>
             </View>
           </View>
 
