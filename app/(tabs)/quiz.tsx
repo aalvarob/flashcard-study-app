@@ -533,9 +533,9 @@ export default function QuizScreen() {
             <Text style={styles.questionText}>{currentQuestion.question}</Text>
 
             <View style={styles.optionsContainer}>
-              {currentQuestion.options.map((option: any) => (
+              {currentQuestion.options.map((option: any, idx: number) => (
                 <Pressable
-                  key={option.id}
+                  key={`${quizState.currentQuestionIndex}-${idx}`}
                   onPress={() => handleSelectAnswer(option.id)}
                   style={[
                     styles.optionButtonQuiz,
