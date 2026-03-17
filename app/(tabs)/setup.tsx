@@ -19,6 +19,13 @@ import { FlashcardArea } from "@/data/flashcards";
 
 type AreaType = string;
 
+function formatAreaName(areaName: string): string {
+  return areaName
+    .split('_')
+    .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+    .join(' ');
+}
+
 export default function SetupScreen() {
   const colors = useColors();
   const { initializeSession, state, toggleAllCards, toggleAllCardsByArea } = useFlashcards();
@@ -51,7 +58,7 @@ export default function SetupScreen() {
 
     const loadedAreas = Array.from(uniqueAreas.entries()).map(([areaName, count], index) => ({
       id: areaName,
-      label: areaName,
+      label: formatAreaName(areaName),
       description: `${count} card${count !== 1 ? "s" : ""}`,
       color: colorsList[index % colorsList.length],
     }));
