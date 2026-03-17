@@ -80,20 +80,16 @@ export default function SetupScreen() {
   useEffect(() => {
     if (selectionMode === "single") {
       toggleAllCards(true);
+      setCardsPerArea("1");
     }
   }, [selectionMode, toggleAllCards]);
 
   // Recalcular maxCardsAvailable quando selectionMode muda
   useEffect(() => {
     const newMax = getMaxCardsAvailable();
-    if (newMax > 0) {
-      if (selectionMode === "single") {
-        // Se é modo "Todas", incrementar para o máximo
-        setCardsPerArea(String(newMax));
-      } else if (parseInt(cardsPerArea) > newMax) {
-        // Se o valor é maior que o máximo, reduzir
-        setCardsPerArea(String(newMax));
-      }
+    if (newMax > 0 && parseInt(cardsPerArea) > newMax) {
+      // Se o valor é maior que o máximo, reduzir
+      setCardsPerArea(String(newMax));
     }
   }, [selectionMode, state.cards, selectedAreas]);
 
