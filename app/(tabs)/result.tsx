@@ -49,10 +49,10 @@ export default function ResultScreen() {
     if (Platform.OS !== "web") {
       Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
     }
-    // Apenas reseta os contadores da sessão, mantendo os cards habilitados
+    // Reseta contadores e reabilita cards respondidos
     resetStudySession();
-    // Navegar diretamente para a tela de estudo (index)
-    router.replace("/(tabs)");
+    // Navegar para a tela de estudo
+    router.push("/(tabs)");
   }
 
   return (
