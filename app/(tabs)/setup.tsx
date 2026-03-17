@@ -25,7 +25,7 @@ export default function SetupScreen() {
 
   const [candidateName, setCandidateName] = useState("");
   const [selectedAreas, setSelectedAreas] = useState<Set<AreaType>>(new Set());
-  const [cardsPerArea, setCardsPerArea] = useState("10");
+  const [cardsPerArea, setCardsPerArea] = useState("1");
   const [selectionMode, setSelectionMode] = useState<"single" | "multiple">("single");
   const [areas, setAreas] = useState<{ id: string; label: string; description: string; color: string }[]>([]);
 
