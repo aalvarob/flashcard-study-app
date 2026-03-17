@@ -397,18 +397,18 @@ const styles = StyleSheet.create({
   },
   quickActionBtn: {
     flex: 1,
-    paddingVertical: 10,
-    paddingHorizontal: 12,
+    paddingVertical: 8,
+    paddingHorizontal: 10,
     borderRadius: 8,
     alignItems: "center",
-    gap: 4,
+    gap: 3,
   },
   quickActionBtnIcon: {
-    fontSize: 20,
+    fontSize: 18,
     fontWeight: "bold",
   },
   quickActionBtnText: {
-    fontSize: 12,
+    fontSize: 11,
     fontWeight: "600",
   },
   notSureBtn: {
@@ -421,9 +421,9 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     paddingHorizontal: 16,
-    paddingVertical: 12,
-    marginVertical: 8,
-    minHeight: 380,
+    paddingVertical: 8,
+    marginVertical: 4,
+    minHeight: 300,
   },
   emptyCard: {
     borderWidth: 2,
@@ -449,18 +449,18 @@ const styles = StyleSheet.create({
   },
   resultBtn: {
     flex: 1,
-    paddingVertical: 12,
-    paddingHorizontal: 12,
+    paddingVertical: 8,
+    paddingHorizontal: 10,
     borderRadius: 8,
     alignItems: "center",
-    gap: 4,
+    gap: 3,
   },
   resultBtnIcon: {
-    fontSize: 20,
+    fontSize: 18,
     fontWeight: "bold",
   },
   resultBtnText: {
-    fontSize: 12,
+    fontSize: 11,
     fontWeight: "600",
   },
   correctBtn: {

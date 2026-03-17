@@ -229,13 +229,13 @@ const styles = StyleSheet.create({
   cardContent: {
     flex: 1,
     justifyContent: "center",
-    paddingVertical: 16,
+    paddingVertical: 8,
   },
   cardLabel: {
     fontSize: 10,
     fontWeight: "700",
     letterSpacing: 1.5,
-    marginBottom: 16,
+    marginBottom: 8,
     textTransform: "uppercase",
   },
   questionText: {
