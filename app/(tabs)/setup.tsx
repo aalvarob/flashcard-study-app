@@ -388,7 +388,7 @@ export default function SetupScreen() {
     <ScreenContainer className="bg-background">
       <ScrollView style={styles.container} contentContainerStyle={styles.content}>
           <View style={styles.header}>
-            <Text style={styles.title}>Simulado Concílio</Text>
+            <Text style={styles.title}>Simulado para Concílio Pastoral Batista</Text>
             <Text style={styles.subtitle}>Configurar Sessão de Estudo</Text>
           </View>
 

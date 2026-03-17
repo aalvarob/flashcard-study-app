@@ -222,7 +222,7 @@ export default function HomeScreen() {
         <View style={styles.header}>
           <Text style={styles.title}>Bem-vindo!</Text>
           <Text style={styles.subtitle}>
-            Simulado Concílio - Estude teologia de forma eficaz
+            Simulado para Concílio Pastoral Batista - Estude teologia de forma eficaz
           </Text>
         </View>
 
