@@ -11,6 +11,9 @@ export default function PDFViewer({ pdfUrl, title, onClose }: PDFViewerProps) {
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
 
+  // Usar Google Docs Viewer para exibir PDFs inline
+  const googleDocsViewerUrl = `https://docs.google.com/gview?url=${encodeURIComponent(pdfUrl)}&embedded=true`
+
   const handleIframeLoad = () => {
     setIsLoading(false)
   }
@@ -28,8 +31,7 @@ export default function PDFViewer({ pdfUrl, title, onClose }: PDFViewerProps) {
           <div className="pdf-viewer-actions">
             <a
               href={pdfUrl}
-              target="_blank"
-              rel="noopener noreferrer"
+              download
               className="pdf-viewer-button download-btn"
               title="Baixar PDF"
             >
@@ -64,11 +66,12 @@ export default function PDFViewer({ pdfUrl, title, onClose }: PDFViewerProps) {
         )}
 
         <iframe
-          src={`${pdfUrl}#toolbar=0`}
+          src={googleDocsViewerUrl}
           className="pdf-viewer-iframe"
           onLoad={handleIframeLoad}
           onError={handleIframeError}
           title={`Visualizador de PDF: ${title}`}
+          sandbox="allow-same-origin allow-scripts allow-popups allow-forms"
         />
       </div>
     </div>
