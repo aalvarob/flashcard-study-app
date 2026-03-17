@@ -489,7 +489,7 @@ const styles = StyleSheet.create({
   },
   navRowOverlay: {
     position: "absolute",
-    top: 220,
+    top: 340,
     left: 16,
     right: 16,
     flexDirection: "row",
