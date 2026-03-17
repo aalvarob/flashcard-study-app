@@ -86,11 +86,17 @@ export default function SetupScreen() {
   // Recalcular maxCardsAvailable quando selectionMode muda
   useEffect(() => {
     const newMax = getMaxCardsAvailable();
-    if (newMax > 0 && parseInt(cardsPerArea) > newMax) {
-      // Se o valor é maior que o máximo, reduzir
-      setCardsPerArea(String(newMax));
+    if (newMax > 0) {
+      if (selectionMode === "single") {
+        // Se é modo "Todas", incrementar para o máximo
+        setCardsPerArea(String(newMax));
+      } else if (parseInt(cardsPerArea) > newMax) {
+        // Se o valor é maior que o máximo, reduzir
+        setCardsPerArea(String(newMax));
+      }
     }
   }, [selectionMode, state.cards, selectedAreas]);
+
 
   const staticAreas: { id: AreaType; label: string; description: string; color: string }[] = [
     { id: "escrituras_sagradas", label: "Escrituras Sagradas", description: "25 cards", color: colors.primary },
