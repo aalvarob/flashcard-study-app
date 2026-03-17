@@ -19,6 +19,7 @@ interface QuizState {
   selectedQuestions: any[];
   numQuestionsToAnswer: number | null;
   selectingNumQuestions: boolean;
+  counterValue: number;
 }
 
 export default function QuizScreen() {
@@ -31,6 +32,7 @@ export default function QuizScreen() {
     selectedQuestions: [],
     numQuestionsToAnswer: null,
     selectingNumQuestions: false,
+    counterValue: 3,
   });
   const [windowWidth, setWindowWidth] = useState(Dimensions.get("window").width);
 
@@ -94,7 +96,23 @@ export default function QuizScreen() {
       selectedQuestions: [],
       numQuestionsToAnswer: null,
       selectingNumQuestions: true,
+      counterValue: 3,
     });
+  };
+
+  const handleIncrementCounter = () => {
+    if (!currentQuiz) return;
+    setQuizState((prev) => ({
+      ...prev,
+      counterValue: Math.min(prev.counterValue + 1, currentQuiz.questions.length),
+    }));
+  };
+
+  const handleDecrementCounter = () => {
+    setQuizState((prev) => ({
+      ...prev,
+      counterValue: Math.max(prev.counterValue - 1, 3),
+    }));
   };
 
   const handleSelectNumQuestions = (num: number) => {
@@ -125,6 +143,7 @@ export default function QuizScreen() {
       selectedQuestions: [],
       numQuestionsToAnswer: null,
       selectingNumQuestions: false,
+      counterValue: 3,
     });
   };
 
@@ -204,23 +223,44 @@ export default function QuizScreen() {
       marginBottom: isDesktop ? 32 : isTablet ? 24 : 20,
       textAlign: "center",
     },
-    optionsGrid: {
+    counterContainer: {
       flexDirection: "row",
-      flexWrap: "wrap",
-      gap: isDesktop ? 16 : isTablet ? 12 : 10,
+      alignItems: "center",
       justifyContent: "center",
+      gap: isDesktop ? 24 : isTablet ? 16 : 12,
       marginBottom: isDesktop ? 40 : isTablet ? 32 : 24,
     },
-    optionButton: {
-      paddingVertical: isDesktop ? 16 : isTablet ? 14 : 12,
-      paddingHorizontal: isDesktop ? 24 : isTablet ? 20 : 16,
-      borderRadius: 8,
-      minWidth: isDesktop ? 100 : isTablet ? 80 : 70,
+    counterButton: {
+      width: isDesktop ? 50 : isTablet ? 45 : 40,
+      height: isDesktop ? 50 : isTablet ? 45 : 40,
+      borderRadius: isDesktop ? 25 : isTablet ? 22.5 : 20,
+      backgroundColor: colors.primary,
+      justifyContent: "center",
       alignItems: "center",
     },
-    optionButtonText: {
-      fontWeight: "600",
-      fontSize: isDesktop ? 16 : isTablet ? 14 : 12,
+    counterDisplay: {
+      minWidth: isDesktop ? 80 : isTablet ? 70 : 60,
+      height: isDesktop ? 50 : isTablet ? 45 : 40,
+      borderRadius: 8,
+      backgroundColor: colors.surface,
+      justifyContent: "center",
+      alignItems: "center",
+      borderWidth: 2,
+      borderColor: colors.primary,
+    },
+    counterText: {
+      fontSize: isDesktop ? 24 : isTablet ? 20 : 18,
+      fontWeight: "700",
+      color: colors.foreground,
+    },
+    counterButtonText: {
+      fontSize: isDesktop ? 20 : isTablet ? 18 : 16,
+      fontWeight: "700",
+      color: colors.background,
+    },
+    confirmButton: {
+      paddingVertical: isDesktop ? 12 : isTablet ? 10 : 8,
+      paddingHorizontal: isDesktop ? 24 : isTablet ? 20 : 16,
     },
     backButton: {
       paddingVertical: isDesktop ? 12 : isTablet ? 10 : 8,
@@ -371,27 +411,51 @@ export default function QuizScreen() {
             <Text style={[styles.description, { color: colors.muted }]}>
               Quantas perguntas você gostaria de responder?
             </Text>
-            <View style={styles.optionsGrid}>
-              {[3, 5, 10, currentQuiz.questions.length].map((num) => (
-                num <= currentQuiz.questions.length && (
-                  <Pressable
-                    key={num}
-                    onPress={() => handleSelectNumQuestions(num)}
-                    style={({ pressed }) => [
-                      styles.optionButton,
-                      {
-                        backgroundColor: colors.primary,
-                        opacity: pressed ? 0.8 : 1,
-                      },
-                    ]}
-                  >
-                    <Text style={[styles.optionButtonText, { color: colors.background }]}>
-                      {num}
-                    </Text>
-                  </Pressable>
-                )
-              ))}
+            <View style={styles.counterContainer}>
+              <Pressable
+                onPress={handleDecrementCounter}
+                disabled={quizState.counterValue <= 3}
+                style={({ pressed }) => [
+                  styles.counterButton,
+                  {
+                    opacity: quizState.counterValue <= 3 ? 0.5 : pressed ? 0.8 : 1,
+                  },
+                ]}
+              >
+                <Text style={styles.counterButtonText}>−</Text>
+              </Pressable>
+              <View style={styles.counterDisplay}>
+                <Text style={styles.counterText}>{quizState.counterValue}</Text>
+              </View>
+              <Pressable
+                onPress={handleIncrementCounter}
+                disabled={quizState.counterValue >= currentQuiz.questions.length}
+                style={({ pressed }) => [
+                  styles.counterButton,
+                  {
+                    opacity:
+                      quizState.counterValue >= currentQuiz.questions.length
+                        ? 0.5
+                        : pressed
+                          ? 0.8
+                          : 1,
+                  },
+                ]}
+              >
+                <Text style={styles.counterButtonText}>+</Text>
+              </Pressable>
             </View>
+            <Pressable
+              onPress={() => handleSelectNumQuestions(quizState.counterValue)}
+              style={({ pressed }) => [
+                styles.button,
+                styles.primaryButton,
+                styles.confirmButton,
+                { opacity: pressed ? 0.8 : 1 },
+              ]}
+            >
+              <Text style={styles.primaryButtonText}>Começar Quiz</Text>
+            </Pressable>
             <Pressable
               onPress={handleBackToList}
               style={({ pressed }) => [
