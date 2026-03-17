@@ -377,8 +377,8 @@ const styles = StyleSheet.create({
   },
   quickActionsArea: {
     paddingHorizontal: 16,
-    paddingVertical: 4,
-    paddingBottom: 4,
+    paddingVertical: 2,
+    paddingBottom: 2,
   },
   quickActionsRow: {
     flexDirection: "row",
