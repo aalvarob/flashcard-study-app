@@ -425,7 +425,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     paddingVertical: 8,
     marginVertical: 4,
-    minHeight: 300,
+    minHeight: 380,
   },
   emptyCard: {
     borderWidth: 2,
