@@ -257,13 +257,13 @@ export default function SetupScreen() {
     },
     areaButton: {
       width: "48%",
-      paddingVertical: 10,
+      paddingVertical: 12,
       paddingHorizontal: 8,
       borderRadius: 8,
       borderWidth: 2,
       alignItems: "center",
       marginRight: "4%",
-      marginBottom: 8,
+      marginBottom: 12,
     },
     areaButtonSelected: {
       borderColor: colors.primary,
