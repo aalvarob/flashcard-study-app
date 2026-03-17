@@ -170,7 +170,7 @@ function reducer(state: FlashcardState, action: FlashcardAction): FlashcardState
     }
 
     case "FLIP_CARD": {
-      return { ...state, isFlipped: true };
+      return { ...state, isFlipped: !state.isFlipped };
     }
 
     case "RESET_FLIP": {
