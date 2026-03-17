@@ -82,13 +82,7 @@ export default function HomeScreen() {
       color: colors.primary,
       onPress: () => router.navigate("/(tabs)/stats"),
     },
-    {
-      title: "Administração",
-      description: "Gerenciar cards e áreas",
-      icon: "gear.circle.fill",
-      color: colors.primary,
-      onPress: () => router.navigate("/(tabs)/admin"),
-    },
+
   ];
 
   const styles = StyleSheet.create({
