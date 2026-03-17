@@ -49,8 +49,9 @@ export default function ResultScreen() {
     if (Platform.OS !== "web") {
       Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
     }
+    // Apenas reseta os contadores da sessão, mantendo os cards habilitados
     resetStudySession();
-    router.replace("/(tabs)");
+    router.push("/(tabs)");
   }
 
   return (
