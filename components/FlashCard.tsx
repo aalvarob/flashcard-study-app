@@ -138,7 +138,11 @@ export function FlashCard({ card, isFlipped, onFlip }: FlashCardProps) {
 
         <View style={styles.cardContent}>
           <Text style={[styles.cardLabel, { color: colors.muted }]}>PERGUNTA</Text>
-          <Text style={[styles.questionText, { color: colors.foreground }]}>
+          <Text 
+            style={[styles.questionText, { color: colors.foreground }]}
+            numberOfLines={6}
+            ellipsizeMode="tail"
+          >
             {card.question}
           </Text>
         </View>
@@ -170,7 +174,11 @@ export function FlashCard({ card, isFlipped, onFlip }: FlashCardProps) {
 
         <View style={styles.cardContent}>
           <Text style={[styles.cardLabel, { color: "rgba(255,255,255,0.7)" }]}>RESPOSTA</Text>
-          <Text style={[styles.answerText, { color: "#FFFFFF" }]}>
+          <Text 
+            style={[styles.answerText, { color: "#FFFFFF" }]}
+            numberOfLines={6}
+            ellipsizeMode="tail"
+          >
             {card.answer}
           </Text>
         </View>
@@ -231,15 +239,15 @@ const styles = StyleSheet.create({
     textTransform: "uppercase",
   },
   questionText: {
-    fontSize: 36,
+    fontSize: 24,
     fontWeight: "700",
-    lineHeight: 50,
+    lineHeight: 32,
     textAlign: "center",
   },
   answerText: {
-    fontSize: 32,
+    fontSize: 22,
     fontWeight: "600",
-    lineHeight: 46,
+    lineHeight: 30,
     textAlign: "center",
   },
   cardFooter: {
