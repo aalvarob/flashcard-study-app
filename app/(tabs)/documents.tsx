@@ -32,6 +32,7 @@ export default function DocumentsScreen() {
       title: "📜 Pacto das Igrejas Batistas",
       icon: "📜",
       description: "Compromissos e princípios fundamentais das igrejas batistas",
+      pdfUrl: "https://d2xsxph8kpxj0f.cloudfront.net/310519663434646570/ijHg8DNNEmRjrxapNo7pAg/pacto_bd0e3e8c.pdf",
       content: [
         "Tendo sido levados pelo Espírito Santo a aceitar a Jesus Cristo como único e suficiente Salvador, e batizados, sob profissão de fé, em nome do Pai, do Filho e do Espírito Santo, decidimo-nos, unânimes, como um corpo em Cristo, firmar, solene e alegremente, na presença de Deus e desta congregação, o seguinte Pacto:",
         "Comprometemo-nos a, auxiliados pelo Espírito Santo, andar sempre unidos no amor cristão; trabalhar para que esta igreja cresça no conhecimento da Palavra, na santidade, no conforto mútuo e na espiritualidade; manter os seus cultos, suas doutrinas, suas ordenanças e sua disciplina; contribuir liberalmente para o sustento do ministério, para as despesas da igreja, para o auxílio dos pobres e para a propaganda do evangelho em todas as nações.",
@@ -46,6 +47,7 @@ export default function DocumentsScreen() {
       title: "📖 Declaração Doutrinária da CBB",
       icon: "📖",
       description: "Fundamentos doutrinários da Convenção Batista Brasileira",
+      pdfUrl: "https://d2xsxph8kpxj0f.cloudfront.net/310519663434646570/ijHg8DNNEmRjrxapNo7pAg/doc_decl_b867a252.docx",
       content: [
         "Documento que apresenta os princípios doutrinários fundamentais da Convenção Batista Brasileira, incluindo crenças sobre Deus, Jesus Cristo, Salvação e a Igreja.",
       ],
@@ -55,6 +57,7 @@ export default function DocumentsScreen() {
       title: "📚 História dos Batistas",
       icon: "📚",
       description: "Origem e desenvolvimento do movimento batista no mundo e no Brasil",
+      pdfUrl: "https://d2xsxph8kpxj0f.cloudfront.net/310519663434646570/ijHg8DNNEmRjrxapNo7pAg/doc_hist_592f5640.docx",
       content: [
         "Documento que narra a história do movimento batista, desde suas origens na Europa até sua expansão no Brasil e em Alagoas.",
       ],
@@ -64,6 +67,7 @@ export default function DocumentsScreen() {
       title: "⚖️ Princípios Batistas",
       icon: "⚖️",
       description: "Princípios fundamentais que caracterizam a fé e prática batista",
+      pdfUrl: "https://d2xsxph8kpxj0f.cloudfront.net/310519663434646570/ijHg8DNNEmRjrxapNo7pAg/doc_princ_1a0ba449.docx",
       content: [
         "Documento que detalha os princípios batistas como autonomia da igreja local, liberdade de consciência, separação entre Igreja e Estado, e competência da alma.",
       ],
@@ -73,6 +77,7 @@ export default function DocumentsScreen() {
       title: "⚖️ Código de Ética",
       icon: "⚖️",
       description: "Normas éticas e morais para ministros batistas",
+      pdfUrl: "https://d2xsxph8kpxj0f.cloudfront.net/310519663434646570/ijHg8DNNEmRjrxapNo7pAg/codigo_eti_8c2e9f4a.pdf",
       content: [
         "Documento que estabelece as normas éticas e morais esperadas de ministros batistas, incluindo conduta pessoal, familiar e ministerial.",
       ],
@@ -81,6 +86,14 @@ export default function DocumentsScreen() {
 
   const toggleSection = (id: string) => {
     setExpandedSection(expandedSection === id ? null : id);
+  };
+
+  const openPDF = (pdfUrl?: string) => {
+    if (pdfUrl) {
+      Linking.openURL(pdfUrl).catch(() => {
+        alert('Erro ao abrir o documento. Tente novamente.');
+      });
+    }
   };
 
   const styles = StyleSheet.create({
@@ -186,9 +199,22 @@ export default function DocumentsScreen() {
                   <Text style={styles.docTitle}>{doc.title}</Text>
                   <Text style={styles.docDescription}>{doc.description}</Text>
                 </View>
-                <Text style={styles.expandIcon}>
-                  {expandedSection === doc.id ? "▼" : "▶"}
-                </Text>
+                <View style={{ flexDirection: 'row', gap: 8, alignItems: 'center' }}>
+                  {doc.pdfUrl && (
+                    <Pressable
+                      onPress={() => openPDF(doc.pdfUrl)}
+                      style={({ pressed }) => ({
+                        opacity: pressed ? 0.6 : 1,
+                        padding: 4,
+                      })}
+                    >
+                      <Text style={{ fontSize: 20 }}>📄</Text>
+                    </Pressable>
+                  )}
+                  <Text style={styles.expandIcon}>
+                    {expandedSection === doc.id ? "▼" : "▶"}
+                  </Text>
+                </View>
               </View>
 
               {expandedSection === doc.id && (
