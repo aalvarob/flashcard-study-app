@@ -386,7 +386,7 @@ export default function SetupScreen() {
 
   return (
     <ScreenContainer className="bg-background">
-      <View style={[styles.content, { flex: 1 }]}>
+      <ScrollView style={styles.container} contentContainerStyle={styles.content}>
           <View style={styles.header}>
             <Text style={styles.title}>Simulado Concílio</Text>
             <Text style={styles.subtitle}>Configurar Sessão de Estudo</Text>
@@ -541,7 +541,7 @@ export default function SetupScreen() {
           <Pressable style={styles.startButton} onPress={handleStartStudy}>
             <Text style={styles.startButtonText}>Iniciar Estudo</Text>
           </Pressable>
-      </View>
+      </ScrollView>
     </ScreenContainer>
   );
 }
