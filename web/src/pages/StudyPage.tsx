@@ -89,51 +89,27 @@ export default function StudyPage() {
     })
     console.log('[StudyPage] Cards filtrados:', filtered.length, 'de', allFlashcards.length)
 
-    // Distribuir cards por área
-    if (config.mode === 'all') {
-      const cardsPerArea = config.cardsPerArea
-      const selectedCards: typeof allFlashcards = []
-      const areaMap: Record<string, typeof allFlashcards> = {}
+    // Distribuir cards por área: sempre pegar cardsPerArea de cada área selecionada
+    const selectedCards: typeof allFlashcards = []
+    const areaMap: Record<string, typeof allFlashcards> = {}
 
-      // Agrupar cards por área
-      filtered.forEach(card => {
-        if (!areaMap[card.area]) {
-          areaMap[card.area] = []
-        }
-        areaMap[card.area].push(card)
-      })
+    // Agrupar cards por área
+    filtered.forEach(card => {
+      if (!areaMap[card.area]) {
+        areaMap[card.area] = []
+      }
+      areaMap[card.area].push(card)
+    })
 
-      // Selecionar cards de cada área
-      config.areas.forEach(area => {
-        if (areaMap[area]) {
-          const toSelect = Math.min(cardsPerArea, areaMap[area].length)
-          selectedCards.push(...areaMap[area].slice(0, toSelect))
-        }
-      })
+    // Selecionar cardsPerArea cards de cada área selecionada
+    config.areas.forEach(area => {
+      if (areaMap[area]) {
+        const toSelect = Math.min(config.cardsPerArea, areaMap[area].length)
+        selectedCards.push(...areaMap[area].slice(0, toSelect))
+      }
+    })
 
-      // Limitar ao número total de cards solicitado
-      filtered = selectedCards.slice(0, cardsPerArea * config.areas.length)
-    } else {
-      // Modo múltiplo: cardsPerArea por área selecionada
-      const selectedCards: typeof allFlashcards = []
-      const areaMap: Record<string, typeof allFlashcards> = {}
-
-      filtered.forEach(card => {
-        if (!areaMap[card.area]) {
-          areaMap[card.area] = []
-        }
-        areaMap[card.area].push(card)
-      })
-
-      config.areas.forEach(area => {
-        if (areaMap[area]) {
-          const toSelect = Math.min(config.cardsPerArea, areaMap[area].length)
-          selectedCards.push(...areaMap[area].slice(0, toSelect))
-        }
-      })
-
-      filtered = selectedCards
-    }
+    filtered = selectedCards
 
     // Embaralhar cards
     filtered = filtered.sort(() => Math.random() - 0.5)

@@ -91,7 +91,7 @@ describe('StudyPage Integration', () => {
     const config = {
       mode: 'all',
       areas: ['Escrituras Sagradas', 'Deus Pai'],
-      cardsPerArea: 10,
+      cardsPerArea: 2,
     }
 
     // 2. StudyPage carrega flashcards
@@ -102,7 +102,7 @@ describe('StudyPage Integration', () => {
     console.log('Filtered count:', filtered.length)
     expect(filtered).toHaveLength(4)
 
-    // 4. Distribuir cards por área (modo 'all')
+    // 4. Distribuir cards por área (lógica unificada: cardsPerArea por área)
     const selectedCards: typeof flashcards = []
     const areaMap: Record<string, typeof flashcards> = {}
 
@@ -113,13 +113,16 @@ describe('StudyPage Integration', () => {
       areaMap[card.area].push(card)
     })
 
-    Object.values(areaMap).forEach(areaCards => {
-      const toSelect = Math.min(config.cardsPerArea, areaCards.length)
-      selectedCards.push(...areaCards.slice(0, toSelect))
+    config.areas.forEach(area => {
+      if (areaMap[area]) {
+        const toSelect = Math.min(config.cardsPerArea, areaMap[area].length)
+        selectedCards.push(...areaMap[area].slice(0, toSelect))
+      }
     })
 
-    filtered = selectedCards.slice(0, config.cardsPerArea * config.areas.length)
+    filtered = selectedCards
     console.log('Final cards:', filtered.length)
+    // 2 áreas × 2 cards por área = 4 cards
     expect(filtered).toHaveLength(4)
   })
 })
