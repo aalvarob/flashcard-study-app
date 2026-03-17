@@ -417,7 +417,11 @@ export default function SetupScreen() {
                   styles.modeButton,
                   selectionMode === "multiple" ? styles.modeButtonActive : styles.modeButtonInactive,
                 ]}
-                onPress={() => setSelectionMode("multiple")}
+                onPress={() => {
+                  setSelectionMode("multiple");
+                  toggleAllCards(false);
+                  setCardsPerArea("1");
+                }}
               >
                 <Text
                   style={[
