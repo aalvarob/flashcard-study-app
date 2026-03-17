@@ -49,7 +49,8 @@ export default function ResultScreen() {
     if (Platform.OS !== "web") {
       Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
     }
-    router.push("/");
+    resetSession();
+    router.push("/setup");
   }
 
   return (
