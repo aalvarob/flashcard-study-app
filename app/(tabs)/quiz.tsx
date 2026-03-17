@@ -16,6 +16,9 @@ interface QuizState {
   currentQuestionIndex: number;
   selectedAnswers: { [key: number]: string };
   showResults: boolean;
+  selectedQuestions: any[];
+  numQuestionsToAnswer: number | null;
+  selectingNumQuestions: boolean;
 }
 
 export default function QuizScreen() {
@@ -25,6 +28,9 @@ export default function QuizScreen() {
     currentQuestionIndex: 0,
     selectedAnswers: {},
     showResults: false,
+    selectedQuestions: [],
+    numQuestionsToAnswer: null,
+    selectingNumQuestions: false,
   });
   const [windowWidth, setWindowWidth] = useState(Dimensions.get("window").width);
 
@@ -42,8 +48,8 @@ export default function QuizScreen() {
     ? quizData.quizzes.find((q) => q.id === quizState.currentQuizId)
     : null;
 
-  const currentQuestion = currentQuiz
-    ? currentQuiz.questions[quizState.currentQuestionIndex]
+  const currentQuestion = quizState.selectedQuestions.length > 0
+    ? quizState.selectedQuestions[quizState.currentQuestionIndex]
     : null;
 
   const handleSelectAnswer = (optionId: string) => {
@@ -57,7 +63,7 @@ export default function QuizScreen() {
   };
 
   const handleNextQuestion = () => {
-    if (currentQuiz && quizState.currentQuestionIndex < currentQuiz.questions.length - 1) {
+    if (quizState.currentQuestionIndex < quizState.selectedQuestions.length - 1) {
       setQuizState((prev) => ({
         ...prev,
         currentQuestionIndex: prev.currentQuestionIndex + 1,
@@ -70,13 +76,38 @@ export default function QuizScreen() {
     }
   };
 
+  const handlePreviousQuestion = () => {
+    if (quizState.currentQuestionIndex > 0) {
+      setQuizState((prev) => ({
+        ...prev,
+        currentQuestionIndex: prev.currentQuestionIndex - 1,
+      }));
+    }
+  };
+
   const handleStartQuiz = (quizId: string) => {
     setQuizState({
       currentQuizId: quizId,
       currentQuestionIndex: 0,
       selectedAnswers: {},
       showResults: false,
+      selectedQuestions: [],
+      numQuestionsToAnswer: null,
+      selectingNumQuestions: true,
     });
+  };
+
+  const handleSelectNumQuestions = (num: number) => {
+    if (!currentQuiz) return;
+    // Embaralhar perguntas e selecionar o número desejado
+    const shuffled = [...currentQuiz.questions].sort(() => Math.random() - 0.5);
+    const selected = shuffled.slice(0, num);
+    setQuizState((prev) => ({
+      ...prev,
+      selectedQuestions: selected,
+      numQuestionsToAnswer: num,
+      selectingNumQuestions: false,
+    }));
   };
 
   const handleRestartQuiz = () => {
@@ -91,18 +122,21 @@ export default function QuizScreen() {
       currentQuestionIndex: 0,
       selectedAnswers: {},
       showResults: false,
+      selectedQuestions: [],
+      numQuestionsToAnswer: null,
+      selectingNumQuestions: false,
     });
   };
 
   const calculateScore = () => {
-    if (!currentQuiz) return 0;
+    if (quizState.selectedQuestions.length === 0) return 0;
     let correct = 0;
-    currentQuiz.questions.forEach((q, idx) => {
+    quizState.selectedQuestions.forEach((q, idx) => {
       const selectedOptionId = quizState.selectedAnswers[idx];
-      const selectedOption = q.options.find((o) => o.id === selectedOptionId);
+      const selectedOption = q.options.find((o: any) => o.id === selectedOptionId);
       if (selectedOption?.isCorrect) correct++;
     });
-    return (correct / currentQuiz.questions.length) * 100;
+    return (correct / quizState.selectedQuestions.length) * 100;
   };
 
   const styles = StyleSheet.create({
@@ -160,6 +194,38 @@ export default function QuizScreen() {
       fontWeight: "600",
       fontSize: isDesktop ? 14 : isTablet ? 13 : 12,
     },
+    selectionContainer: {
+      alignItems: "center",
+      paddingVertical: isDesktop ? 40 : isTablet ? 32 : 24,
+    },
+    description: {
+      fontSize: isDesktop ? 16 : isTablet ? 14 : 12,
+      color: colors.muted,
+      marginBottom: isDesktop ? 32 : isTablet ? 24 : 20,
+      textAlign: "center",
+    },
+    optionsGrid: {
+      flexDirection: "row",
+      flexWrap: "wrap",
+      gap: isDesktop ? 16 : isTablet ? 12 : 10,
+      justifyContent: "center",
+      marginBottom: isDesktop ? 40 : isTablet ? 32 : 24,
+    },
+    optionButton: {
+      paddingVertical: isDesktop ? 16 : isTablet ? 14 : 12,
+      paddingHorizontal: isDesktop ? 24 : isTablet ? 20 : 16,
+      borderRadius: 8,
+      minWidth: isDesktop ? 100 : isTablet ? 80 : 70,
+      alignItems: "center",
+    },
+    optionButtonText: {
+      fontWeight: "600",
+      fontSize: isDesktop ? 16 : isTablet ? 14 : 12,
+    },
+    backButton: {
+      paddingVertical: isDesktop ? 12 : isTablet ? 10 : 8,
+      paddingHorizontal: isDesktop ? 24 : isTablet ? 20 : 16,
+    },
     questionContainer: {
       marginBottom: isDesktop ? 40 : isTablet ? 32 : 24,
     },
@@ -174,6 +240,11 @@ export default function QuizScreen() {
       height: "100%",
       backgroundColor: colors.primary,
     },
+    progressText: {
+      fontSize: isDesktop ? 12 : isTablet ? 11 : 10,
+      color: colors.muted,
+      marginBottom: isDesktop ? 12 : isTablet ? 10 : 8,
+    },
     questionText: {
       fontSize: isDesktop ? 18 : isTablet ? 16 : 14,
       fontWeight: "600",
@@ -184,7 +255,7 @@ export default function QuizScreen() {
     optionsContainer: {
       gap: isDesktop ? 16 : isTablet ? 12 : 10,
     },
-    optionButton: {
+    optionButtonQuiz: {
       padding: isDesktop ? 16 : isTablet ? 14 : 12,
       borderRadius: 8,
       borderWidth: 2,
@@ -284,6 +355,59 @@ export default function QuizScreen() {
     },
   });
 
+  // Seleção de número de perguntas
+  if (quizState.selectingNumQuestions && currentQuiz) {
+    return (
+      <ScreenContainer className="flex-1">
+        <ScrollView
+          style={styles.container}
+          contentContainerStyle={styles.content}
+          showsVerticalScrollIndicator={false}
+        >
+          <View style={styles.selectionContainer}>
+            <Text style={[styles.title, { color: colors.foreground }]}>
+              {currentQuiz.title}
+            </Text>
+            <Text style={[styles.description, { color: colors.muted }]}>
+              Quantas perguntas você gostaria de responder?
+            </Text>
+            <View style={styles.optionsGrid}>
+              {[3, 5, 10, currentQuiz.questions.length].map((num) => (
+                num <= currentQuiz.questions.length && (
+                  <Pressable
+                    key={num}
+                    onPress={() => handleSelectNumQuestions(num)}
+                    style={({ pressed }) => [
+                      styles.optionButton,
+                      {
+                        backgroundColor: colors.primary,
+                        opacity: pressed ? 0.8 : 1,
+                      },
+                    ]}
+                  >
+                    <Text style={[styles.optionButtonText, { color: colors.background }]}>
+                      {num}
+                    </Text>
+                  </Pressable>
+                )
+              ))}
+            </View>
+            <Pressable
+              onPress={handleBackToList}
+              style={({ pressed }) => [
+                styles.backButton,
+                { opacity: pressed ? 0.7 : 1 },
+              ]}
+            >
+              <Text style={{ color: colors.primary }}>← Voltar</Text>
+            </Pressable>
+          </View>
+        </ScrollView>
+      </ScreenContainer>
+    );
+  }
+
+  // Lista de quizzes
   if (!quizState.currentQuizId) {
     return (
       <ScreenContainer className="flex-1">
@@ -319,11 +443,12 @@ export default function QuizScreen() {
     );
   }
 
+  // Resultados
   if (quizState.showResults && currentQuiz) {
     const score = calculateScore();
     const correctCount = Object.values(quizState.selectedAnswers).filter((optionId, idx) => {
-      const question = currentQuiz.questions[idx];
-      const option = question.options.find((o) => o.id === optionId);
+      const question = quizState.selectedQuestions[idx];
+      const option = question.options.find((o: any) => o.id === optionId);
       return option?.isCorrect;
     }).length;
 
@@ -349,19 +474,27 @@ export default function QuizScreen() {
             </Text>
 
             <Text style={styles.resultDetails}>
-              Você acertou {correctCount} de {currentQuiz.questions.length} perguntas
+              Você acertou {correctCount} de {quizState.selectedQuestions.length} perguntas
             </Text>
 
             <View style={styles.navigationButtons}>
               <Pressable
-                style={[styles.button, styles.primaryButton]}
                 onPress={handleRestartQuiz}
+                style={({ pressed }) => [
+                  styles.button,
+                  styles.primaryButton,
+                  { opacity: pressed ? 0.8 : 1 },
+                ]}
               >
                 <Text style={styles.primaryButtonText}>Refazer Quiz</Text>
               </Pressable>
               <Pressable
-                style={[styles.button, styles.secondaryButton]}
                 onPress={handleBackToList}
+                style={({ pressed }) => [
+                  styles.button,
+                  styles.secondaryButton,
+                  { opacity: pressed ? 0.8 : 1 },
+                ]}
               >
                 <Text style={styles.secondaryButtonText}>Voltar</Text>
               </Pressable>
@@ -372,11 +505,14 @@ export default function QuizScreen() {
     );
   }
 
+  // Pergunta do quiz
   if (currentQuestion) {
-    const selectedOptionId = quizState.selectedAnswers[quizState.currentQuestionIndex];
-    const selectedOption = currentQuestion.options.find((o) => o.id === selectedOptionId);
     const progress =
-      ((quizState.currentQuestionIndex + 1) / currentQuiz!.questions.length) * 100;
+      ((quizState.currentQuestionIndex + 1) / quizState.selectedQuestions.length) * 100;
+    const selectedOptionId = quizState.selectedAnswers[quizState.currentQuestionIndex];
+    const selectedOption = currentQuestion.options.find(
+      (o: any) => o.id === selectedOptionId
+    );
 
     return (
       <ScreenContainer className="flex-1">
@@ -385,24 +521,24 @@ export default function QuizScreen() {
           contentContainerStyle={styles.content}
           showsVerticalScrollIndicator={false}
         >
-          <View style={styles.progressBar}>
-            <View style={[styles.progressFill, { width: `${progress}%` }]} />
-          </View>
-
-          <Text style={{ fontSize: isDesktop ? 14 : 12, color: colors.muted, marginBottom: 16 }}>
-            Pergunta {quizState.currentQuestionIndex + 1} de {currentQuiz!.questions.length}
-          </Text>
-
           <View style={styles.questionContainer}>
+            <View style={styles.progressBar}>
+              <View style={[styles.progressFill, { width: `${progress}%` }]} />
+            </View>
+            <Text style={styles.progressText}>
+              Pergunta {quizState.currentQuestionIndex + 1} de{" "}
+              {quizState.selectedQuestions.length}
+            </Text>
+
             <Text style={styles.questionText}>{currentQuestion.question}</Text>
 
             <View style={styles.optionsContainer}>
-              {currentQuestion.options.map((option) => (
+              {currentQuestion.options.map((option: any) => (
                 <Pressable
                   key={option.id}
                   onPress={() => handleSelectAnswer(option.id)}
                   style={[
-                    styles.optionButton,
+                    styles.optionButtonQuiz,
                     selectedOptionId === option.id && styles.optionButtonSelected,
                   ]}
                 >
@@ -418,39 +554,48 @@ export default function QuizScreen() {
               ))}
             </View>
 
-            {selectedOption && (
+            {selectedOptionId && (
               <View style={styles.feedbackContainer}>
-                <Text
-                  style={[
-                    styles.feedbackText,
-                    { color: selectedOption.isCorrect ? colors.success : colors.error },
-                    { fontWeight: "600" },
-                  ]}
-                >
-                  {selectedOption.isCorrect ? "✓ Correto!" : "✗ Incorreto"}
-                </Text>
-                <Text style={[styles.feedbackText, { marginTop: 8 }]}>
-                  {selectedOption.explanation}
+                <Text style={styles.feedbackText}>
+                  {selectedOption?.isCorrect ? "✅ Correto! " : "❌ Incorreto. "}
+                  {selectedOption?.explanation}
                 </Text>
               </View>
             )}
 
             <View style={styles.navigationButtons}>
               <Pressable
-                style={[styles.button, styles.secondaryButton]}
-                onPress={handleBackToList}
+                onPress={handlePreviousQuestion}
+                disabled={quizState.currentQuestionIndex === 0}
+                style={({ pressed }) => [
+                  styles.button,
+                  styles.secondaryButton,
+                  {
+                    opacity:
+                      quizState.currentQuestionIndex === 0
+                        ? 0.5
+                        : pressed
+                          ? 0.8
+                          : 1,
+                  },
+                ]}
               >
-                <Text style={styles.secondaryButtonText}>Voltar</Text>
+                <Text style={styles.secondaryButtonText}>← Anterior</Text>
               </Pressable>
               <Pressable
-                style={[styles.button, styles.primaryButton]}
                 onPress={handleNextQuestion}
                 disabled={!selectedOptionId}
+                style={({ pressed }) => [
+                  styles.button,
+                  styles.primaryButton,
+                  { opacity: !selectedOptionId ? 0.5 : pressed ? 0.8 : 1 },
+                ]}
               >
                 <Text style={styles.primaryButtonText}>
-                  {quizState.currentQuestionIndex === currentQuiz!.questions.length - 1
-                    ? "Ver Resultado"
-                    : "Próxima"}
+                  {quizState.currentQuestionIndex ===
+                  quizState.selectedQuestions.length - 1
+                    ? "Finalizar"
+                    : "Próxima →"}
                 </Text>
               </Pressable>
             </View>
