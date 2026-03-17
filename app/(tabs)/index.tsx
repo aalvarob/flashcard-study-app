@@ -102,6 +102,13 @@ export default function StudyScreen() {
     nextCard();
   }
 
+  function handleEndStudy() {
+    if (Platform.OS !== "web") {
+      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Warning);
+    }
+    router.push("/result");
+  }
+
   const progress = total > 0 ? totalAnswered / total : 0;
 
   return (
@@ -255,6 +262,17 @@ export default function StudyScreen() {
               <Text style={styles.flipBtnText}>Ver Resposta</Text>
             </Pressable>
           )}
+
+          {/* Botão Encerrar */}
+          <Pressable
+            onPress={handleEndStudy}
+            style={({ pressed }) => [
+              styles.endBtn,
+              { opacity: pressed ? 0.8 : 1, transform: [{ scale: pressed ? 0.97 : 1 }] },
+            ]}
+          >
+            <Text style={styles.endBtnText}>Encerrar Simulado</Text>
+          </Pressable>
 
           {/* Navegação */}
           <View style={styles.navRow}>
@@ -477,5 +495,19 @@ const styles = StyleSheet.create({
   navBtnText: {
     fontSize: 14,
     fontWeight: "700",
+  },
+  endBtn: {
+    paddingVertical: 12,
+    paddingHorizontal: 16,
+    borderRadius: 8,
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: "#EF4444",
+    marginBottom: 8,
+  },
+  endBtnText: {
+    fontSize: 16,
+    fontWeight: "600",
+    color: "white",
   },
 });
