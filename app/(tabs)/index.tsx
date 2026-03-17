@@ -61,7 +61,7 @@ export default function StudyScreen() {
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
     }
     markCorrect();
-    // nextCard() é chamado automaticamente pelo contexto ao desabilitar o card
+    nextCard();
   }
 
   function handleWrong() {
