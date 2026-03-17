@@ -111,7 +111,8 @@ export default function StudyPage() {
         }
       })
 
-      filtered = selectedCards
+      // Limitar ao número total de cards solicitado
+      filtered = selectedCards.slice(0, cardsPerArea * config.areas.length)
     } else {
       // Modo múltiplo: cardsPerArea por área selecionada
       const selectedCards: typeof allFlashcards = []
