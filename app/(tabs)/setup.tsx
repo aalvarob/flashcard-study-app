@@ -1,4 +1,3 @@
-import { useState, useMemo, useEffect } from "react";
 import {
   View,
   Text,
@@ -14,6 +13,7 @@ import { useColors } from "@/hooks/use-colors";
 import * as Haptics from "expo-haptics";
 import { useFlashcards } from "@/context/FlashcardContext";
 import { router } from "expo-router";
+import { useState, useEffect } from "react";
 
 import { FlashcardArea } from "@/data/flashcards";
 
@@ -66,12 +66,30 @@ export default function SetupScreen() {
     setAreas(loadedAreas.sort((a, b) => a.label.localeCompare(b.label)));
   }, [state.cards, colors.primary]);
 
+  // Define getMaxCardsAvailable function BEFORE using it in useEffect
+  const getMaxCardsAvailable = () => {
+    if (selectionMode === "single") {
+      return state.cards.filter(c => c.enabled).length;
+    } else {
+      const selectedAreaIds = Array.from(selectedAreas);
+      return state.cards.filter(c => c.enabled && selectedAreaIds.includes(c.area)).length;
+    }
+  };
+
   // Habilitar todos os cards quando selectionMode eh single
   useEffect(() => {
     if (selectionMode === "single") {
       toggleAllCards(true);
     }
   }, [selectionMode, toggleAllCards]);
+
+  // Recalcular maxCardsAvailable quando selectionMode muda
+  useEffect(() => {
+    const newMax = getMaxCardsAvailable();
+    if (newMax > 0 && parseInt(cardsPerArea) > newMax) {
+      setCardsPerArea(String(newMax));
+    }
+  }, [selectionMode, state.cards, selectedAreas]);
 
   const staticAreas: { id: AreaType; label: string; description: string; color: string }[] = [
     { id: "escrituras_sagradas", label: "Escrituras Sagradas", description: "25 cards", color: colors.primary },
@@ -106,26 +124,28 @@ export default function SetupScreen() {
 
   const cardCounts = ["5", "10", "15", "20", "25", "30", "40", "50"];
 
-  const areaStats = useMemo(() => {
-    const stats: Record<string, { enabled: number; total: number }> = {};
-    displayAreas.forEach((area) => {
+  const areaStats = displayAreas.reduce(
+    (acc, area) => {
       const areaCards = state.cards.filter((c) => c.area === area.id);
-      const enabledCards = areaCards.filter((c) => c.enabled);
-      stats[area.id] = { enabled: enabledCards.length, total: areaCards.length };
-    });
-    return stats;
-  }, [state.cards, areas]);
+      acc[area.id] = {
+        total: areaCards.length,
+        enabled: areaCards.filter((c) => c.enabled).length,
+      };
+      return acc;
+    },
+    {} as Record<string, { total: number; enabled: number }>
+  );
 
-  const getAreaStats = (area: string) => areaStats[area] || { enabled: 0, total: 0 };
-
-  function toggleArea(areaId: AreaType) {
-    const newSelected = new Set(selectedAreas);
-    if (newSelected.has(areaId)) {
-      newSelected.delete(areaId);
+  function toggleArea(areaId: string) {
+    const newSelectedAreas = new Set(selectedAreas);
+    if (newSelectedAreas.has(areaId)) {
+      newSelectedAreas.delete(areaId);
+      toggleAllCardsByArea(false, [areaId]);
     } else {
-      newSelected.add(areaId);
+      newSelectedAreas.add(areaId);
+      toggleAllCardsByArea(true, [areaId]);
     }
-    setSelectedAreas(newSelected);
+    setSelectedAreas(newSelectedAreas);
   }
 
   function toggleAllAreas() {
@@ -142,18 +162,6 @@ export default function SetupScreen() {
       toggleAllCardsByArea(!allSelectedEnabled, selectedAreaIds);
     }
   }
-
-  // Calcular o máximo de cards disponíveis nas áreas selecionadas
-  const getMaxCardsAvailable = () => {
-    if (selectionMode === "single") {
-      // Modo "todas as áreas": retorna o total de cards habilitados
-      return state.cards.filter(c => c.enabled).length;
-    } else {
-      // Modo múltiplo: retorna o total de cards habilitados nas áreas selecionadas
-      const selectedAreaIds = Array.from(selectedAreas);
-      return state.cards.filter(c => c.enabled && selectedAreaIds.includes(c.area)).length;
-    }
-  };
 
   const maxCardsAvailable = getMaxCardsAvailable();
   const currentCardsPerArea = Math.min(parseInt(cardsPerArea), maxCardsAvailable);
@@ -218,7 +226,7 @@ export default function SetupScreen() {
       marginBottom: 24,
     },
     sectionTitle: {
-      fontSize: 16,
+      fontSize: 14,
       fontWeight: "600",
       color: colors.foreground,
       marginBottom: 12,
@@ -235,14 +243,12 @@ export default function SetupScreen() {
     },
     modeToggle: {
       flexDirection: "row",
-      gap: 8,
-      marginBottom: 16,
+      gap: 12,
     },
     modeButton: {
       flex: 1,
-      paddingVertical: 8,
-      paddingHorizontal: 12,
-      borderRadius: 6,
+      paddingVertical: 10,
+      borderRadius: 8,
       borderWidth: 1,
       alignItems: "center",
     },
@@ -255,7 +261,7 @@ export default function SetupScreen() {
       borderColor: colors.border,
     },
     modeButtonText: {
-      fontSize: 12,
+      fontSize: 14,
       fontWeight: "600",
     },
     modeButtonTextActive: {
@@ -267,44 +273,38 @@ export default function SetupScreen() {
     areaGrid: {
       flexDirection: "row",
       flexWrap: "wrap",
-      marginBottom: 16,
+      gap: 8,
     },
     areaButton: {
       width: "48%",
       paddingVertical: 12,
-      paddingHorizontal: 8,
+      paddingHorizontal: 12,
       borderRadius: 8,
-      borderWidth: 2,
+      borderWidth: 1,
       alignItems: "center",
-      marginRight: "4%",
-      marginBottom: 12,
+      justifyContent: "center",
+      marginBottom: 8,
     },
     areaButtonSelected: {
-      borderColor: colors.primary,
-      backgroundColor: colors.primary,
+      borderColor: "transparent",
     },
     areaButtonUnselected: {
+      backgroundColor: colors.surface,
       borderColor: colors.border,
-      backgroundColor: colors.background,
     },
     areaLabel: {
       fontSize: 12,
       fontWeight: "600",
       color: colors.foreground,
-      marginBottom: 2,
+      textAlign: "center",
     },
     areaDescription: {
       fontSize: 10,
       color: colors.muted,
+      marginTop: 4,
+      textAlign: "center",
     },
-    cardCountGrid: {
-      flexDirection: "row",
-      flexWrap: "wrap",
-    },
-    cardCountInputContainer: {
-      flexDirection: "row",
-      alignItems: "center",
-      justifyContent: "center",
+    cardCountSection: {
       gap: 12,
     },
     cardCountButton: {
@@ -494,37 +494,38 @@ export default function SetupScreen() {
 
           {/* Quantidade de Cards */}
           <View style={styles.section}>
-            <Text style={styles.sectionTitle}>Quantidade de Cards</Text>
-            <View style={styles.cardCountInputContainer}>
-              <Pressable
-                onPress={() => {
-                  const current = parseInt(cardsPerArea);
-                  if (current > 1) setCardsPerArea((current - 1).toString());
-                }}
-                style={styles.cardCountButton}
-              >
-                <Text style={styles.cardCountButtonText}>−</Text>
-              </Pressable>
-              <TextInput
-                style={styles.cardCountInput}
-                value={cardsPerArea}
-                onChangeText={(text) => {
-                  const num = parseInt(text) || 0;
-                  const limited = Math.min(Math.max(1, num), maxCardsAvailable);
-                  setCardsPerArea(limited.toString());
-                }}
-                keyboardType="number-pad"
-                maxLength={3}
-              />
-              <Pressable
-                onPress={() => {
-                  const current = parseInt(cardsPerArea);
-                  if (current < maxCardsAvailable) setCardsPerArea((current + 1).toString());
-                }}
-                style={styles.cardCountButton}
-              >
-                <Text style={styles.cardCountButtonText}>+</Text>
-              </Pressable>
+            <Text style={styles.sectionTitle}>Quantidade de Cards (máx: {maxCardsAvailable})</Text>
+            <View style={styles.cardCountSection}>
+              <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "center", gap: 12 }}>
+                <Pressable
+                  style={styles.cardCountButton}
+                  onPress={() => {
+                    const newValue = Math.max(1, parseInt(cardsPerArea) - 1);
+                    setCardsPerArea(String(newValue));
+                  }}
+                >
+                  <Text style={styles.cardCountButtonText}>−</Text>
+                </Pressable>
+                <TextInput
+                  style={styles.cardCountInput}
+                  value={cardsPerArea}
+                  onChangeText={(text) => {
+                    const num = parseInt(text) || 0;
+                    const limited = Math.min(Math.max(1, num), maxCardsAvailable);
+                    setCardsPerArea(String(limited));
+                  }}
+                  keyboardType="numeric"
+                />
+                <Pressable
+                  style={styles.cardCountButton}
+                  onPress={() => {
+                    const newValue = Math.min(maxCardsAvailable, parseInt(cardsPerArea) + 1);
+                    setCardsPerArea(String(newValue));
+                  }}
+                >
+                  <Text style={styles.cardCountButtonText}>+</Text>
+                </Pressable>
+              </View>
             </View>
           </View>
 
