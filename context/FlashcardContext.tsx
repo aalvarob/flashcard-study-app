@@ -10,6 +10,8 @@ import { FLASHCARDS_DATA, FlashcardData, FlashcardArea } from "@/data/flashcards
 import { trpc } from "@/lib/trpc";
 
 const STORAGE_KEY = "@simulado_concilio_state";
+const FLASHCARDS_CACHE_KEY = "@simulado_concilio_flashcards_cache";
+const FLASHCARDS_CACHE_TIMESTAMP_KEY = "@simulado_concilio_flashcards_timestamp";
 
 export interface Flashcard extends FlashcardData {
   enabled: boolean;
@@ -290,16 +292,40 @@ const FlashcardContext = createContext<FlashcardContextValue | undefined>(
 export function FlashcardProvider({ children }: { children: React.ReactNode }) {
   const [state, dispatch] = useReducer(reducer, initialState);
 
+  const flashcardsQuery = trpc.flashcards.list.useQuery(undefined, {
+    staleTime: 24 * 60 * 60 * 1000,
+  });
+
   useEffect(() => {
     const loadData = async () => {
       try {
         dispatch({ type: "SET_LOADING", loading: true });
         const stored = await AsyncStorage.getItem(STORAGE_KEY);
+        let cardsToUse = FLASHCARDS_DATA;
+        if (flashcardsQuery.data && flashcardsQuery.data.length > 0) {
+          cardsToUse = flashcardsQuery.data.map((card) => ({
+            id: String(card.id),
+            question: card.question,
+            answer: card.answer,
+            area: card.area as FlashcardArea,
+          }));
+        }
+        
         if (stored) {
           const parsed = JSON.parse(stored);
-          // Ensure all cards are disabled on initial load
-          const disabledCards = parsed.cards.map((card: Flashcard) => ({ ...card, enabled: false }));
-          dispatch({ type: "INIT", payload: disabledCards });
+          const progressMap = new Map(parsed.cards.map((c: Flashcard) => [c.id, c]));
+          const mergedCards: Flashcard[] = cardsToUse.map((card) => {
+            const storedCard = progressMap.get(card.id) as Flashcard | undefined;
+            return {
+              ...card,
+              enabled: storedCard?.enabled ?? false,
+              correctCount: storedCard?.correctCount ?? 0,
+              wrongCount: storedCard?.wrongCount ?? 0,
+              notSureCount: storedCard?.notSureCount ?? 0,
+              notRememberCount: storedCard?.notRememberCount ?? 0,
+            };
+          });
+          dispatch({ type: "INIT", payload: mergedCards });
         } else {
           const initialCards: Flashcard[] = FLASHCARDS_DATA.map((card) => ({
             ...card,
@@ -330,7 +356,21 @@ export function FlashcardProvider({ children }: { children: React.ReactNode }) {
     };
 
     loadData();
-  }, []);
+  }, [flashcardsQuery.data]);
+
+  useEffect(() => {
+    const cacheFlashcards = async () => {
+      if (flashcardsQuery.data && flashcardsQuery.data.length > 0) {
+        try {
+          await AsyncStorage.setItem(FLASHCARDS_CACHE_KEY, JSON.stringify(flashcardsQuery.data));
+          await AsyncStorage.setItem(FLASHCARDS_CACHE_TIMESTAMP_KEY, String(Date.now()));
+        } catch (error) {
+          console.debug("Failed to cache flashcards:", error);
+        }
+      }
+    };
+    cacheFlashcards();
+  }, [flashcardsQuery.data]);
 
   const syncProgressMutation = trpc.progress.syncProgress.useMutation();
 
