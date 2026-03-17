@@ -276,6 +276,11 @@ interface FlashcardContextValue {
   resetAllStats: () => void;
   resetStudySession: () => void;
   initializeSession: (config: { candidateName: string; area: "all" | FlashcardArea | FlashcardArea[]; cardsPerArea: number }) => void;
+  getCardsByArea: (area: string) => Flashcard[];
+  totalCorrect: number;
+  totalWrong: number;
+  totalNotSure: number;
+  totalNotRemember: number;
 }
 
 const FlashcardContext = createContext<FlashcardContextValue | undefined>(
@@ -406,6 +411,10 @@ export function FlashcardProvider({ children }: { children: React.ReactNode }) {
   const totalNotSure = state.cards.reduce((sum, c) => sum + c.notSureCount, 0);
   const totalNotRemember = state.cards.reduce((sum, c) => sum + c.notRememberCount, 0);
 
+  const getCardsByArea = useCallback((area: string) => {
+    return state.cards.filter(card => card.area === area);
+  }, [state.cards]);
+
   const initializeSession = useCallback((config: { candidateName: string; area: "all" | FlashcardArea | FlashcardArea[]; cardsPerArea: number }) => {
     console.log("Session initialized:", config);
     
@@ -453,6 +462,11 @@ export function FlashcardProvider({ children }: { children: React.ReactNode }) {
     resetAllStats,
     resetStudySession,
     initializeSession,
+    getCardsByArea,
+    totalCorrect,
+    totalWrong,
+    totalNotSure,
+    totalNotRemember,
   };
 
   return (

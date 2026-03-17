@@ -61,7 +61,7 @@ export default function StudyScreen() {
     if (Platform.OS !== "web") {
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
     }
-    markCorrect();
+    if (currentCard) markCorrect(currentCard.id);
     nextCard();
   }
 
@@ -69,7 +69,7 @@ export default function StudyScreen() {
     if (Platform.OS !== "web") {
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
     }
-    markWrong();
+    if (currentCard) markWrong(currentCard.id);
     nextCard();
   }
 
@@ -77,7 +77,7 @@ export default function StudyScreen() {
     if (Platform.OS !== "web") {
       Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
     }
-    markNotSure();
+    if (currentCard) markNotSure(currentCard.id);
     nextCard();
   }
 
@@ -85,7 +85,7 @@ export default function StudyScreen() {
     if (Platform.OS !== "web") {
       Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
     }
-    markNotRemember();
+    if (currentCard) markNotRemember(currentCard.id);
     nextCard();
   }
 
