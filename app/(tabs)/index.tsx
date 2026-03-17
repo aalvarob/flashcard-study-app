@@ -480,18 +480,18 @@ const styles = StyleSheet.create({
   },
   navBtn: {
     flex: 1,
-    paddingVertical: 12,
-    paddingHorizontal: 16,
-    borderRadius: 8,
+    paddingVertical: 8,
+    paddingHorizontal: 12,
+    borderRadius: 6,
     alignItems: "center",
     backgroundColor: "#f0f0f0",
-    borderWidth: 2,
+    borderWidth: 1.5,
     borderColor: "#333",
   },
 
   navBtnText: {
-    fontSize: 14,
-    fontWeight: "700",
+    fontSize: 12,
+    fontWeight: "600",
   },
   endBtn: {
     paddingVertical: 12,
