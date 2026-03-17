@@ -29,6 +29,7 @@ interface FlashcardState {
   isFlipped: boolean;
   loading: boolean;
   error: string | null;
+  sessionTotal: number;
 }
 
 type FlashcardAction =
@@ -56,8 +57,10 @@ function getEnabledCards(cards: Flashcard[]): Flashcard[] {
 
 function reducer(state: FlashcardState, action: FlashcardAction): FlashcardState {
   switch (action.type) {
-    case "INIT":
-      return { ...state, cards: action.payload, loading: false };
+    case "INIT": {
+      const enabledCount = action.payload.filter(c => c.enabled).length;
+      return { ...state, cards: action.payload, loading: false, sessionTotal: enabledCount };
+    }
 
     case "TOGGLE_CARD": {
       const updated = state.cards.map((c) =>
@@ -205,6 +208,7 @@ const initialState: FlashcardState = {
   isFlipped: false,
   loading: true,
   error: null,
+  sessionTotal: 0,
 };
 
 interface FlashcardContextValue {

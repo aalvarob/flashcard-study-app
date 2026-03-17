@@ -30,8 +30,8 @@ export default function StudyScreen() {
     flipCard,
   } = useFlashcards();
 
-  const { sessionCorrect, sessionWrong, sessionNotSure, sessionNotRemember, isFlipped, currentIndex } = state;
-  const total = enabledCards.length;
+  const { sessionCorrect, sessionWrong, sessionNotSure, sessionNotRemember, isFlipped, currentIndex, sessionTotal } = state;
+  const total = sessionTotal > 0 ? sessionTotal : enabledCards.length;
   const totalAnswered = sessionCorrect + sessionWrong + sessionNotSure + sessionNotRemember;
 
   // Verificar se não há cards habilitados ou se todos foram respondidos
