@@ -253,6 +253,133 @@
           ]
         }
       ]
+    },
+    {
+      "id": "controversial_topics_quiz",
+      "title": "⚖️ Temas Polêmicos - Quiz",
+      "description": "Teste seus conhecimentos sobre temas controversos da fé batista",
+      "questions": [
+        {
+          "id": 1,
+          "question": "Qual é a posição batista sobre o batismo infantil?",
+          "options": [
+            {
+              "id": "a",
+              "text": "Os batistas praticam o batismo infantil como outras denominações",
+              "isCorrect": false,
+              "explanation": "Os batistas historicamente praticam apenas o batismo de crentes (believer's baptism)."
+            },
+            {
+              "id": "b",
+              "text": "Os batistas praticam apenas o batismo de crentes por imersão total",
+              "isCorrect": true,
+              "explanation": "Este é um princípio fundamental da fé batista - o batismo é apenas para aqueles que já creem."
+            },
+            {
+              "id": "c",
+              "text": "Os batistas permitem ambas as formas de batismo",
+              "isCorrect": false,
+              "explanation": "Os batistas têm posição clara sobre o batismo de crentes por imersão."
+            }
+          ]
+        },
+        {
+          "id": 2,
+          "question": "Como os batistas entendem a relação entre fé e obras?",
+          "options": [
+            {
+              "id": "a",
+              "text": "A salvação é apenas pela fé, sem necessidade de obras",
+              "isCorrect": false,
+              "explanation": "Embora a salvação seja pela fé, as obras são evidência da fé genuína."
+            },
+            {
+              "id": "b",
+              "text": "A salvação é apenas pelas obras que fazemos",
+              "isCorrect": false,
+              "explanation": "Os batistas não creem em salvação pelas obras."
+            },
+            {
+              "id": "c",
+              "text": "A fé em Cristo é o fundamento, e as obras são evidência dessa fé",
+              "isCorrect": true,
+              "explanation": "Os batistas entendem que a fé genuína produz obras como fruto natural."
+            }
+          ]
+        },
+        {
+          "id": 3,
+          "question": "Qual é a posição batista sobre a separação entre Igreja e Estado?",
+          "options": [
+            {
+              "id": "a",
+              "text": "A Igreja deve controlar o governo",
+              "isCorrect": false,
+              "explanation": "Os batistas defendem a separação entre Igreja e Estado."
+            },
+            {
+              "id": "b",
+              "text": "Deve haver separação entre Igreja e Estado, com liberdade religiosa",
+              "isCorrect": true,
+              "explanation": "Este é um princípio histórico fundamental dos batistas - a liberdade de consciência."
+            },
+            {
+              "id": "c",
+              "text": "O governo deve proibir a religião",
+              "isCorrect": false,
+              "explanation": "Os batistas defendem a liberdade religiosa, não a proibição."
+            }
+          ]
+        },
+        {
+          "id": 4,
+          "question": "Como os batistas entendem a autoridade da Bíblia?",
+          "options": [
+            {
+              "id": "a",
+              "text": "A Bíblia é uma entre várias autoridades religiosas",
+              "isCorrect": false,
+              "explanation": "Os batistas creem na autoridade suprema da Bíblia."
+            },
+            {
+              "id": "b",
+              "text": "A Bíblia é a autoridade suprema em matérias de fé e prática",
+              "isCorrect": true,
+              "explanation": "O princípio de 'sola scriptura' é central na fé batista."
+            },
+            {
+              "id": "c",
+              "text": "A tradição é mais importante que a Bíblia",
+              "isCorrect": false,
+              "explanation": "Os batistas enfatizam a Bíblia acima da tradição."
+            }
+          ]
+        },
+        {
+          "id": 5,
+          "question": "Qual é a posição batista sobre o divórcio e novo casamento?",
+          "options": [
+            {
+              "id": "a",
+              "text": "O divórcio é absolutamente proibido em qualquer circunstância",
+              "isCorrect": false,
+              "explanation": "Os batistas reconhecem situações difíceis, mas enfatizam a indissolubilidade do casamento."
+            },
+            {
+              "id": "b",
+              "text": "O divórcio é permitido livremente sem restrições",
+              "isCorrect": false,
+              "explanation": "Os batistas veem o casamento como um compromisso sagrado."
+            },
+            {
+              "id": "c",
+              "text": "O divórcio é permitido em casos de infidelidade ou abandono, com possibilidade de novo casamento",
+              "isCorrect": true,
+              "explanation": "Esta é a posição batista tradicional sobre divórcio e novo casamento."
+            }
+          ]
+        }
+      ]
     }
   ]
 }
