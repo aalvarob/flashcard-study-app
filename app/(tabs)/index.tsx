@@ -397,11 +397,13 @@ const styles = StyleSheet.create({
   },
   quickActionBtn: {
     flex: 1,
+    flexDirection: "row",
     paddingVertical: 8,
     paddingHorizontal: 10,
     borderRadius: 8,
     alignItems: "center",
-    gap: 3,
+    justifyContent: "center",
+    gap: 4,
   },
   quickActionBtnIcon: {
     fontSize: 18,
@@ -449,11 +451,13 @@ const styles = StyleSheet.create({
   },
   resultBtn: {
     flex: 1,
+    flexDirection: "row",
     paddingVertical: 8,
     paddingHorizontal: 10,
     borderRadius: 8,
     alignItems: "center",
-    gap: 3,
+    justifyContent: "center",
+    gap: 4,
   },
   resultBtnIcon: {
     fontSize: 18,
