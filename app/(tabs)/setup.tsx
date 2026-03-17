@@ -86,14 +86,9 @@ export default function SetupScreen() {
   // Recalcular maxCardsAvailable quando selectionMode muda
   useEffect(() => {
     const newMax = getMaxCardsAvailable();
-    if (newMax > 0) {
-      // Se "Todas" foi selecionado, incrementar para o máximo
-      if (selectionMode === "single") {
-        setCardsPerArea(String(newMax));
-      } else if (parseInt(cardsPerArea) > newMax) {
-        // Se em modo múltiplo e o valor é maior que o máximo, reduzir
-        setCardsPerArea(String(newMax));
-      }
+    if (newMax > 0 && parseInt(cardsPerArea) > newMax) {
+      // Se o valor é maior que o máximo, reduzir
+      setCardsPerArea(String(newMax));
     }
   }, [selectionMode, state.cards, selectedAreas]);
 
