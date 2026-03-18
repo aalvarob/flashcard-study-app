@@ -1,5 +1,3 @@
-import { PieChart, Pie, Cell, Legend, Tooltip, ResponsiveContainer } from 'recharts'
-
 interface AreaData {
   area: string
   correctCards: number
@@ -39,45 +37,75 @@ export default function AreaPerformancePieChart({ data }: AreaPerformancePieChar
     )
   }
 
-  // Preparar dados para o gráfico de pizza (usando cartões corretos)
-  const chartData = data.map((item) => ({
-    name: item.area,
-    value: item.correctCards,
-    percentage: item.percentage,
-  }))
+  const total = data.reduce((sum, item) => sum + item.correctCards, 0)
 
   return (
-    <div className="chart-container">
-      <ResponsiveContainer width="100%" height={400}>
-        <PieChart>
-          <Pie
-            data={chartData}
-            cx="50%"
-            cy="50%"
-            labelLine={false}
-            label={({ name }) => {
-              const item = chartData.find((d) => d.name === name)
-              return item ? `${name}: ${item.percentage}%` : name
-            }}
-            outerRadius={120}
-            fill="#8884d8"
-            dataKey="value"
-          >
-            {chartData.map((entry, index) => (
-              <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+    <div className="w-full p-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        {/* Gráfico de barras simples */}
+        <div>
+          <h3 className="text-lg font-semibold mb-4">Desempenho por Área</h3>
+          <div className="space-y-3">
+            {data.map((item, index) => (
+              <div key={item.area}>
+                <div className="flex justify-between mb-1">
+                  <span className="text-sm font-medium">{item.area}</span>
+                  <span className="text-sm text-gray-600">{item.percentage}%</span>
+                </div>
+                <div className="w-full bg-gray-200 rounded-full h-2">
+                  <div
+                    className="h-2 rounded-full transition-all"
+                    style={{
+                      width: `${item.percentage}%`,
+                      backgroundColor: COLORS[index % COLORS.length],
+                    }}
+                  />
+                </div>
+                <div className="text-xs text-gray-500 mt-1">
+                  {item.correctCards} de {item.totalCards} cartões
+                </div>
+              </div>
             ))}
-          </Pie>
-          <Tooltip
-            formatter={(value: any) => {
-              if (typeof value === 'number') {
-                return `${value.toFixed(0)} cartões`
-              }
-              return value
-            }}
-          />
-          <Legend wrapperStyle={{ paddingTop: '20px' }} />
-        </PieChart>
-      </ResponsiveContainer>
+          </div>
+        </div>
+
+        {/* Resumo estatístico */}
+        <div>
+          <h3 className="text-lg font-semibold mb-4">Resumo</h3>
+          <div className="space-y-3">
+            <div className="p-3 bg-blue-50 rounded-lg">
+              <div className="text-sm text-gray-600">Total de Cartões Corretos</div>
+              <div className="text-2xl font-bold text-blue-600">{total}</div>
+            </div>
+            <div className="p-3 bg-green-50 rounded-lg">
+              <div className="text-sm text-gray-600">Áreas Estudadas</div>
+              <div className="text-2xl font-bold text-green-600">{data.length}</div>
+            </div>
+            <div className="p-3 bg-purple-50 rounded-lg">
+              <div className="text-sm text-gray-600">Desempenho Médio</div>
+              <div className="text-2xl font-bold text-purple-600">
+                {(data.reduce((sum, item) => sum + item.percentage, 0) / data.length).toFixed(1)}%
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Legenda de cores */}
+      <div className="mt-6 p-3 bg-gray-50 rounded-lg">
+        <h4 className="text-sm font-semibold mb-3">Legenda</h4>
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
+          {data.map((item, index) => (
+            <div key={item.area} className="flex items-center gap-2">
+              <div
+                className="w-3 h-3 rounded-full"
+                style={{ backgroundColor: COLORS[index % COLORS.length] }}
+              />
+              <span className="text-xs text-gray-700">{item.area}</span>
+            </div>
+          ))}
+        </div>
+      </div>
     </div>
   )
 }

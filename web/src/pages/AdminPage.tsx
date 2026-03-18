@@ -66,33 +66,21 @@ export default function AdminPage() {
   const isConnected = false
   const send = () => {} // Dummy function
 
-  // tRPC queries and mutations
-  const flashcardsQuery = trpc.flashcards.list.useQuery()
-  const createMutation = trpc.flashcards.create.useMutation()
-  const updateMutation = trpc.flashcards.update.useMutation()
-  const deleteMutation = trpc.flashcards.delete.useMutation()
-
-  // Load flashcards from API
+  // Load flashcards from localStorage
   useEffect(() => {
-    if (flashcardsQuery.isLoading) {
-      setLoading(true)
-    } else if (flashcardsQuery.error) {
-      setError('Erro ao carregar flashcards')
-      setLoading(false)
-      // Fallback to localStorage
+    try {
       const savedCards = JSON.parse(localStorage.getItem('flashcards') || '[]')
       setCards(savedCards)
-    } else if (flashcardsQuery.data) {
-      const loadedCards = flashcardsQuery.data as Card[]
-      setCards(loadedCards)
       // Carregar áreas dinamicamente a partir dos cards
-      const uniqueAreas = Array.from(new Set(loadedCards.map(c => c.area))).sort()
-      setAreas(uniqueAreas)
+      const uniqueAreas = Array.from(new Set(savedCards.map((c: Card) => c.area))).sort()
+      setAreas(uniqueAreas.length > 0 ? uniqueAreas : AREAS)
       setLoading(false)
-    } else {
+    } catch (error) {
+      console.error('Erro ao carregar flashcards:', error)
+      setCards([])
       setLoading(false)
     }
-  }, [flashcardsQuery.data, flashcardsQuery.isLoading, flashcardsQuery.error])
+  }, [])
 
   function handleAddCard() {
     if (!formData.question.trim() || !formData.answer.trim()) {
@@ -102,49 +90,30 @@ export default function AdminPage() {
 
     if (editingId) {
       // Update existing card
-      updateMutation.mutate(
-        {
-          id: editingId,
-          question: formData.question,
-          answer: formData.answer,
-          area: formData.area,
-        },
-        {
-          onSuccess: () => {
-            // Broadcast update event via WebSocket
-            // WebSocket broadcast disabled
-            toast.showSuccess('Card atualizado com sucesso!')
-            flashcardsQuery.refetch()
-            setEditingId(null)
-            setFormData({ question: '', answer: '', area: AREAS[0] })
-          },
-          onError: () => {
-            toast.showError('Erro ao atualizar card')
-          },
-        }
+      const updatedCards = cards.map(c => 
+        c.id === editingId 
+          ? { ...c, question: formData.question, answer: formData.answer, area: formData.area }
+          : c
       )
+      setCards(updatedCards)
+      localStorage.setItem('flashcards', JSON.stringify(updatedCards))
+      toast.showSuccess('Card atualizado com sucesso!')
+      setEditingId(null)
+      setFormData({ question: '', answer: '', area: AREAS[0] })
     } else {
       // Create new card
-      createMutation.mutate(
-        {
-          question: formData.question,
-          answer: formData.answer,
-          area: formData.area,
-        },
-        {
-          onSuccess: () => {
-            // Broadcast create event via WebSocket
-            // WebSocket broadcast disabled
-            toast.showSuccess('Card criado com sucesso!')
-            flashcardsQuery.refetch()
-            setFormData({ question: '', answer: '', area: AREAS[0] })
-            setCurrentPage(1)
-          },
-          onError: () => {
-            toast.showError('Erro ao criar card')
-          },
-        }
-      )
+      const newCard: Card = {
+        id: Math.max(...cards.map(c => c.id), 0) + 1,
+        question: formData.question,
+        answer: formData.answer,
+        area: formData.area,
+      }
+      const updatedCards = [...cards, newCard]
+      setCards(updatedCards)
+      localStorage.setItem('flashcards', JSON.stringify(updatedCards))
+      toast.showSuccess('Card criado com sucesso!')
+      setFormData({ question: '', answer: '', area: AREAS[0] })
+      setCurrentPage(1)
     }
   }
 
@@ -156,20 +125,10 @@ export default function AdminPage() {
 
   function handleDeleteCard(id: number) {
     if (confirm('Tem certeza que deseja deletar este card?')) {
-      deleteMutation.mutate(
-        { id },
-        {
-          onSuccess: () => {
-            // Broadcast delete event via WebSocket
-            // WebSocket broadcast disabled
-            toast.showSuccess('Card deletado com sucesso!')
-            flashcardsQuery.refetch()
-          },
-          onError: () => {
-            toast.showError('Erro ao deletar card')
-          },
-        }
-      )
+      const updatedCards = cards.filter(c => c.id !== id)
+      setCards(updatedCards)
+      localStorage.setItem('flashcards', JSON.stringify(updatedCards))
+      toast.showSuccess('Card deletado com sucesso!')
     }
   }
 
@@ -186,20 +145,16 @@ export default function AdminPage() {
   function handleConfirmChangeArea() {
     if (!cardToChangeArea || !newArea) return
 
-    updateMutation.mutate(
-      { id: cardToChangeArea.id, question: cardToChangeArea.question, answer: cardToChangeArea.answer, area: newArea },
-      {
-        onSuccess: () => {
-          toast.showSuccess('Área alterada com sucesso!')
-          flashcardsQuery.refetch()
-          setCardToChangeArea(null)
-          setNewArea('')
-        },
-        onError: () => {
-          toast.showError('Erro ao alterar área')
-        },
-      }
+    const updatedCards = cards.map(c =>
+      c.id === cardToChangeArea.id
+        ? { ...c, area: newArea }
+        : c
     )
+    setCards(updatedCards)
+    localStorage.setItem('flashcards', JSON.stringify(updatedCards))
+    toast.showSuccess('Área alterada com sucesso!')
+    setCardToChangeArea(null)
+    setNewArea('')
   }
 
   function handleCancelChangeArea() {
@@ -208,31 +163,20 @@ export default function AdminPage() {
   }
 
   function handleImportCards(importedCards: Array<{ question: string; answer: string; area: string }>) {
-    let successCount = 0
-    importedCards.forEach((card) => {
-      createMutation.mutate(
-        {
-          question: card.question,
-          answer: card.answer,
-          area: card.area,
-        },
-        {
-          onSuccess: () => {
-            successCount++
-            // Broadcast create event via WebSocket
-            // WebSocket broadcast disabled
-            if (successCount === importedCards.length) {
-              flashcardsQuery.refetch()
-              // Atualizar a lista de áreas com as novas áreas importadas
-              const newAreas = Array.from(new Set([...areas, ...importedCards.map(c => c.area)]))
-              setAreas(newAreas)
-              toast.showSuccess(`${successCount} cards importados com sucesso!`)
-              setShowImporter(false)
-            }
-          },
-        }
-      )
-    })
+    const newCards = importedCards.map((card, index) => ({
+      id: Math.max(...cards.map(c => c.id), 0) + index + 1,
+      question: card.question,
+      answer: card.answer,
+      area: card.area,
+    }))
+    const updatedCards = [...cards, ...newCards]
+    setCards(updatedCards)
+    localStorage.setItem('flashcards', JSON.stringify(updatedCards))
+    // Atualizar a lista de áreas com as novas áreas importadas
+    const newAreas = Array.from(new Set([...areas, ...importedCards.map(c => c.area)]))
+    setAreas(newAreas)
+    toast.showSuccess(`${importedCards.length} cards importados com sucesso!`)
+    setShowImporter(false)
   }
 
   function handleAreasChange(newAreas: string[]) {

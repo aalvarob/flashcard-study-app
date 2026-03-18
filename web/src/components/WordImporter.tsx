@@ -97,10 +97,11 @@ export default function WordImporter({ onImport, existingCards = [] }: { onImpor
   }
 
   const handleFileSelect = async (file: File) => {
-    if (!file.name.endsWith('.docx')) {
+    // Aceitar apenas .txt e .docx
+    if (!file.name.endsWith('.docx') && !file.name.endsWith('.txt')) {
       setProgress({
         status: 'error',
-        message: 'Por favor, selecione um arquivo .docx válido',
+        message: 'Por favor, selecione um arquivo .docx ou .txt válido',
         cardsFound: 0,
         cardsProcessed: 0,
       })
@@ -115,12 +116,22 @@ export default function WordImporter({ onImport, existingCards = [] }: { onImpor
     })
 
     try {
-      // Usar mammoth para extrair texto do Word
-      const arrayBuffer = await file.arrayBuffer()
-      
-      // Dynamic import para evitar erro se mammoth não estiver disponível no build
-      const mammoth = await import('mammoth' as any)
-      
+      let text = ''
+
+      if (file.name.endsWith('.txt')) {
+        // Para arquivos .txt, ler diretamente
+        text = await file.text()
+      } else if (file.name.endsWith('.docx')) {
+        // Para arquivos .docx, mostrar mensagem informativa
+        setProgress({
+          status: 'error',
+          message: 'Suporte a .docx requer upload manual. Copie o conteúdo para um arquivo .txt e tente novamente.',
+          cardsFound: 0,
+          cardsProcessed: 0,
+        })
+        return
+      }
+
       setProgress({
         status: 'parsing',
         message: 'Analisando conteúdo...',
@@ -128,8 +139,7 @@ export default function WordImporter({ onImport, existingCards = [] }: { onImpor
         cardsProcessed: 0,
       })
 
-      const result = await mammoth.extractRawText({ arrayBuffer })
-      const cards = parseWordContent(result.value)
+      const cards = parseWordContent(text)
 
       setProgress({
         status: 'success',
@@ -213,7 +223,7 @@ export default function WordImporter({ onImport, existingCards = [] }: { onImpor
   return (
     <>
     <div className="word-importer">
-      <h3>Importar Cards do Word</h3>
+      <h3>Importar Cards do Arquivo</h3>
       
       <div
         className={`drop-zone ${isDragging ? 'dragging' : ''}`}
@@ -224,15 +234,18 @@ export default function WordImporter({ onImport, existingCards = [] }: { onImpor
         <div className="drop-zone-content">
           <div className="drop-zone-icon">📄</div>
           <p className="drop-zone-text">
-            Arraste um arquivo .docx aqui ou clique para selecionar
+            Arraste um arquivo .txt aqui ou clique para selecionar
           </p>
           <input
             type="file"
-            accept=".docx"
+            accept=".txt,.docx"
             onChange={handleInputChange}
             className="file-input"
             disabled={progress.status === 'uploading' || progress.status === 'parsing'}
           />
+          <p className="text-xs text-gray-500 mt-2">
+            Formatos suportados: .txt (recomendado) ou .docx
+          </p>
         </div>
       </div>
 

@@ -1,8 +1,6 @@
 import { useState, useEffect, useMemo } from 'react'
 import { useAuth } from '../contexts/AuthContext'
-import ProgressLineChart from '../components/ProgressLineChart'
 import AreaPerformancePieChart from '../components/AreaPerformancePieChart'
-import AreaPerformanceBarChart from '../components/AreaPerformanceBarChart'
 import './StatsPage.css'
 import '../styles/Charts.css'
 
@@ -194,26 +192,17 @@ export default function StatsPage() {
           </div>
         </div>
 
-        {/* Progress Line Chart */}
+        {/* Progress Summary */}
         <div className="chart-section">
           <h2>Progresso ao Longo do Tempo</h2>
           {filteredSessions.length > 0 ? (
-            <ProgressLineChart
-              data={filteredSessions
-                .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())
-                .map((session) => ({
-                  date: new Date(session.date).toLocaleDateString('pt-BR', {
-                    month: 'short',
-                    day: 'numeric',
-                  }),
-                  correctCards: session.correctCards,
-                  totalCards: session.totalCards,
-                  percentage: Math.round((session.correctCards / session.totalCards) * 100),
-                }))}
-            />
+            <div className="text-center py-4">
+              <p className="text-gray-600">Total de sessões: {filteredSessions.length}</p>
+              <p className="text-gray-600">Média de acertos: {Math.round(filteredSessions.reduce((sum, s) => sum + (s.correctCards / s.totalCards), 0) / filteredSessions.length * 100)}%</p>
+            </div>
           ) : (
             <div className="empty-state">
-              <p>Nenhum dado disponível para exibir o gráfico</p>
+              <p>Nenhum dado disponível</p>
             </div>
           )}
         </div>
@@ -248,11 +237,7 @@ export default function StatsPage() {
               <AreaPerformancePieChart data={areaStats} />
             </div>
 
-            {/* Bar Chart */}
-            <div className="chart-section">
-              <h2>Comparação de Desempenho por Área</h2>
-              <AreaPerformanceBarChart data={areaStats} />
-            </div>
+
           </>
         )}
 
