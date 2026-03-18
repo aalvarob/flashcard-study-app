@@ -8,8 +8,8 @@
     "dev:server": "cross-env NODE_ENV=development tsx watch server/_core/index.ts",
     "dev:metro": "cross-env EXPO_USE_METRO_WORKSPACE_ROOT=1 npx expo start --web --port ${EXPO_PORT:-8081}",
     "dev:web": "cd web && npm run dev",
-    "build": "esbuild server/_core/index.ts --platform=node --packages=external --bundle --format=esm --outdir=dist",
-    "start": "NODE_ENV=production node dist/index.js",
+    "build": "esbuild server/_core/simple-server.ts --platform=node --packages=external --bundle --format=esm --outdir=dist",
+    "start": "NODE_ENV=production node dist/simple-server.js",
     "check": "tsc --noEmit",
     "lint": "expo lint",
     "format": "prettier --write .",
@@ -35,6 +35,7 @@
     "axios": "^1.13.2",
     "clsx": "^2.1.1",
     "cookie": "^1.1.1",
+    "cors": "^2.8.6",
     "dotenv": "^16.6.1",
     "drizzle-orm": "^0.44.7",
     "expo": "~54.0.29",
@@ -96,5 +97,5 @@
     "typescript": "~5.9.3",
     "vitest": "^2.1.9"
   },
-  "packageManager": "pnpm@9.12.0"
+    "packageManager": "npm@10.0.0"
 }
